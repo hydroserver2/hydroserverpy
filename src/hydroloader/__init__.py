@@ -1,12 +1,11 @@
-from hydroloader.main import HydroLoaderClient
-from hydroloader.utils import parse_conf, build_observations_requests
-from hydroloader.models import HydroLoaderConfTimestamp, HydroLoaderConfDatastream, HydroLoaderConf
+from hydroloader.main import HydroLoader
+from hydroloader.models import HydroLoaderConfFileTimestamp, HydroLoaderConfFileDatastream, HydroLoaderConf, \
+     HydroLoaderDatastream
 
 __all__ = [
-    "HydroLoaderClient",
+    "HydroLoader",
     "HydroLoaderConf",
-    "HydroLoaderConfDatastream",
-    "HydroLoaderConfTimestamp",
-    "parse_conf",
-    "build_observations_requests"
+    "HydroLoaderConfFileDatastream",
+    "HydroLoaderConfFileTimestamp",
+    "HydroLoaderDatastream"
 ]

@@ -1,39 +1,179 @@
 import yaml
+import re
 import simplejson as json
 from uuid import UUID
-from pydantic import BaseModel, DirectoryPath
-from typing import List, Pattern, Optional
+from datetime import datetime
+from crontab import CronTab
+from pydantic import BaseModel, validator, root_validator, conint, AnyHttpUrl
+from typing import List, Optional, Literal, Union
 
 
-class HydroLoaderConfTimestamp(BaseModel):
-    format: str = '%Y-%m-%d %H:%M:%S%z'
-    column: int = 0
-    utc_offset: str = '+0000'
+class HydroLoaderDatastream(BaseModel):
+    id: UUID
+    value_count: Optional[int]
+    result_time: Optional[datetime]
+    phenomenon_time: Optional[datetime]
 
 
-class HydroLoaderConfDatastream(BaseModel):
-    datastream: UUID
-    column: int
+class HydroLoaderConfSchedule(BaseModel):
+    crontab: Optional[str]
+    interval_units: Optional[Literal['minutes', 'hours', 'days', 'weeks', 'months']]
+    interval: Optional[conint(gt=0)]
+    start_time: Optional[datetime]
+
+    @root_validator(pre=True)
+    def check_crontab_or_interval(cls, values):
+        """
+        The check_crontab_or_interval function is a validator that ensures that the HydroLoaderConfSchedule model
+        includes either a crontab or an interval, but not both. It also ensures that if an interval is
+        included, it includes both an interval and its units.
+
+        :param cls: Pass the class of the model to be created
+        :param values: Pass the values of the fields in a form to
+        :return: The values dictionary
+        """
+
+        if values.get('crontab') and (values.get('interval_units') or values.get('interval')):
+            raise ValueError('Schedule must include either a crontab or an interval, not both.')
+
+        if not values.get('crontab') and not (values.get('interval_units') and values.get('interval')):
+            raise ValueError('Interval must include both an interval and interval_units.')
+
+        return values
+
+    @validator('crontab')
+    def check_valid_crontab(cls, v):
+        """
+        The check_valid_crontab function is a validator that uses the CronTab library to check if the inputted
+        crontab string is valid. If it's not, an exception will be raised.
+
+        :param cls: Pass the class to the function
+        :param v: Pass the value of the field to be validated
+        :return: The crontab string
+        """
+
+        CronTab(v)
+
+        return v
+
+
+class HydroLoaderConfFileAccess(BaseModel):
+    path: Optional[str]
+    url: Optional[AnyHttpUrl]
+    header_row: Optional[conint(gt=0)] = None
+    data_start_row: Optional[conint(gt=0)] = 1
+    delimiter: Optional[str] = ','
+    quote_char: Optional[str] = '"'
+
+    @root_validator(pre=True)
+    def check_path_or_url(cls, values):
+        """
+        The check_path_or_url function is a validator that takes in the values of the HydroLoaderConfFileAccess model
+        and checks to see if there is either a path or url. If there isn't, it raises an error.
+
+        :param cls: Pass the class of the object being created
+        :param values: Pass in the values of the path and url parameters
+        :return: The values dictionary
+        """
+
+        if bool(values.get('path')) == bool(values.get('url')):
+            raise ValueError('File access must include either a path or a URL.')
+
+        return values
+
+    @root_validator(pre=True)
+    def check_header_and_data_rows(cls, values):
+        """
+        The check_header_and_data_rows function is a class method that takes in the values of the header_row and
+        data_start_row and ensures the header row is not greater than the data start row. If it is, it raises an error.
+
+        :param cls: Refer to the class that is being created
+        :param values: Get the values of the header_row and data_start_row
+        :return: The values dictionary
+        """
+
+        if values.get('header_row') is not None and values.get('header_row') >= values.get('data_start_row'):
+            raise ValueError('Header row cannot occur after data start row.')
+
+        return values
+
+    @validator('delimiter')
+    def convert_delimiters(cls, v):
+        """
+        The convert_delimiters function is a validator that takes in a string and replaces all instances of '\\t' with
+        '\t'. This function is used to convert the delimiters from the input file into tab-delimited format.
+
+        :param cls: Pass the class object to the function
+        :param v: Pass the value of the escaped delimiter into the function
+        :return: An unescaped delimiter string
+        """
+
+        return v.replace('\\t', '\t')
+
+
+class HydroLoaderConfFileTimestamp(BaseModel):
+    column: Union[conint(gt=0), str]
+    format: Optional[str] = '%Y-%m-%dT%H:%M:%S%Z'
+    offset: Optional[str] = '+0000'
+
+    @validator('format')
+    def check_valid_strftime(cls, v):
+        """
+        The check_valid_strftime function is a validator that takes in a datetime strf string and checks to see if it
+        is valid. It uses the strftime function from the datetime module, which returns an error if the string passed
+        to it is not valid.
+
+        :param cls: Pass the class to which the validator is attached
+        :param v: Pass the value of the argument to be checked
+        :return: The value of the string
+        """
+
+        datetime.now().strftime(v)
+
+        return v
+
+    @validator('offset', always=True)
+    def parse_tzinfo(cls, v):
+        """
+        The parse_tzinfo function is a validator for the offset field. It takes in a string and returns an instance
+        of datetime.tzinfo, which is used by Python's datetime module to represent timezone information. The function
+        first checks that the input string is a valid UTC offset formatted like "+0000". If it is not valid, then it
+        raises an exception.
+
+        :param cls: Pass in the class of the object being created
+        :param v: Pass the timezone offset
+        :return: A tzinfo object
+        """
+
+        tzinfo_pattern = r'^[+-](0[0-9]|1[0-4])[0-5][0-9]$'
+        if re.match(tzinfo_pattern, v) is None:
+            raise ValueError('The offset must be a valid UTC timezone offset formatted such as "+0000".')
+
+        return datetime.strptime(v, '%z').tzinfo
+
+
+class HydroLoaderConfFileDatastream(BaseModel):
+    column: Union[conint(gt=0), str]
+    datastream_id: UUID
 
 
 class HydroLoaderConf(BaseModel):
-    name: str
-    directory: DirectoryPath
-    file: Pattern
-    delimiter: str = ','
-    header_rows: int = 0
-    footer_rows: int = 0
-    timestamp: HydroLoaderConfTimestamp
-    datastreams: List[HydroLoaderConfDatastream]
+    schedule: HydroLoaderConfSchedule
+    file_access: HydroLoaderConfFileAccess
+    file_timestamp: HydroLoaderConfFileTimestamp
+    datastreams: List[HydroLoaderConfFileDatastream]
 
     def to_yaml(
             self,
-            file_path: Optional[DirectoryPath] = None
+            file_path: str
     ):
-        """"""
+        """
+        The to_yaml function takes a file path and writes the configuration to that file in YAML format.
 
-        if file_path is None:
-            file_path = f'{self.name}.yaml'
+        :param self: Refer to the current instance of the class
+        :param file_path: str: Specify the file path to save the configuration
+        :return: A yaml file
+        """
 
         with open(file_path, 'w') as conf_file:
             yaml.dump(
