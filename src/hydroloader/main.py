@@ -2,10 +2,16 @@ import requests
 import yaml
 import json
 import csv
+import logging
 from pydantic import AnyHttpUrl, conint
 from datetime import datetime
 from typing import Tuple, Union, Optional
-from hydroloader.models import HydroLoaderConf, HydroLoaderDatastream
+from hydroloader.models import HydroLoaderConf, HydroLoaderDatastream, HydroLoaderObservationsResponse
+from hydroloader.exceptions import HeaderParsingError, TimestampParsingError
+
+
+logger = logging.getLogger('hydroloader')
+logger.addHandler(logging.NullHandler())
 
 
 class HydroLoader:
@@ -56,18 +62,55 @@ class HydroLoader:
 
         for datastream in self.conf.datastreams:
             request_url = f'{self.service}/Datastreams({datastream.datastream_id})'
-            raw_response = self.client.get(request_url)
-            response = json.loads(raw_response.content)
-            self.datastreams[str(datastream.datastream_id)] = HydroLoaderDatastream(
-                id=response['@iot.id'],
-                value_count=response['properties']['valueCount'],
-                result_time=datetime.strptime(
-                    response['resultTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
-                ) if response['resultTime'] else None,
-                phenomenon_time=datetime.strptime(
-                    response['phenomenonTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
-                ) if response['phenomenonTime'] else None
-            )
+
+            try:
+                raw_response = self.client.get(request_url)
+            except requests.exceptions.RequestException as e:
+                logger.error(
+                    'Failed to make request to "' + request_url + '" with error: ' + str(e)
+                )
+                continue
+
+            if raw_response.status_code != 200:
+                logger.error(
+                    'SensorThings request to "' + request_url + '" failed with status code: ' +
+                    str(raw_response.status_code) + ': ' + raw_response.reason
+                )
+                continue
+
+            try:
+                response = json.loads(raw_response.content)
+            except ValueError as e:
+                logger.error(
+                    'Failed to parse SensorThings response from "' + request_url + '" with error: ' + str(e)
+                )
+                continue
+
+            try:
+                if self.datastreams.get(str(datastream.datastream_id)):
+                    self.datastreams[str(datastream.datastream_id)].value_count = response['properties']['valueCount']
+                    self.datastreams[str(datastream.datastream_id)].result_time = datetime.strptime(
+                        response['resultTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
+                    ) if response['resultTime'] else None
+                    self.datastreams[str(datastream.datastream_id)].phenomenon_time = datetime.strptime(
+                        response['phenomenonTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
+                    ) if response['phenomenonTime'] else None
+                else:
+                    self.datastreams[str(datastream.datastream_id)] = HydroLoaderDatastream(
+                        id=response['@iot.id'],
+                        value_count=response['properties']['valueCount'],
+                        result_time=datetime.strptime(
+                            response['resultTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
+                        ) if response['resultTime'] else None,
+                        phenomenon_time=datetime.strptime(
+                            response['phenomenonTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
+                        ) if response['phenomenonTime'] else None
+                    )
+            except (KeyError, ValueError, IndexError) as e:
+                logger.error(
+                    'Failed to parse SensorThings response body from "' + request_url + '" with error: ' + str(e)
+                )
+                continue
 
         return self.datastreams
 
@@ -89,40 +132,130 @@ class HydroLoader:
 
         with open(self.conf.file_access.path) as data_file:
             data_reader = csv.reader(data_file, delimiter=self.conf.file_access.delimiter)
+            failed_datastreams = []
             for i, row in enumerate(data_reader):
-                self.parse_data_file_row(i + 1, row)
+                try:
+                    self.parse_data_file_row(i + 1, row)
+                except HeaderParsingError as e:
+                    logger.error(
+                        f'Failed to parse data file headers for "{self.conf.file_access.path}" ' +
+                        f'with error: {str(e)}'
+                    )
+                    raise ValueError from e
+                except TimestampParsingError as e:
+                    logger.error(
+                        f'Failed to parse timestamp on row {i + 1} for "{self.conf.file_access.path}" ' +
+                        f'with error: {str(e)}'
+                    )
+                    raise ValueError from e
                 if i > 0 and i % self.chunk_size == 0:
-                    self.post_observations()
-            self.post_observations()
+                    responses = self.post_observations(
+                        skip_datastreams=failed_datastreams
+                    )
+                    failed_datastreams = self.handle_post_responses(
+                        responses=responses,
+                        failed_datastreams=failed_datastreams
+                    )
+            responses = self.post_observations(
+                skip_datastreams=failed_datastreams
+            )
+            self.handle_post_responses(
+                responses=responses,
+                failed_datastreams=failed_datastreams
+            )
 
-    def post_observations(self):
+        self.get_datastreams()
+
+        return {
+            datastream_id: {
+                'file_thru': datastream_meta.file_result_end_time,
+                'database_thru': self.datastreams[datastream_id].result_time if self.datastreams.get(datastream_id) else None,
+                'success': datastream_id not in failed_datastreams
+            } for datastream_id, datastream_meta in self.datastreams.items()
+        }
+
+    @staticmethod
+    def handle_post_responses(responses, failed_datastreams):
+        """
+        The handle_post_responses function takes a list of responses from SensorThings observations POST requests and
+        a list of datastreams that have failed to post observations. It iterates through each response,
+        and if the status code is not 201 (created), it logs an error message with information about
+        the request URL, chunk start time, chunk end time, status code and reason for failure. If the
+        status code is 201 (created), it logs a success message with information about the chunk start time,
+        chunk end time and datastream ID. The function returns a set of unique IDs for all failed datastreams.
+
+        :param responses: Store the response from the post request
+        :param failed_datastreams: Keep track of the datastreams that failed to post observations
+        :return: A set of datastreams that failed to post
+        """
+
+        for response in responses:
+            if response.status_code != 201:
+                logger.error(
+                    f'Observations POST request to "{response.request_url}" ' +
+                    f'from {response.chunk_start_time} to {response.chunk_end_time} ' +
+                    f'failed with error: {str(response.status_code)}: {response.reason}')
+                failed_datastreams.append(response.datastream_id)
+            else:
+                logger.info(
+                    f'Posted observations from {response.chunk_start_time} to {response.chunk_end_time} ' +
+                    f'for datastream {response.datastream_id}'
+                )
+
+        return list(set(failed_datastreams))
+
+    def post_observations(self, skip_datastreams):
         """
         The post_observations function takes the observation_bodies dictionary and posts it to the HydroServer
         SensorThings API Observations endpoint. Each request body contains a batch of observations associated with a
         single datastream.
 
         :param self: Represent the instance of the class
+        :param skip_datastreams: A list of datastreams to skip
         :return: The response of the client
         """
 
+        responses = []
+
         for datastream_id, observation_body in self.observation_bodies.items():
-            request_url = f'{self.service}/Observations'
-            request_body = [{
-                'Datastream': {
-                    '@iot.id': str(datastream_id)
-                },
-                'components': [
-                    'resultTime', 'result'
-                ],
-                'dataArray': observation_body
-            }]
-            response = self.client.post(
-                request_url,
-                json=request_body
-            )
-            print(response)
+            chunk_start_time = self.datastreams[datastream_id].chunk_result_start_time
+            chunk_end_time = self.datastreams[datastream_id].chunk_result_end_time
+            if str(datastream_id) not in skip_datastreams:
+                request_url = f'{self.service}/Observations'
+                request_body = [{
+                    'Datastream': {
+                        '@iot.id': str(datastream_id)
+                    },
+                    'components': [
+                        'resultTime', 'result'
+                    ],
+                    'dataArray': observation_body
+                }]
+                response = self.client.post(
+                    request_url,
+                    json=request_body
+                )
+                responses.append(HydroLoaderObservationsResponse(
+                    datastream_id=datastream_id,
+                    request_url=request_url,
+                    status_code=response.status_code,
+                    reason=response.reason,
+                    chunk_start_time=chunk_start_time.strftime("%Y-%m-%d %H:%M:%S%z"),
+                    chunk_end_time=chunk_end_time.strftime("%Y-%m-%d %H:%M:%S%z")
+                ))
+            else:
+                logger.info(
+                    f'Skipping observations POST request from ' +
+                    f'{chunk_start_time.strftime("%Y-%m-%d %H:%M:%S%z")} to ' +
+                    f'{chunk_end_time.strftime("%Y-%m-%d %H:%M:%S%z")} for datastream: ' +
+                    f'{str(datastream_id)}, due to previous failed POST request.'
+                )
+            self.datastreams[datastream_id].chunk_result_start_time = None
+            self.datastreams[datastream_id].chunk_result_end_time = None
 
         self.observation_bodies = {}
+
+        return responses
 
     def parse_data_file_row(self, index, row):
         """
@@ -139,42 +272,55 @@ class HydroLoader:
         :return: A list of datetime and value pairs for each datastream
         """
 
-        if index == self.conf.file_access.header_row:
-            self.datastream_column_indexes = {
-                datastream.column: row.index(datastream.column)
-                if isinstance(datastream.column, str) else datastream.column
-                for datastream in self.conf.datastreams
-            }
-            self.timestamp_column_index = row.index(self.conf.file_timestamp.column) \
-                if isinstance(self.conf.file_timestamp.column, str) else self.conf.file_timestamp.column
+        if index == self.conf.file_access.header_row or (
+                index == self.conf.file_access.data_start_row and not hasattr(self, 'timestamp_column_index')
+        ):
+            try:
+                self.datastream_column_indexes = {
+                    datastream.column: row.index(datastream.column)
+                    if isinstance(datastream.column, str) else datastream.column - 1
+                    for datastream in self.conf.datastreams
+                }
+                self.timestamp_column_index = row.index(self.conf.file_timestamp.column) \
+                    if isinstance(self.conf.file_timestamp.column, str) else self.conf.file_timestamp.column - 1
+                if max(self.datastream_column_indexes.values()) > len(row) or self.timestamp_column_index > len(row):
+                    raise ValueError
+            except ValueError as e:
+                raise HeaderParsingError from e
 
         if index < self.conf.file_access.data_start_row:
             return
 
-        timestamp = datetime.strptime(
-            row[self.timestamp_column_index],
-            self.conf.file_timestamp.format
-        )
+        try:
+            timestamp = datetime.strptime(
+                row[self.timestamp_column_index],
+                self.conf.file_timestamp.format
+            )
+        except ValueError as e:
+            raise TimestampParsingError from e
 
         if timestamp.tzinfo is None:
             timestamp = timestamp.replace(tzinfo=self.conf.file_timestamp.offset)
 
-        for datastream in self.conf.datastreams:
+        for datastream in [
+            ds for ds in self.conf.datastreams if str(ds.datastream_id) in self.datastreams.keys()
+        ]:
             ds_timestamp = self.datastreams[str(datastream.datastream_id)].result_time
 
-            if ds_timestamp is None or timestamp > ds_timestamp:
+            if not self.datastreams[str(datastream.datastream_id)].file_row_start_index:
+                if ds_timestamp is None or timestamp > ds_timestamp:
+                    self.datastreams[str(datastream.datastream_id)].file_row_start_index = index
+
+            if self.datastreams[str(datastream.datastream_id)].file_row_start_index and \
+                    self.datastreams[str(datastream.datastream_id)].file_row_start_index <= index:
                 if str(datastream.datastream_id) not in self.observation_bodies.keys():
                     self.observation_bodies[str(datastream.datastream_id)] = []
 
+                if not self.datastreams[str(datastream.datastream_id)].chunk_result_start_time:
+                    self.datastreams[str(datastream.datastream_id)].chunk_result_start_time = timestamp
+                self.datastreams[str(datastream.datastream_id)].chunk_result_end_time = timestamp
+                self.datastreams[str(datastream.datastream_id)].file_result_end_time = timestamp
+
                 self.observation_bodies[str(datastream.datastream_id)].append([
-                    timestamp.strftime('%Y-%m-%dT%H:%M:%SZ'), row[self.datastream_column_indexes[datastream.column]]
+                    timestamp.strftime('%Y-%m-%dT%H:%M:%S%z'), row[self.datastream_column_indexes[datastream.column]]
                 ])
-
-
-hl = HydroLoader(
-    conf='/Users/klippold/HydroLoader/LRO1.yaml',
-    auth=('test', 'test'),
-    service='http://ciroh-his-dev.us-east-1.elasticbeanstalk.com/sensorthings/v1.1'
-)
-
-hl.sync_datastreams()

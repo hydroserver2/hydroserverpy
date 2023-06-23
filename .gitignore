@@ -2,6 +2,7 @@
 *.sqlite3
 *.db
 *.egg-info
+*.spec
 *test.ipynb
 .DS_Store
 .idea
@@ -10,4 +11,3 @@
 __pycache__/
 dist
 build
-requirements.txt

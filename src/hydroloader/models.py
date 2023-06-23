@@ -13,6 +13,19 @@ class HydroLoaderDatastream(BaseModel):
     value_count: Optional[int]
     result_time: Optional[datetime]
     phenomenon_time: Optional[datetime]
+    file_row_start_index: Optional[int]
+    file_result_end_time: Optional[datetime]
+    chunk_result_start_time: Optional[datetime]
+    chunk_result_end_time: Optional[datetime]
+
+
+class HydroLoaderObservationsResponse(BaseModel):
+    datastream_id: str
+    request_url: str
+    status_code: int
+    reason: str
+    chunk_start_time: str
+    chunk_end_time: str
 
 
 class HydroLoaderConfSchedule(BaseModel):
@@ -20,12 +33,14 @@ class HydroLoaderConfSchedule(BaseModel):
     interval_units: Optional[Literal['minutes', 'hours', 'days', 'weeks', 'months']]
     interval: Optional[conint(gt=0)]
     start_time: Optional[datetime]
+    end_time: Optional[datetime]
+    paused: Optional[bool]
 
     @root_validator(pre=True)
     def check_crontab_or_interval(cls, values):
         """
         The check_crontab_or_interval function is a validator that ensures that the HydroLoaderConfSchedule model
-        includes either a crontab or an interval, but not both. It also ensures that if an interval is
+        does not include both a crontab and an interval. It also ensures that if an interval is
         included, it includes both an interval and its units.
 
         :param cls: Pass the class of the model to be created
@@ -34,7 +49,7 @@ class HydroLoaderConfSchedule(BaseModel):
         """
 
         if values.get('crontab') and (values.get('interval_units') or values.get('interval')):
-            raise ValueError('Schedule must include either a crontab or an interval, not both.')
+            raise ValueError('Schedule can include either a crontab or an interval, not both.')
 
         if not values.get('crontab') and not (values.get('interval_units') and values.get('interval')):
             raise ValueError('Interval must include both an interval and interval_units.')
@@ -158,10 +173,23 @@ class HydroLoaderConfFileDatastream(BaseModel):
 
 
 class HydroLoaderConf(BaseModel):
-    schedule: HydroLoaderConfSchedule
+    schedule: Optional[HydroLoaderConfSchedule]
     file_access: HydroLoaderConfFileAccess
     file_timestamp: HydroLoaderConfFileTimestamp
     datastreams: List[HydroLoaderConfFileDatastream]
+
+    @root_validator()
+    def check_header_and_fields(cls, values):
+        """"""
+
+        if not values['file_access'].header_row:
+            if not isinstance(values['file_timestamp'].column, int):
+                raise ValueError('If no header row is defined, all column identifiers must be integers.')
+            for datastream in values['datastreams']:
+                if not isinstance(datastream.column, int):
+                    raise ValueError('If no header row is defined, all column identifiers must be integers.')
+
+        return values
 
     def to_yaml(
             self,
