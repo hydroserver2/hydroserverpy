@@ -5,7 +5,7 @@ import csv
 import logging
 from pydantic import AnyHttpUrl, conint
 from datetime import datetime
-from typing import Tuple, Union, Optional
+from typing import Tuple, Union, Optional, Dict, List
 from hydroloader.models import HydroLoaderConf, HydroLoaderDatastream, HydroLoaderObservationsResponse
 from hydroloader.exceptions import HeaderParsingError, TimestampParsingError
 
@@ -20,12 +20,12 @@ class HydroLoader:
     service: Union[AnyHttpUrl, str]
     conf: HydroLoaderConf
 
-    datastreams: dict[str, HydroLoaderDatastream]
+    datastreams: Dict[str, HydroLoaderDatastream]
     chunk_size: conint(gt=0) = 10000
 
     timestamp_column_index: Optional[conint(gt=0)]
-    datastream_column_indexes: dict[Union[str, int], int]
-    observation_bodies: dict[str, list[list[str]]]
+    datastream_column_indexes: Dict[Union[str, int], int]
+    observation_bodies: Dict[str, List[List[str]]]
 
     def __init__(
             self,
