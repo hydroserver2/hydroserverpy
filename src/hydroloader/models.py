@@ -67,7 +67,8 @@ class HydroLoaderConfSchedule(BaseModel):
         :return: The crontab string
         """
 
-        CronTab(v)
+        if v is not None:
+            CronTab(v)
 
         return v
 
@@ -161,10 +162,10 @@ class HydroLoaderConfFileTimestamp(BaseModel):
         """
 
         tzinfo_pattern = r'^[+-](0[0-9]|1[0-4])[0-5][0-9]$'
-        if re.match(tzinfo_pattern, v) is None:
+        if v is not None and re.match(tzinfo_pattern, v) is None:
             raise ValueError('The offset must be a valid UTC timezone offset formatted such as "+0000".')
 
-        return datetime.strptime(v, '%z').tzinfo
+        return datetime.strptime(v, '%z').tzinfo if v is not None else None
 
 
 class HydroLoaderConfFileDatastream(BaseModel):
@@ -182,8 +183,8 @@ class HydroLoaderConf(BaseModel):
     def check_header_and_fields(cls, values):
         """"""
 
-        if not values['file_access'].header_row:
-            if not isinstance(values['file_timestamp'].column, int):
+        if not values.get('file_access') or not values['file_access'].header_row:
+            if values.get('file_timestamp') and not isinstance(values['file_timestamp'].column, int):
                 raise ValueError('If no header row is defined, all column identifiers must be integers.')
             for datastream in values['datastreams']:
                 if not isinstance(datastream.column, int):
