@@ -4,7 +4,7 @@ import json
 import csv
 import logging
 from pydantic import AnyHttpUrl, conint
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Tuple, Union, Optional, Dict, List
 from hydroloader.models import HydroLoaderConf, HydroLoaderDatastream, HydroLoaderObservationsResponse
 from hydroloader.exceptions import HeaderParsingError, TimestampParsingError
@@ -164,15 +164,23 @@ class HydroLoader:
                 failed_datastreams=failed_datastreams
             )
 
-        self.get_datastreams()
-
         return {
-            datastream_id: {
-                'file_thru': datastream_meta.file_result_end_time,
-                'database_thru': self.datastreams[datastream_id].result_time if self.datastreams.get(datastream_id) else None,
-                'success': datastream_id not in failed_datastreams
-            } for datastream_id, datastream_meta in self.datastreams.items()
+            'data_thru': self.get_data_thru_date(),
+            'success': len(failed_datastreams) == 0
         }
+
+    def get_data_thru_date(self):
+        """"""
+
+        data_thru_date = None
+
+        for datastream in self.datastreams.values():
+            if datastream.file_result_end_time and (
+                    data_thru_date is None or datastream.file_result_end_time > data_thru_date
+            ):
+                data_thru_date = datastream.file_result_end_time
+
+        return data_thru_date
 
     @staticmethod
     def handle_post_responses(responses, failed_datastreams):
@@ -292,20 +300,30 @@ class HydroLoader:
             return
 
         try:
-            timestamp = datetime.strptime(
-                row[self.timestamp_column_index],
-                self.conf.file_timestamp.format
-            )
+            if self.conf.file_timestamp.format == 'iso':
+                timestamp = datetime.fromisoformat(
+                    row[self.timestamp_column_index]
+                )
+            else:
+                timestamp = datetime.strptime(
+                    row[self.timestamp_column_index],
+                    self.conf.file_timestamp.format
+                )
         except ValueError as e:
             raise TimestampParsingError from e
 
         if timestamp.tzinfo is None:
-            timestamp = timestamp.replace(tzinfo=self.conf.file_timestamp.offset)
+            if not self.conf.file_timestamp.offset:
+                timestamp = timestamp.replace(
+                    tzinfo=timezone.utc
+                )
 
         for datastream in [
             ds for ds in self.conf.datastreams if str(ds.datastream_id) in self.datastreams.keys()
         ]:
             ds_timestamp = self.datastreams[str(datastream.datastream_id)].result_time
+
+            self.datastreams[str(datastream.datastream_id)].file_result_end_time = timestamp
 
             if not self.datastreams[str(datastream.datastream_id)].file_row_start_index:
                 if ds_timestamp is None or timestamp > ds_timestamp:
@@ -319,7 +337,6 @@ class HydroLoader:
                 if not self.datastreams[str(datastream.datastream_id)].chunk_result_start_time:
                     self.datastreams[str(datastream.datastream_id)].chunk_result_start_time = timestamp
                 self.datastreams[str(datastream.datastream_id)].chunk_result_end_time = timestamp
-                self.datastreams[str(datastream.datastream_id)].file_result_end_time = timestamp
 
                 self.observation_bodies[str(datastream.datastream_id)].append([
                     timestamp.strftime('%Y-%m-%dT%H:%M:%S%z'), row[self.datastream_column_indexes[datastream.column]]
