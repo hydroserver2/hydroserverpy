@@ -20,6 +20,7 @@ class HydroLoader:
     service: Union[AnyHttpUrl, str]
     conf: HydroLoaderConf
 
+    file_result_timestamp: Optional[datetime]
     datastreams: Dict[str, HydroLoaderDatastream]
     chunk_size: conint(gt=0) = 10000
 
@@ -132,6 +133,7 @@ class HydroLoader:
 
         with open(self.conf.file_access.path) as data_file:
             data_reader = csv.reader(data_file, delimiter=self.conf.file_access.delimiter)
+            file_parsing_error = False
             failed_datastreams = []
             for i, row in enumerate(data_reader):
                 try:
@@ -141,13 +143,15 @@ class HydroLoader:
                         f'Failed to parse data file headers for "{self.conf.file_access.path}" ' +
                         f'with error: {str(e)}'
                     )
-                    raise ValueError from e
+                    file_parsing_error = True
+                    break
                 except TimestampParsingError as e:
                     logger.error(
                         f'Failed to parse timestamp on row {i + 1} for "{self.conf.file_access.path}" ' +
                         f'with error: {str(e)}'
                     )
-                    raise ValueError from e
+                    file_parsing_error = True
+                    break
                 if i > 0 and i % self.chunk_size == 0:
                     responses = self.post_observations(
                         skip_datastreams=failed_datastreams
@@ -156,31 +160,19 @@ class HydroLoader:
                         responses=responses,
                         failed_datastreams=failed_datastreams
                     )
-            responses = self.post_observations(
-                skip_datastreams=failed_datastreams
-            )
-            self.handle_post_responses(
-                responses=responses,
-                failed_datastreams=failed_datastreams
-            )
+            if not file_parsing_error:
+                responses = self.post_observations(
+                    skip_datastreams=failed_datastreams
+                )
+                self.handle_post_responses(
+                    responses=responses,
+                    failed_datastreams=failed_datastreams
+                )
 
         return {
-            'data_thru': self.get_data_thru_date(),
-            'success': len(failed_datastreams) == 0
+            'data_thru': self.file_result_timestamp,
+            'success': len(failed_datastreams) == 0 and file_parsing_error is False
         }
-
-    def get_data_thru_date(self):
-        """"""
-
-        data_thru_date = None
-
-        for datastream in self.datastreams.values():
-            if datastream.file_result_end_time and (
-                    data_thru_date is None or datastream.file_result_end_time > data_thru_date
-            ):
-                data_thru_date = datastream.file_result_end_time
-
-        return data_thru_date
 
     @staticmethod
     def handle_post_responses(responses, failed_datastreams):
@@ -318,12 +310,12 @@ class HydroLoader:
                     tzinfo=timezone.utc
                 )
 
+        self.file_result_timestamp = timestamp
+
         for datastream in [
             ds for ds in self.conf.datastreams if str(ds.datastream_id) in self.datastreams.keys()
         ]:
             ds_timestamp = self.datastreams[str(datastream.datastream_id)].result_time
-
-            self.datastreams[str(datastream.datastream_id)].file_result_end_time = timestamp
 
             if not self.datastreams[str(datastream.datastream_id)].file_row_start_index:
                 if ds_timestamp is None or timestamp > ds_timestamp:
