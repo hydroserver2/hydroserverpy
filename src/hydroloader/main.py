@@ -5,6 +5,7 @@ import csv
 import logging
 from pydantic import AnyHttpUrl, conint
 from datetime import datetime, timezone
+from dateutil.parser import isoparse
 from typing import Tuple, Union, Optional, Dict, List
 from hydroloader.models import HydroLoaderConf, HydroLoaderDatastream, HydroLoaderObservationsResponse
 from hydroloader.exceptions import HeaderParsingError, TimestampParsingError
@@ -170,7 +171,7 @@ class HydroLoader:
                 )
 
         return {
-            'data_thru': self.file_result_timestamp,
+            'data_thru': getattr(self, 'file_result_timestamp', None),
             'success': len(failed_datastreams) == 0 and file_parsing_error is False
         }
 
@@ -293,7 +294,7 @@ class HydroLoader:
 
         try:
             if self.conf.file_timestamp.format == 'iso':
-                timestamp = datetime.fromisoformat(
+                timestamp = isoparse(
                     row[self.timestamp_column_index]
                 )
             else:
