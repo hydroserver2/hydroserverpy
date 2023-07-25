@@ -63,7 +63,7 @@ class HydroLoader:
         """
 
         for datastream in self.conf.datastreams:
-            request_url = f'{self.service}/Datastreams({datastream.datastream_id})'
+            request_url = f'{self.service}/Datastreams({datastream.id})'
 
             try:
                 raw_response = self.client.get(request_url)
@@ -89,16 +89,16 @@ class HydroLoader:
                 continue
 
             try:
-                if self.datastreams.get(str(datastream.datastream_id)):
-                    self.datastreams[str(datastream.datastream_id)].value_count = response['properties']['valueCount']
-                    self.datastreams[str(datastream.datastream_id)].result_time = datetime.strptime(
+                if self.datastreams.get(str(datastream.id)):
+                    self.datastreams[str(datastream.id)].value_count = response['properties']['valueCount']
+                    self.datastreams[str(datastream.id)].result_time = datetime.strptime(
                         response['resultTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
                     ) if response['resultTime'] else None
-                    self.datastreams[str(datastream.datastream_id)].phenomenon_time = datetime.strptime(
+                    self.datastreams[str(datastream.id)].phenomenon_time = datetime.strptime(
                         response['phenomenonTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
                     ) if response['phenomenonTime'] else None
                 else:
-                    self.datastreams[str(datastream.datastream_id)] = HydroLoaderDatastream(
+                    self.datastreams[str(datastream.id)] = HydroLoaderDatastream(
                         id=response['@iot.id'],
                         value_count=response['properties']['valueCount'],
                         result_time=datetime.strptime(
@@ -132,6 +132,8 @@ class HydroLoader:
         if not self.conf.file_access.path:
             return
 
+        message = None
+
         with open(self.conf.file_access.path) as data_file:
             data_reader = csv.reader(data_file, delimiter=self.conf.file_access.delimiter)
             file_parsing_error = False
@@ -140,17 +142,15 @@ class HydroLoader:
                 try:
                     self.parse_data_file_row(i + 1, row)
                 except HeaderParsingError as e:
-                    logger.error(
-                        f'Failed to parse data file headers for "{self.conf.file_access.path}" ' +
+                    message = f'Failed to parse data file headers for "{self.conf.file_access.path}" ' + \
                         f'with error: {str(e)}'
-                    )
+                    logger.error(message)
                     file_parsing_error = True
                     break
                 except TimestampParsingError as e:
-                    logger.error(
-                        f'Failed to parse timestamp on row {i + 1} for "{self.conf.file_access.path}" ' +
+                    message = f'Failed to parse timestamp on row {i + 1} for "{self.conf.file_access.path}" ' + \
                         f'with error: {str(e)}'
-                    )
+                    logger.error(message)
                     file_parsing_error = True
                     break
                 if i > 0 and i % self.chunk_size == 0:
@@ -170,9 +170,13 @@ class HydroLoader:
                     failed_datastreams=failed_datastreams
                 )
 
+        if not message and len(failed_datastreams) > 0:
+            message = 'One or more datastreams failed to sync with HydroServer.'
+
         return {
             'data_thru': getattr(self, 'file_result_timestamp', None),
-            'success': len(failed_datastreams) == 0 and file_parsing_error is False
+            'success': len(failed_datastreams) == 0 and file_parsing_error is False,
+            'message': message
         }
 
     @staticmethod
@@ -263,7 +267,7 @@ class HydroLoader:
         The parse_data_file_row function is used to parse the data file row by row. The function takes in two
         arguments: index and row. The index argument is the current line number of the data file, and it's used to
         determine if we are at a header or not (if so, then we need to determine the column index for each named
-        column). The second argument is a list containing all of the values for each column on that particular line. If
+        column). The second argument is a list containing all the values for each column on that particular line. If
         this isn't a header, then we check if there are any observations with timestamps later than the latest
         timestamp for the associated datastream; if so, then add them into our observation_bodies to be posted.
 
@@ -287,7 +291,7 @@ class HydroLoader:
                 if max(self.datastream_column_indexes.values()) > len(row) or self.timestamp_column_index > len(row):
                     raise ValueError
             except ValueError as e:
-                raise HeaderParsingError from e
+                raise HeaderParsingError(str(e)) from e
 
         if index < self.conf.file_access.data_start_row:
             return
@@ -303,7 +307,7 @@ class HydroLoader:
                     self.conf.file_timestamp.format
                 )
         except ValueError as e:
-            raise TimestampParsingError from e
+            raise TimestampParsingError(str(e)) from e
 
         if timestamp.tzinfo is None:
             if not self.conf.file_timestamp.offset:
@@ -314,23 +318,23 @@ class HydroLoader:
         self.file_result_timestamp = timestamp
 
         for datastream in [
-            ds for ds in self.conf.datastreams if str(ds.datastream_id) in self.datastreams.keys()
+            ds for ds in self.conf.datastreams if str(ds.id) in self.datastreams.keys()
         ]:
-            ds_timestamp = self.datastreams[str(datastream.datastream_id)].result_time
+            ds_timestamp = self.datastreams[str(datastream.id)].result_time
 
-            if not self.datastreams[str(datastream.datastream_id)].file_row_start_index:
+            if not self.datastreams[str(datastream.id)].file_row_start_index:
                 if ds_timestamp is None or timestamp > ds_timestamp:
-                    self.datastreams[str(datastream.datastream_id)].file_row_start_index = index
+                    self.datastreams[str(datastream.id)].file_row_start_index = index
 
-            if self.datastreams[str(datastream.datastream_id)].file_row_start_index and \
-                    self.datastreams[str(datastream.datastream_id)].file_row_start_index <= index:
-                if str(datastream.datastream_id) not in self.observation_bodies.keys():
-                    self.observation_bodies[str(datastream.datastream_id)] = []
+            if self.datastreams[str(datastream.id)].file_row_start_index and \
+                    self.datastreams[str(datastream.id)].file_row_start_index <= index:
+                if str(datastream.id) not in self.observation_bodies.keys():
+                    self.observation_bodies[str(datastream.id)] = []
 
-                if not self.datastreams[str(datastream.datastream_id)].chunk_result_start_time:
-                    self.datastreams[str(datastream.datastream_id)].chunk_result_start_time = timestamp
-                self.datastreams[str(datastream.datastream_id)].chunk_result_end_time = timestamp
+                if not self.datastreams[str(datastream.id)].chunk_result_start_time:
+                    self.datastreams[str(datastream.id)].chunk_result_start_time = timestamp
+                self.datastreams[str(datastream.id)].chunk_result_end_time = timestamp
 
-                self.observation_bodies[str(datastream.datastream_id)].append([
+                self.observation_bodies[str(datastream.id)].append([
                     timestamp.strftime('%Y-%m-%dT%H:%M:%S%z'), row[self.datastream_column_indexes[datastream.column]]
                 ])
