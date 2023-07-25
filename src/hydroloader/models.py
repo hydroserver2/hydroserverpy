@@ -170,7 +170,7 @@ class HydroLoaderConfFileTimestamp(BaseModel):
 
 class HydroLoaderConfFileDatastream(BaseModel):
     column: Union[conint(gt=0), str]
-    datastream_id: UUID
+    id: UUID
 
 
 class HydroLoaderConf(BaseModel):
