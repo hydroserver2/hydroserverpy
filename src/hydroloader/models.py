@@ -186,7 +186,7 @@ class HydroLoaderConf(BaseModel):
         if not values.get('file_access') or not values['file_access'].header_row:
             if values.get('file_timestamp') and not isinstance(values['file_timestamp'].column, int):
                 raise ValueError('If no header row is defined, all column identifiers must be integers.')
-            if values['datastreams']:
+            if values.get('datastreams'):
                 for datastream in values['datastreams']:
                     if not isinstance(datastream.column, int):
                         raise ValueError('If no header row is defined, all column identifiers must be integers.')
