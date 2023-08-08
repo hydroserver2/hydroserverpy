@@ -165,7 +165,7 @@ class HydroLoaderConfFileTimestamp(BaseModel):
         if v is not None and re.match(tzinfo_pattern, v) is None:
             raise ValueError('The offset must be a valid UTC timezone offset formatted such as "+0000".')
 
-        return datetime.strptime(v, '%z').tzinfo if v is not None else None
+        return v  # datetime.strptime(v, '%z').tzinfo if v is not None else None
 
 
 class HydroLoaderConfFileDatastream(BaseModel):
