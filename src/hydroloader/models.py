@@ -51,7 +51,11 @@ class HydroLoaderConfSchedule(BaseModel):
         if values.get('crontab') and (values.get('interval_units') or values.get('interval')):
             raise ValueError('Schedule can include either a crontab or an interval, not both.')
 
-        if not values.get('crontab') and not (values.get('interval_units') and values.get('interval')):
+        if (
+            values.get('interval_units') and not values.get('interval')
+        ) or (
+            not values.get('interval_units') and values.get('interval')
+        ):
             raise ValueError('Interval must include both an interval and interval_units.')
 
         return values
