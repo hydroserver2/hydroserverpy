@@ -17,7 +17,7 @@ logger.addHandler(logging.NullHandler())
 
 class HydroLoader:
 
-    client: requests.Session
+    auth: Tuple[str, str]
     service: Union[AnyHttpUrl, str]
     conf: HydroLoaderConf
 
@@ -36,8 +36,7 @@ class HydroLoader:
             service: Union[AnyHttpUrl, str] = 'http://127.0.0.1:8000/sensorthings/v1.1',
             chunk_size: conint(gt=0) = 10000
     ):
-        self.client = requests.Session()
-        self.client.auth = auth
+        self.auth = auth
         self.service = service
 
         self.datastreams = {}
@@ -66,7 +65,7 @@ class HydroLoader:
             request_url = f'{self.service}/Datastreams({datastream.id})'
 
             try:
-                raw_response = self.client.get(request_url)
+                raw_response = requests.get(request_url, auth=self.auth)
             except requests.exceptions.RequestException as e:
                 logger.error(
                     'Failed to make request to "' + request_url + '" with error: ' + str(e)
@@ -130,7 +129,20 @@ class HydroLoader:
             self.get_datastreams()
 
         if not self.conf.file_access.path:
-            return
+            message = f'No data source file configured.'
+            return {
+                'data_thru': None,
+                'success': True,
+                'message': message
+            }
+
+        if len(self.conf.datastreams) == 0:
+            message = f'No datastreams configured for data source file: {self.conf.file_access.path}'
+            return {
+                'data_thru': None,
+                'success': True,
+                'message': message
+            }
 
         message = None
 
@@ -236,9 +248,10 @@ class HydroLoader:
                     ],
                     'dataArray': observation_body
                 }]
-                response = self.client.post(
+                response = requests.post(
                     request_url,
-                    json=request_body
+                    json=request_body,
+                    auth=self.auth
                 )
                 responses.append(HydroLoaderObservationsResponse(
                     datastream_id=datastream_id,
@@ -314,6 +327,15 @@ class HydroLoader:
                 timestamp = timestamp.replace(
                     tzinfo=timezone.utc
                 )
+            else:
+                try:
+                    timestamp = timestamp.replace(
+                        tzinfo=datetime.strptime(
+                            self.conf.file_timestamp.offset[:-2] + ':' + self.conf.file_timestamp.offset[3:], '%z'
+                        ).tzinfo
+                    )
+                except ValueError as e:
+                    raise TimestampParsingError(str(e)) from e
 
         self.file_result_timestamp = timestamp
 
