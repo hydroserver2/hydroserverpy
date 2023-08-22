@@ -38,6 +38,7 @@ class HydroLoader:
     ):
         self.auth = auth
         self.service = service
+        self.timeout = 60
 
         self.datastreams = {}
         self.chunk_size = chunk_size
@@ -65,7 +66,7 @@ class HydroLoader:
             request_url = f'{self.service}/Datastreams({datastream.id})'
 
             try:
-                raw_response = requests.get(request_url, auth=self.auth)
+                raw_response = requests.get(request_url, auth=self.auth, timeout=self.timeout)
             except requests.exceptions.RequestException as e:
                 logger.error(
                     'Failed to make request to "' + request_url + '" with error: ' + str(e)
@@ -251,7 +252,8 @@ class HydroLoader:
                 response = requests.post(
                     request_url,
                     json=request_body,
-                    auth=self.auth
+                    auth=self.auth,
+                    timeout=self.timeout
                 )
                 responses.append(HydroLoaderObservationsResponse(
                     datastream_id=datastream_id,
