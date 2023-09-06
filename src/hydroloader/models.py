@@ -4,15 +4,15 @@ import simplejson as json
 from uuid import UUID
 from datetime import datetime
 from crontab import CronTab
-from pydantic import BaseModel, validator, root_validator, conint, AnyHttpUrl
+from pydantic import BaseModel, validator, root_validator, conint, AnyHttpUrl, Field
 from typing import List, Optional, Literal, Union
 
 
 class HydroLoaderDatastream(BaseModel):
     id: UUID
-    value_count: Optional[int]
-    result_time: Optional[datetime]
-    phenomenon_time: Optional[datetime]
+    value_count: Optional[int] = Field(None, alias='valueCount')
+    result_time: Optional[datetime] = Field(None, alias='resultTime')
+    phenomenon_time: Optional[datetime] = Field(None, alias='phenomenonTime')
     file_row_start_index: Optional[int]
     file_result_end_time: Optional[datetime]
     chunk_result_start_time: Optional[datetime]

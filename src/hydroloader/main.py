@@ -93,20 +93,20 @@ class HydroLoader:
                     self.datastreams[str(datastream.id)].value_count = response['properties']['valueCount']
                     self.datastreams[str(datastream.id)].result_time = datetime.strptime(
                         response['resultTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
-                    ) if response['resultTime'] else None
+                    ) if response.get('resultTime') else None
                     self.datastreams[str(datastream.id)].phenomenon_time = datetime.strptime(
                         response['phenomenonTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
-                    ) if response['phenomenonTime'] else None
+                    ) if response.get('phenomenonTime') else None
                 else:
                     self.datastreams[str(datastream.id)] = HydroLoaderDatastream(
                         id=response['@iot.id'],
-                        value_count=response['properties']['valueCount'],
-                        result_time=datetime.strptime(
+                        valueCount=response['properties']['valueCount'],
+                        resultTime=datetime.strptime(
                             response['resultTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
-                        ) if response['resultTime'] else None,
-                        phenomenon_time=datetime.strptime(
+                        ) if response.get('resultTime') else None,
+                        phenomenonTime=datetime.strptime(
                             response['phenomenonTime'].split('/')[1].replace('Z', '+0000'), '%Y-%m-%dT%H:%M:%S%z'
-                        ) if response['phenomenonTime'] else None
+                        ) if response.get('phenomenonTime') else None
                     )
             except (KeyError, ValueError, IndexError) as e:
                 logger.error(
@@ -245,7 +245,7 @@ class HydroLoader:
                         '@iot.id': str(datastream_id)
                     },
                     'components': [
-                        'resultTime', 'result'
+                        'phenomenonTime', 'result'
                     ],
                     'dataArray': observation_body
                 }]
@@ -344,7 +344,7 @@ class HydroLoader:
         for datastream in [
             ds for ds in self.conf.datastreams if str(ds.id) in self.datastreams.keys()
         ]:
-            ds_timestamp = self.datastreams[str(datastream.id)].result_time
+            ds_timestamp = self.datastreams[str(datastream.id)].phenomenon_time
 
             if not self.datastreams[str(datastream.id)].file_row_start_index:
                 if ds_timestamp is None or timestamp > ds_timestamp:
