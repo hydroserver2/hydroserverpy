@@ -1,7 +1,7 @@
 import requests
 import json
 import frost_sta_client as fsc
-from typing import Optional, Union, Tuple
+from typing import Optional, Union, Tuple, List
 from pydantic import AnyHttpUrl
 
 
@@ -37,7 +37,11 @@ class BaseService:
             self._session.auth = self.auth
 
         self.sensorthings = fsc.SensorThingsService(
-            url=f'{self.host}/{self._sta_path}'
+            url=f'{self.host}/{self._sta_path}',
+            auth_handler=fsc.service.auth_handler.AuthHandler(
+                username=self.auth[0],
+                password=self.auth[1]
+            )
         )
 
     def _request(self, method, path, *args, **kwargs):
@@ -55,7 +59,7 @@ class BaseService:
                 else:
                     raise e
 
-    def get(self, path, *args, **kwargs):
+    def get(self, path, response_schema=None, *args, **kwargs):
         """
         The get function accepts a path and any other arguments that are passed to it,
         and then calls the _request function with the 'get' method. If the request is successful,
@@ -69,13 +73,22 @@ class BaseService:
         response = self._request('get', path, *args, **kwargs)
 
         if response.status_code == 200:
-            response.data = json.loads(response.content)
+            if not response_schema:
+                response.data = json.loads(response.content)
+            elif getattr(response_schema, '__origin__', None) == list:
+                response.data = [
+                    response_schema.__args__[0](**entity)
+                    for entity in json.loads(response.content)
+                ]
+            else:
+                response.data = response_schema(**json.loads(response.content))
+
         else:
             response.data = None
 
         return response
 
-    def post(self, path, *args, **kwargs):
+    def post(self, path, response_schema=None, *args, **kwargs):
         """
         The post function accepts a path and any other arguments that are passed to it,
         and then calls the _request function with the 'post' method. If the request is successful,
@@ -89,8 +102,46 @@ class BaseService:
         response = self._request('post', path, *args, **kwargs)
 
         if response.status_code == 201:
-            response.data = json.loads(response.content)
+            if not response_schema:
+                response.data = json.loads(response.content)
+            else:
+                response.data = response_schema(**json.loads(response.content))
         else:
             response.data = None
 
         return response
+
+    def patch(self, path, response_schema=None, *args, **kwargs):
+        """
+        The patch function accepts a path and any other arguments that are passed to it,
+        and then calls the _request function with the 'patch' method. If the request is successful,
+        the response content is parsed and added to the response object to be returned.
+
+        :param self: Represent the instance of the class
+        :param path: Specify the url of the request
+        :return: A response object
+        """
+
+        response = self._request('patch', path, *args, **kwargs)
+
+        if response.status_code == 203:
+            if not response_schema:
+                response.data = json.loads(response.content)
+            else:
+                response.data = response_schema(**json.loads(response.content))
+        else:
+            response.data = None
+
+        return response
+
+    def delete(self, path, *args, **kwargs):
+        """
+        The patch function accepts a path and any other arguments that are passed to it,
+        and then calls the _request function with the 'delete' method.
+
+        :param self: Represent the instance of the class
+        :param path: Specify the url of the request
+        :return: A response object
+        """
+
+        return self._request('delete', path, *args, **kwargs)
