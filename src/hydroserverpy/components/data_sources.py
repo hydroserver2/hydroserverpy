@@ -2,9 +2,9 @@ import tempfile
 from urllib.request import urlopen
 from uuid import UUID
 from typing import List
-from hydroserver.schemas.data_sources import DataSourceGetResponse, DataSourcePostBody, DataSourcePatchBody
-from hydroserver.schemas.datastreams import DatastreamGetResponse
-from hydroserver.etl import HydroServerETL
+from hydroserverpy.schemas.data_sources import DataSourceGetResponse, DataSourcePostBody, DataSourcePatchBody
+from hydroserverpy.schemas.datastreams import DatastreamGetResponse
+from hydroserverpy.etl import HydroServerETL
 
 
 class DataSource:

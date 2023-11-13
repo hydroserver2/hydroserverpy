@@ -1,11 +1,11 @@
 from pydantic import BaseModel, Field, root_validator
 from typing import List, Optional
 from uuid import UUID
-from hydroserver.utils import allow_partial
-from hydroserver.schemas.observed_properties import ObservedPropertyGetResponse
-from hydroserver.schemas.processing_levels import ProcessingLevelGetResponse
-from hydroserver.schemas.units import UnitGetResponse
-from hydroserver.schemas.sensors import SensorGetResponse
+from hydroserverpy.utils import allow_partial
+from hydroserverpy.schemas.observed_properties import ObservedPropertyGetResponse
+from hydroserverpy.schemas.processing_levels import ProcessingLevelGetResponse
+from hydroserverpy.schemas.units import UnitGetResponse
+from hydroserverpy.schemas.sensors import SensorGetResponse
 
 
 class ThingID(BaseModel):

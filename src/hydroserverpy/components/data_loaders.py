@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
-from hydroserver.schemas.data_loaders import DataLoaderGetResponse, DataLoaderPostBody, DataLoaderPatchBody
-from hydroserver.schemas.data_sources import DataSourceGetResponse
+from hydroserverpy.schemas.data_loaders import DataLoaderGetResponse, DataLoaderPostBody, DataLoaderPatchBody
+from hydroserverpy.schemas.data_sources import DataSourceGetResponse
 
 
 class DataLoader:
@@ -35,7 +35,7 @@ class DataLoader:
         return self._service.post(
             f'data-loaders',
             headers={'Content-type': 'application/json'},
-            data=data_loader_body.dict(by_alias=True),
+            data=data_loader_body.json(by_alias=True),
             response_schema=DataLoaderGetResponse
         )
 
@@ -44,7 +44,7 @@ class DataLoader:
         return self._service.patch(
             f'data-loaders/{str(data_loader_id)}',
             headers={'Content-type': 'application/json'},
-            data=data_loader_body.dict(exclude_unset=True, by_alias=True),
+            data=data_loader_body.json(exclude_unset=True, by_alias=True),
             response_schema=DataLoaderGetResponse
         )
 

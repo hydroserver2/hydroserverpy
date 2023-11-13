@@ -1,13 +1,14 @@
 import csv
 import logging
 import frost_sta_client as fsc
+import croniter
 from typing import IO, List
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from dateutil.parser import isoparse
-from hydroserver.schemas.data_sources import DataSourceGetResponse
-from hydroserver.schemas.datastreams import DatastreamGetResponse
-from hydroserver.exceptions import HeaderParsingError, TimestampParsingError
-from hydroserver.schemas.data_sources import DataSourcePatchBody
+from hydroserverpy.schemas.data_sources import DataSourceGetResponse
+from hydroserverpy.schemas.datastreams import DatastreamGetResponse
+from hydroserverpy.exceptions import HeaderParsingError, TimestampParsingError
+from hydroserverpy.schemas.data_sources import DataSourcePatchBody
 
 logger = logging.getLogger('hydroserver_etl')
 logger.addHandler(logging.NullHandler())
@@ -43,7 +44,14 @@ class HydroServerETL:
         self._observations = {}
 
     def run(self):
-        """"""
+        """
+        The run function is the main function of this class. It reads in a data file and parses it into observations,
+        which are then posted to HydroServer. The run function also updates the DataSource object with information about
+        the sync process.
+
+        :param self
+        :return: None
+        """
 
         data_reader = csv.reader(self._data_file, delimiter=self._data_source.delimiter)
 
@@ -84,7 +92,7 @@ class HydroServerETL:
         this isn't a header, then we check if there are any observations with timestamps later than the latest
         timestamp for the associated datastream; if so, then add them into our observation_bodies to be posted.
 
-        :param self: Refer to the object itself
+        :param self
         :param index: Keep track of the row number in the file
         :param row: Access the row of data in the csv file
         :return: A list of datetime and value pairs for each datastream
@@ -116,7 +124,16 @@ class HydroServerETL:
                 })
 
     def _parse_file_header(self, row: List[str]) -> None:
-        """"""
+        """
+        The _parse_file_header function is used to parse the header of a file.
+        It takes in a row (a list of strings) and parses it for the timestamp column index,
+        and datastream column indexes. It then sets these values as attributes on self._timestamp_column_index,
+        and self._datastream_column_indexes respectively.
+
+        :param self: Refer to the object itself
+        :param row: List[str]: Parse the header of a csv file
+        :return: A dictionary of the datastreams with their column index
+        """
 
         try:
             self._timestamp_column_index = row.index(self._data_source.timestamp_column) \
@@ -137,7 +154,13 @@ class HydroServerETL:
             raise HeaderParsingError(str(e)) from e
 
     def _parse_row_timestamp(self, row: List[str]) -> datetime:
-        """"""
+        """
+        The _parse_row_timestamp function takes a row of data from the CSV file and parses it into a datetime object.
+
+        :param self
+        :param row: List[str]: Parse the timestamp from a row of data
+        :return: A datetime object, which is a python standard library class
+        """
 
         try:
             if self._data_source.timestamp_format == 'iso':
@@ -170,12 +193,30 @@ class HydroServerETL:
         return timestamp
 
     def _post_observations(self) -> List[str]:
-        """"""
+        """
+        The _post_observations function is used to post observations to the SensorThings API.
+        The function returns a list of datastreams that failed to be posted.
+        The function iterates through all datastreams in self._observations, which is a dictionary with keys being
+        datastream IDs and values being lists of observation dictionaries (see _load_observations for more details).
+        For each datastream, if it has not previously failed posting observations or if there are any new observations
+        to post, the function posts the new observations to HydroServer using the SensorThings API.
+
+        :param self
+        :return: A list of failed datastreams
+        """
 
         failed_datastreams = []
 
         for datastream_id, observations in self._observations.items():
             if datastream_id not in self._failed_datastreams and len(observations) > 0:
+
+                logger.info(
+                    f'Loading observations from ' +
+                    f'{observations[0]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} to ' +
+                    f'{observations[-1]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} for datastream: ' +
+                    f'{str(datastream_id)}.'
+                )
+
                 data_array_value = getattr(fsc.model, 'ext').data_array_value.DataArrayValue()
 
                 datastream = fsc.Datastream(id=datastream_id)
@@ -199,15 +240,42 @@ class HydroServerETL:
                 except KeyError:
                     failed_datastreams.append(datastream_id)
 
-                if observations[-1]['phenomenon_time'] > self._last_loaded_timestamp:
+                if not self._last_loaded_timestamp or (
+                        observations[-1]['phenomenon_time'] and observations[-1]['phenomenon_time'] >
+                        self._last_loaded_timestamp
+                ):
                     self._last_loaded_timestamp = observations[-1]['phenomenon_time']
+            elif datastream_id in self._failed_datastreams:
+                logger.info(
+                    f'Skipping observations POST request from ' +
+                    f'{observations[0]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} to ' +
+                    f'{observations[-1]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} for datastream: ' +
+                    f'{str(datastream_id)}, due to previous failed POST request.'
+                )
 
         self._observations = {}
 
         return failed_datastreams
 
     def _update_data_source(self):
-        """"""
+        """
+        The _update_data_source function updates the data source with information about the last sync.
+
+        :param self
+        :return: None
+        """
+
+        if self._data_source.crontab is not None:
+            next_sync = croniter.croniter(
+                self._data_source.crontab,
+                datetime.now()
+            ).get_next(datetime)
+        elif self._data_source.interval is not None and self._data_source.interval_units is not None:
+            next_sync = datetime.now() + timedelta(
+                **{self._data_source.interval_units: self._data_source.interval}
+            )
+        else:
+            next_sync = None
 
         updated_data_source = DataSourcePatchBody(
             data_source_thru=self._last_loaded_timestamp,
@@ -217,7 +285,7 @@ class HydroServerETL:
             ),
             last_sync_message=self._message,
             last_synced=datetime.now(timezone.utc),
-            next_sync=None
+            next_sync=next_sync
         )
 
         self._service.data_sources.update(

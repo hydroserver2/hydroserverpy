@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 from uuid import UUID
 from typing import Optional
-from hydroserver.utils import allow_partial
-from hydroserver.schemas.users import UserFields
+from hydroserverpy.utils import allow_partial
+from hydroserverpy.schemas.users import UserFields
 
 
 class ObservedPropertyID(BaseModel):

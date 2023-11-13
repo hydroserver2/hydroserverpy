@@ -1,6 +1,6 @@
 from typing import List
 from uuid import UUID
-from hydroserver.schemas.processing_levels import ProcessingLevelGetResponse, ProcessingLevelPostBody, \
+from hydroserverpy.schemas.processing_levels import ProcessingLevelGetResponse, ProcessingLevelPostBody, \
      ProcessingLevelPatchBody
 
 

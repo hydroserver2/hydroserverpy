@@ -1,7 +1,7 @@
 import requests
 import json
 import frost_sta_client as fsc
-from typing import Optional, Union, Tuple, List
+from typing import Optional, Union, Tuple
 from pydantic import AnyHttpUrl
 
 
@@ -24,6 +24,13 @@ class BaseService:
         self._initialize_session()
 
     def _initialize_session(self):
+        """
+        The _initialize_session function is used to initialize the session object.
+
+        :param self
+        :return: None
+        """
+
         if self._session is not None:
             self._session.close()
 
@@ -45,6 +52,19 @@ class BaseService:
         )
 
     def _request(self, method, path, *args, **kwargs):
+        """
+        The _request function is a helper function that makes it easier to make requests to the API.
+        It takes in a method, path, and any other arguments you want to pass into the request.
+        The method argument should be one of 'get', 'post', or 'delete'. The path argument should be
+        the endpoint you are trying to reach (e.g., '/users/me'). Any additional arguments will be passed
+        into the request as-is.
+
+        :param self
+        :param method: Specify the type of request that is being made
+        :param path: Specify the path of the request
+        :return: A response object
+        """
+
         for attempt in range(2):
             try:
                 return getattr(self._session, method)(
@@ -67,6 +87,7 @@ class BaseService:
 
         :param self: Represent the instance of the class
         :param path: Specify the url of the request
+        :param response_schema: Specify the schema of the response
         :return: A response object
         """
 
@@ -96,6 +117,7 @@ class BaseService:
 
         :param self: Represent the instance of the class
         :param path: Specify the url of the request
+        :param response_schema: Specify the schema of the response
         :return: A response object
         """
 
@@ -119,6 +141,7 @@ class BaseService:
 
         :param self: Represent the instance of the class
         :param path: Specify the url of the request
+        :param response_schema: Specify the schema of the response
         :return: A response object
         """
 

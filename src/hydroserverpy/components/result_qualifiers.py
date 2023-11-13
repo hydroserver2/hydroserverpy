@@ -1,6 +1,6 @@
 from typing import List
 from uuid import UUID
-from hydroserver.schemas.result_qualifiers import ResultQualifierGetResponse, ResultQualifierPostBody, \
+from hydroserverpy.schemas.result_qualifiers import ResultQualifierGetResponse, ResultQualifierPostBody, \
      ResultQualifierPatchBody
 
 

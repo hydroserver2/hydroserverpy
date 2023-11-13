@@ -25,5 +25,13 @@ def allow_partial(*fields) -> Callable:
     return dec
 
 
-def entity_path(self, id):
-    return "{}({})".format(self.entitytype_plural, id)
+def entity_path(self, entity_id):
+    """
+    The entity_path function returns the path to a specific entity.
+
+    :param self: Represent the instance of the class
+    :param entity_id: Specify the entity id of the entity to be retrieved
+    :return: The entity type and the id of the entity
+    """
+
+    return "{}({})".format(self.entitytype_plural, entity_id)

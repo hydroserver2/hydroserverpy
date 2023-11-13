@@ -1,6 +1,6 @@
 from typing import List
 from uuid import UUID
-from hydroserver.schemas.things import ThingGetResponse, ThingPostBody, \
+from hydroserverpy.schemas.things import ThingGetResponse, ThingPostBody, \
      ThingPatchBody
 
 

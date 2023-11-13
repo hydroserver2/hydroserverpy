@@ -3,7 +3,7 @@ from typing import Optional, Literal, Union
 from pydantic import AnyHttpUrl, conint
 from datetime import datetime
 from uuid import UUID
-from hydroserver.utils import allow_partial
+from hydroserverpy.utils import allow_partial
 
 
 class DataSourceID(BaseModel):

@@ -2,7 +2,7 @@ from pydantic import BaseModel, Field
 from typing import Union
 from uuid import UUID
 from datetime import datetime
-from hydroserver.utils import allow_partial
+from hydroserverpy.utils import allow_partial
 
 
 class DatastreamID(BaseModel):

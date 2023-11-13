@@ -1,7 +1,7 @@
 from typing import Optional, Union, Tuple
 from pydantic import AnyHttpUrl
-from hydroserver.service import BaseService
-from hydroserver.components import DataLoader, DataSource, Datastream, ObservedProperty, ProcessingLevel, \
+from hydroserverpy.service import BaseService
+from hydroserverpy.components import DataLoader, DataSource, Datastream, ObservedProperty, ProcessingLevel, \
      ResultQualifier, Sensor, Thing, Unit, User
 
 

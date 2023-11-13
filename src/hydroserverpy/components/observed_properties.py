@@ -1,6 +1,6 @@
 from typing import List
 from uuid import UUID
-from hydroserver.schemas.observed_properties import ObservedPropertyGetResponse, ObservedPropertyPostBody, \
+from hydroserverpy.schemas.observed_properties import ObservedPropertyGetResponse, ObservedPropertyPostBody, \
      ObservedPropertyPatchBody
 
 

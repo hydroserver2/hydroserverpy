@@ -1,6 +1,6 @@
 from typing import List
 from uuid import UUID
-from hydroserver.schemas.sensors import SensorGetResponse, SensorPostBody, \
+from hydroserverpy.schemas.sensors import SensorGetResponse, SensorPostBody, \
      SensorPatchBody
 
 

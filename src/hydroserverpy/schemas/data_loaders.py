@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from uuid import UUID
-from hydroserver.utils import allow_partial
+from hydroserverpy.utils import allow_partial
 
 
 class DataLoaderID(BaseModel):

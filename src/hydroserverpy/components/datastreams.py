@@ -1,6 +1,6 @@
 from uuid import UUID
 from typing import List
-from hydroserver.schemas.datastreams import DatastreamGetResponse, DatastreamPostBody, DatastreamPatchBody
+from hydroserverpy.schemas.datastreams import DatastreamGetResponse, DatastreamPostBody, DatastreamPatchBody
 
 
 class Datastream:
