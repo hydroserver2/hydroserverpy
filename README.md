@@ -1,6 +1,6 @@
-# HydroServer Hydroloader
+# HydroServer REST Client
 
-A Python package for loading streaming data to a HydroServer instance using the SensorThings API.
+A Python package for interacting with the HydroServer data management and SensorThings REST APIs.
 
 ## Funding and Acknowledgements
 
