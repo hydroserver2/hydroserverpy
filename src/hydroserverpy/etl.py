@@ -5,10 +5,10 @@ import croniter
 from typing import IO, List
 from datetime import datetime, timezone, timedelta
 from dateutil.parser import isoparse
-from hydroserverpy.schemas.data_sources import DataSourceGetResponse
-from hydroserverpy.schemas.datastreams import DatastreamGetResponse
-from hydroserverpy.exceptions import HeaderParsingError, TimestampParsingError
-from hydroserverpy.schemas.data_sources import DataSourcePatchBody
+from .schemas.data_sources import DataSourceGetResponse
+from .schemas.datastreams import DatastreamGetResponse
+from .exceptions import HeaderParsingError, TimestampParsingError
+from .schemas.data_sources import DataSourcePatchBody
 
 logger = logging.getLogger('hydroserver_etl')
 logger.addHandler(logging.NullHandler())
@@ -137,7 +137,7 @@ class HydroServerETL:
 
         try:
             self._timestamp_column_index = row.index(self._data_source.timestamp_column) \
-                if not self._data_source.timestamp_column.isdigit() \
+                if isinstance(self._data_source.timestamp_column, str) \
                 else int(self._data_source.timestamp_column) - 1
             if self._timestamp_column_index > len(row):
                 raise ValueError
@@ -151,6 +151,7 @@ class HydroServerETL:
                     max(self._datastream_column_indexes.values()) > len(row):
                 raise ValueError
         except ValueError as e:
+            logger.error(f'Failed to load data from data source: "{self._data_source.name}"')
             raise HeaderParsingError(str(e)) from e
 
     def _parse_row_timestamp(self, row: List[str]) -> datetime:
@@ -163,7 +164,7 @@ class HydroServerETL:
         """
 
         try:
-            if self._data_source.timestamp_format == 'iso':
+            if self._data_source.timestamp_format == 'iso' or self._data_source.timestamp_format is None:
                 timestamp = isoparse(
                     row[self._timestamp_column_index]
                 )
@@ -188,6 +189,7 @@ class HydroServerETL:
                         ).tzinfo
                     )
                 except ValueError as e:
+                    logger.error(f'Failed to load data from data source: "{self._data_source.name}"')
                     raise TimestampParsingError(str(e)) from e
 
         return timestamp
@@ -214,7 +216,7 @@ class HydroServerETL:
                     f'Loading observations from ' +
                     f'{observations[0]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} to ' +
                     f'{observations[-1]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} for datastream: ' +
-                    f'{str(datastream_id)}.'
+                    f'{str(datastream_id)} in data source "{self._data_source.name}".'
                 )
 
                 data_array_value = getattr(fsc.model, 'ext').data_array_value.DataArrayValue()
@@ -250,7 +252,8 @@ class HydroServerETL:
                     f'Skipping observations POST request from ' +
                     f'{observations[0]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} to ' +
                     f'{observations[-1]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} for datastream: ' +
-                    f'{str(datastream_id)}, due to previous failed POST request.'
+                    f'{str(datastream_id)} in data source "{self._data_source.name}",' +
+                    f'due to previous failed POST request.'
                 )
 
         self._observations = {}

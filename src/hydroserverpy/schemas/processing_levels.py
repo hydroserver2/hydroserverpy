@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 from uuid import UUID
 from typing import Optional
-from hydroserverpy.utils import allow_partial
-from hydroserverpy.schemas.users import UserFields
+from ..utils import allow_partial
+from ..schemas.users import UserFields
 
 
 class ProcessingLevelID(BaseModel):
@@ -16,14 +16,16 @@ class ProcessingLevelFields(BaseModel):
 
 
 class ProcessingLevelGetResponse(ProcessingLevelFields, ProcessingLevelID):
-    owner: Optional[UserFields]
+    owner: Optional[str]
 
     class Config:
         allow_population_by_field_name = True
 
 
 class ProcessingLevelPostBody(ProcessingLevelFields):
-    pass
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 @allow_partial

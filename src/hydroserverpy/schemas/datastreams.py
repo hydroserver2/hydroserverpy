@@ -44,7 +44,9 @@ class DatastreamGetResponse(DatastreamFields, DatastreamID):
 
 
 class DatastreamPostBody(DatastreamFields):
-    pass
+
+    class Config:
+        allow_population_by_field_name = True
 
 
 @allow_partial
