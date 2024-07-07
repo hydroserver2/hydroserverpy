@@ -1,5 +1,5 @@
 from pydantic import BaseModel, Field
-from typing import Union
+from typing import Union, Literal, Optional
 from uuid import UUID
 from datetime import datetime
 from hydroserverpy.utils import allow_partial
@@ -33,8 +33,10 @@ class DatastreamFields(BaseModel):
     observed_property_id: UUID = Field(..., alias='observedPropertyId')
     processing_level_id: UUID = Field(..., alias='processingLevelId')
     unit_id: UUID = Field(..., alias='unitId')
-    time_aggregation_interval_units_id: UUID = Field(..., alias='timeAggregationIntervalUnitsId')
-    intended_time_spacing_units_id: UUID = Field(None, alias='intendedTimeSpacingUnitsId')
+    time_aggregation_interval_units: Literal['seconds', 'minutes', 'hours', 'days'] = \
+        Field(..., alias='timeAggregationIntervalUnits')
+    intended_time_spacing_units: Optional[Literal['seconds', 'minutes', 'hours', 'days']] = \
+        Field(None, alias='intendedTimeSpacingUnits')
 
 
 class DatastreamGetResponse(DatastreamFields, DatastreamID):
