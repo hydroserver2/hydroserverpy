@@ -55,7 +55,6 @@ class ThingGetResponse(LocationFields, ThingFields, ThingID):
     is_private: bool = Field(..., alias='isPrivate')
     is_primary_owner: bool = Field(..., alias='isPrimaryOwner')
     owns_thing: bool = Field(..., alias='ownsThing')
-    follows_thing: bool = Field(..., alias='followsThing')
     owners: List[OwnerFields]
 
     class Config:
