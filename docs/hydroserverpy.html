@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hydroserverpy package &mdash; hydroserverpy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="hydroserverpy.core package" href="hydroserverpy.core.html" />
+    <link rel="prev" title="hydroserverpy documentation" href="index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            hydroserverpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">hydroserverpy package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hydroserverpy">hydroserverpy</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#funding-and-acknowledgements">Funding and Acknowledgements</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.html">hydroserverpy.core package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html">hydroserverpy.etl package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html">hydroserverpy.quality package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#module-hydroserverpy">Module contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hydroserverpy.HydroServerConnection"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerConnection.dataloaders"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.dataloaders</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerConnection.datasources"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.datasources</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerConnection.datastreams"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.datastreams</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerConnection.observedproperties"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.observedproperties</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerConnection.processinglevels"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.processinglevels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerConnection.resultqualifiers"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.resultqualifiers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerConnection.sensors"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.sensors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerConnection.things"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.things</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerConnection.units"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.units</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hydroserverpy.HydroServerETL"><code class="docutils literal notranslate"><span class="pre">HydroServerETL</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerETL.run"><code class="docutils literal notranslate"><span class="pre">HydroServerETL.run()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.add_points"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.add_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.change_values"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.change_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.datastream_id"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.datastream_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.delete_points"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.delete_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.drift_correction"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.drift_correction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.fill_gap"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.fill_gap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.filter"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.filter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.find_gaps"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.find_gaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.interpolate"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.interpolate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.observations"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.observations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserverpy.HydroServerQualityControl.shift_points"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.shift_points()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hydroserverpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">hydroserverpy package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hydroserverpy.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hydroserverpy-package">
+<h1>hydroserverpy package<a class="headerlink" href="#hydroserverpy-package" title="Link to this heading"></a></h1>
+<section id="getting-started">
+<h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
+<section id="hydroserverpy">
+<h3>hydroserverpy<a class="headerlink" href="#hydroserverpy" title="Link to this heading"></a></h3>
+<p>The hydroserverpy Python package provides an interface for interacting with HydroServer’s Data Management API. This guide will go over how to install the package and connect to a HydroServer instance to retrieve, upload, and modify data.</p>
+<section id="installation">
+<h4>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h4>
+<p>You can install the package via pip:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>hydroserverpy
+</pre></div>
+</div>
+</section>
+<section id="getting-started">
+<h4>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h4>
+<section id="connecting-to-hydroserver">
+<h5>Connecting to HydroServer<a class="headerlink" href="#connecting-to-hydroserver" title="Link to this heading"></a></h5>
+<p>To connect to HydroServer, you need to initialize the client with the instance of HydroServer you’re using and your user credentials if you want to access and modify your own data. If you don’t provide authentication credentials you can read public data, but you will not be able to create or modify any data.</p>
+<section id="example-anonymous-user">
+<h6>Example: Anonymous User<a class="headerlink" href="#example-anonymous-user" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hydroserverpy</span> <span class="kn">import</span> <span class="n">HydroServer</span>
+
+<span class="c1"># Initialize HydroServer connection.</span>
+<span class="n">hs_api</span> <span class="o">=</span> <span class="n">HydroServer</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;https://playground.hydroserver.org&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-basic-authentication">
+<h6>Example: Basic Authentication<a class="headerlink" href="#example-basic-authentication" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hydroserverpy</span> <span class="kn">import</span> <span class="n">HydroServer</span>
+
+<span class="c1"># Initialize HydroServer connection with credentials.</span>
+<span class="n">hs_api</span> <span class="o">=</span> <span class="n">HydroServer</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;https://playground.hydroserver.org&#39;</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;user@example.com&#39;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s1">&#39;******&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="retrieving-data">
+<h5>Retrieving Data<a class="headerlink" href="#retrieving-data" title="Link to this heading"></a></h5>
+<p>The hydroserverpy connection exposes the following types of data and metadata you can retireve, either as a list or by ID using the <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">get</span></code> methods of the associated property:</p>
+<ul class="simple">
+<li><p>things</p></li>
+<li><p>datastreams</p></li>
+<li><p>dataloaders</p></li>
+<li><p>datasources</p></li>
+<li><p>sensors</p></li>
+<li><p>units</p></li>
+<li><p>processinglevels</p></li>
+<li><p>observedproperties</p></li>
+<li><p>resultqualifiers</p></li>
+</ul>
+<p>Dataframes of Observations can be queried using the <code class="docutils literal notranslate"><span class="pre">get_observations</span></code> method of a datastream object.</p>
+<section id="example-get-things">
+<h6>Example: Get Things<a class="headerlink" href="#example-get-things" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">things</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-get-thing-by-id">
+<h6>Example: Get Thing by ID<a class="headerlink" href="#example-get-thing-by-id" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-get-observations-of-a-datastream">
+<h6>Example: Get Observations of a Datastream<a class="headerlink" href="#example-get-observations-of-a-datastream" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="o">...</span>
+
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+<span class="n">observations_df</span> <span class="o">=</span> <span class="n">datastream</span><span class="o">.</span><span class="n">get_observations</span><span class="p">(</span>
+    <span class="n">start_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">end_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">31</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="creating-and-modifying-data">
+<h5>Creating and Modifying Data<a class="headerlink" href="#creating-and-modifying-data" title="Link to this heading"></a></h5>
+<p>HydroServer things, datastreams, and other metadata can be created using the <code class="docutils literal notranslate"><span class="pre">create</span></code> method of the respective property of the connection object. To modify HydroServer metadata, you can update one or more properties of a fetched metadata object and then use the <code class="docutils literal notranslate"><span class="pre">save</span></code> method to save those changes back to HydroServer. Observations can be uploaded from a DataFrame using the <code class="docutils literal notranslate"><span class="pre">upload_observations</span></code> method of <code class="docutils literal notranslate"><span class="pre">datastreams</span></code>.</p>
+<section id="example-create-a-thing">
+<h6>Example: Create a Thing<a class="headerlink" href="#example-create-a-thing" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Observation Site&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;This is a site that records environmental observations.&#39;</span>
+    <span class="n">sampling_feature_type</span><span class="o">=</span><span class="s1">&#39;Site&#39;</span><span class="p">,</span>
+    <span class="n">sampling_feature_code</span><span class="o">=</span><span class="s1">&#39;OBSERVATION_SITE&#39;</span><span class="p">,</span>
+    <span class="n">site_type</span><span class="o">=</span><span class="s1">&#39;Atmosphere&#39;</span><span class="p">,</span>
+    <span class="n">latitude</span><span class="o">=</span><span class="s1">&#39;41.739&#39;</span><span class="p">,</span>
+    <span class="n">longitude</span><span class="o">=</span><span class="s1">&#39;-111.794&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-modify-a-thing">
+<h6>Example: Modify a Thing<a class="headerlink" href="#example-modify-a-thing" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Updated Site Name&#39;</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Updated Site Description.&#39;</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-upload-observations">
+<h6>Example: Upload Observations<a class="headerlink" href="#example-upload-observations" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="o">...</span>
+
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+<span class="n">new_observations</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;2023-01-26 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;2023-01-27 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">41.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;2023-01-28 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">42.0</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">new_observations</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">new_observations</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
+<span class="n">datastream</span><span class="o">.</span><span class="n">upload_observations</span><span class="p">(</span><span class="n">new_observations</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="funding-and-acknowledgements">
+<h4>Funding and Acknowledgements<a class="headerlink" href="#funding-and-acknowledgements" title="Link to this heading"></a></h4>
+<p>Funding for this project was provided by the National Oceanic &amp; Atmospheric Administration (NOAA), awarded to the Cooperative Institute for Research to Operations in Hydrology (CIROH) through the NOAA Cooperative Agreement with The University of Alabama (NA22NWS4320003).</p>
+</section>
+</section>
+</section>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.core.html">hydroserverpy.core package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html">hydroserverpy.core.endpoints package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.base">hydroserverpy.core.endpoints.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.data_loaders">hydroserverpy.core.endpoints.data_loaders module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.data_sources">hydroserverpy.core.endpoints.data_sources module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.datastreams">hydroserverpy.core.endpoints.datastreams module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.observed_properties">hydroserverpy.core.endpoints.observed_properties module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.processing_levels">hydroserverpy.core.endpoints.processing_levels module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.result_qualifiers">hydroserverpy.core.endpoints.result_qualifiers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.sensors">hydroserverpy.core.endpoints.sensors module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.things">hydroserverpy.core.endpoints.things module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.units">hydroserverpy.core.endpoints.units module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html">hydroserverpy.core.schemas package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.base">hydroserverpy.core.schemas.base module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.data_loaders">hydroserverpy.core.schemas.data_loaders module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.data_sources">hydroserverpy.core.schemas.data_sources module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.datastreams">hydroserverpy.core.schemas.datastreams module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.observed_properties">hydroserverpy.core.schemas.observed_properties module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.processing_levels">hydroserverpy.core.schemas.processing_levels module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.result_qualifiers">hydroserverpy.core.schemas.result_qualifiers module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.sensors">hydroserverpy.core.schemas.sensors module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.things">hydroserverpy.core.schemas.things module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.units">hydroserverpy.core.schemas.units module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.html#module-hydroserverpy.core.service">hydroserverpy.core.service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServerConnection"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServerConnection.dataloaders"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.dataloaders</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServerConnection.datasources"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.datasources</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServerConnection.datastreams"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.datastreams</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServerConnection.observedproperties"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.observedproperties</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServerConnection.processinglevels"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.processinglevels</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServerConnection.resultqualifiers"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.resultqualifiers</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServerConnection.sensors"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.sensors</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServerConnection.things"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.things</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServerConnection.units"><code class="docutils literal notranslate"><span class="pre">HydroServerConnection.units</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.html#module-hydroserverpy.core">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.etl.html">hydroserverpy.etl package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.etl.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.etl.html#module-hydroserverpy.etl.exceptions">hydroserverpy.etl.exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html#hydroserverpy.etl.exceptions.HeaderParsingError"><code class="docutils literal notranslate"><span class="pre">HeaderParsingError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html#hydroserverpy.etl.exceptions.TimestampParsingError"><code class="docutils literal notranslate"><span class="pre">TimestampParsingError</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.etl.html#module-hydroserverpy.etl.service">hydroserverpy.etl.service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html#hydroserverpy.etl.service.HydroServerETL"><code class="docutils literal notranslate"><span class="pre">HydroServerETL</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.etl.html#hydroserverpy.etl.service.HydroServerETL.run"><code class="docutils literal notranslate"><span class="pre">HydroServerETL.run()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.etl.html#module-hydroserverpy.etl">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.quality.html">hydroserverpy.quality package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.quality.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.quality.html#module-hydroserverpy.quality.service">hydroserverpy.quality.service module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.FilterOperation"><code class="docutils literal notranslate"><span class="pre">FilterOperation</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.FilterOperation.E"><code class="docutils literal notranslate"><span class="pre">FilterOperation.E</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.FilterOperation.GT"><code class="docutils literal notranslate"><span class="pre">FilterOperation.GT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.FilterOperation.GTE"><code class="docutils literal notranslate"><span class="pre">FilterOperation.GTE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.FilterOperation.LT"><code class="docutils literal notranslate"><span class="pre">FilterOperation.LT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.FilterOperation.LTE"><code class="docutils literal notranslate"><span class="pre">FilterOperation.LTE</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.add_points"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.add_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.change_values"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.change_values()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.datastream_id"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.datastream_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.delete_points"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.delete_points()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.drift_correction"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.drift_correction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.fill_gap"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.fill_gap()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.filter"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.filter()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.find_gaps"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.find_gaps()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.interpolate"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.interpolate()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.observations"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.observations</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.HydroServerQualityControl.shift_points"><code class="docutils literal notranslate"><span class="pre">HydroServerQualityControl.shift_points()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.Operator"><code class="docutils literal notranslate"><span class="pre">Operator</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.Operator.ADD"><code class="docutils literal notranslate"><span class="pre">Operator.ADD</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.Operator.ASSIGN"><code class="docutils literal notranslate"><span class="pre">Operator.ASSIGN</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.Operator.DIV"><code class="docutils literal notranslate"><span class="pre">Operator.DIV</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.Operator.MULT"><code class="docutils literal notranslate"><span class="pre">Operator.MULT</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.Operator.SUB"><code class="docutils literal notranslate"><span class="pre">Operator.SUB</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.TimeUnit"><code class="docutils literal notranslate"><span class="pre">TimeUnit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.TimeUnit.DAY"><code class="docutils literal notranslate"><span class="pre">TimeUnit.DAY</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.TimeUnit.HOUR"><code class="docutils literal notranslate"><span class="pre">TimeUnit.HOUR</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.TimeUnit.MINUTE"><code class="docutils literal notranslate"><span class="pre">TimeUnit.MINUTE</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.TimeUnit.MONTH"><code class="docutils literal notranslate"><span class="pre">TimeUnit.MONTH</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.TimeUnit.SECOND"><code class="docutils literal notranslate"><span class="pre">TimeUnit.SECOND</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.TimeUnit.WEEK"><code class="docutils literal notranslate"><span class="pre">TimeUnit.WEEK</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.TimeUnit.YEAR"><code class="docutils literal notranslate"><span class="pre">TimeUnit.YEAR</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.quality.html#module-hydroserverpy.quality">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-hydroserverpy">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hydroserverpy" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerConnection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.</span></span><span class="sig-name descname"><span class="pre">HydroServerConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'api'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/service.html#HydroServerConnection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerConnection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Connects to a HydroServer instance and used to interact with HydroServer’s Data Management API endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<em>str</em>) – The base URL or host of the HydroServer API.</p></li>
+<li><p><strong>username</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The username for basic authentication, if required.</p></li>
+<li><p><strong>password</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The password for basic authentication, if required.</p></li>
+<li><p><strong>apikey</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The API key for authentication, if using API key authentication.</p></li>
+<li><p><strong>api_route</strong> (<em>str</em>) – The API route to use, default is ‘api’.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerConnection.dataloaders">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataloaders</span></span><a class="headerlink" href="#hydroserverpy.HydroServerConnection.dataloaders" title="Link to this definition"></a></dt>
+<dd><p>Data Loader Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of DataLoaderEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint" title="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint">DataLoaderEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerConnection.datasources">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datasources</span></span><a class="headerlink" href="#hydroserverpy.HydroServerConnection.datasources" title="Link to this definition"></a></dt>
+<dd><p>Data Source Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of DataSourceEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint" title="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint">DataSourceEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerConnection.datastreams">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datastreams</span></span><a class="headerlink" href="#hydroserverpy.HydroServerConnection.datastreams" title="Link to this definition"></a></dt>
+<dd><p>Datastream Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of DatastreamEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint" title="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint">DatastreamEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerConnection.observedproperties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observedproperties</span></span><a class="headerlink" href="#hydroserverpy.HydroServerConnection.observedproperties" title="Link to this definition"></a></dt>
+<dd><p>Observed Property Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ObservedPropertyEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint" title="hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint">ObservedPropertyEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerConnection.processinglevels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processinglevels</span></span><a class="headerlink" href="#hydroserverpy.HydroServerConnection.processinglevels" title="Link to this definition"></a></dt>
+<dd><p>Processing Level Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ProcessingLevelEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint" title="hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint">ProcessingLevelEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerConnection.resultqualifiers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resultqualifiers</span></span><a class="headerlink" href="#hydroserverpy.HydroServerConnection.resultqualifiers" title="Link to this definition"></a></dt>
+<dd><p>Result Qualifier Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ResultQualifierEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint" title="hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint">ResultQualifierEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerConnection.sensors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sensors</span></span><a class="headerlink" href="#hydroserverpy.HydroServerConnection.sensors" title="Link to this definition"></a></dt>
+<dd><p>Sensor Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of SensorEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.sensors.SensorEndpoint" title="hydroserverpy.core.endpoints.sensors.SensorEndpoint">SensorEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerConnection.things">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">things</span></span><a class="headerlink" href="#hydroserverpy.HydroServerConnection.things" title="Link to this definition"></a></dt>
+<dd><p>Thing Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ThingEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint" title="hydroserverpy.core.endpoints.things.ThingEndpoint">ThingEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerConnection.units">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">units</span></span><a class="headerlink" href="#hydroserverpy.HydroServerConnection.units" title="Link to this definition"></a></dt>
+<dd><p>Unit Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of UnitEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.units.UnitEndpoint" title="hydroserverpy.core.endpoints.units.UnitEndpoint">UnitEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerETL">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.</span></span><span class="sig-name descname"><span class="pre">HydroServerETL</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IO</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_source</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource" title="hydroserverpy.core.schemas.data_sources.DataSource"><span class="pre">DataSource</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">datastreams</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream"><span class="pre">Datastream</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/etl/service.html#HydroServerETL"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerETL" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerETL.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/etl/service.html#HydroServerETL.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerETL.run" title="Link to this definition"></a></dt>
+<dd><p>The run function is the main function of this class. It reads in a data file and parses it into observations,
+which are then posted to HydroServer. The run function also updates the DataSource object with information about
+the sync process.</p>
+<p>:param self
+:return: None</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.</span></span><span class="sig-name descname"><span class="pre">HydroServerQualityControl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">datastream_id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/quality/service.html#HydroServerQualityControl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Quality control operations for HydroServer observations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>datastream_id</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The ID of the datastream.</p></li>
+<li><p><strong>observations</strong> (<em>pd.DataFrame</em>) – DataFrame containing ‘timestamp’ and ‘value’ columns.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.add_points">
+<span class="sig-name descname"><span class="pre">add_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hydroserverpy/quality/service.html#HydroServerQualityControl.add_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.add_points" title="Link to this definition"></a></dt>
+<dd><p>Adds new points to the observations, optionally at specified indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>points</strong> (<em>List</em><em>[</em><em>List</em><em>[</em><em>Union</em><em>[</em><em>str</em><em>, </em><em>float</em><em>]</em><em>]</em><em>]</em>) – List of points to be added.</p></li>
+<li><p><strong>index</strong> (<em>Optional</em><em>[</em><em>List</em><em>[</em><em>int</em><em>]</em><em>]</em>) – Optional list of indices at which to insert the points.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.change_values">
+<span class="sig-name descname"><span class="pre">change_values</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">operator</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hydroserverpy/quality/service.html#HydroServerQualityControl.change_values"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.change_values" title="Link to this definition"></a></dt>
+<dd><p>Changes the values of observations based on the specified operator and value.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index_list</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – List of indices for which values will be changed.</p></li>
+<li><p><strong>operator</strong> (<em>str</em>) – The operation to perform (‘MULT’, ‘DIV’, ‘ADD’, ‘SUB’, ‘ASSIGN’).</p></li>
+<li><p><strong>value</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>float</em><em>]</em>) – The value to use in the operation.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.datastream_id">
+<span class="sig-name descname"><span class="pre">datastream_id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.datastream_id" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.delete_points">
+<span class="sig-name descname"><span class="pre">delete_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hydroserverpy/quality/service.html#HydroServerQualityControl.delete_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.delete_points" title="Link to this definition"></a></dt>
+<dd><p>Deletes points from the observations at the specified indices.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index_list</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – List of indices for which points will be deleted.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.drift_correction">
+<span class="sig-name descname"><span class="pre">drift_correction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gap_width</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/hydroserverpy/quality/service.html#HydroServerQualityControl.drift_correction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.drift_correction" title="Link to this definition"></a></dt>
+<dd><p>Applies drift correction to the values of observations within the specified index range.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>start</strong> (<em>int</em>) – Start index of the range to apply drift correction.</p></li>
+<li><p><strong>end</strong> (<em>int</em>) – End index of the range to apply drift correction.</p></li>
+<li><p><strong>gap_width</strong> (<em>float</em>) – The width of the drift gap to correct.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame after applying drift correction.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.fill_gap">
+<span class="sig-name descname"><span class="pre">fill_gap</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gap</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fill</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">interpolate_values</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/hydroserverpy/quality/service.html#HydroServerQualityControl.fill_gap"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.fill_gap" title="Link to this definition"></a></dt>
+<dd><p>Fills identified gaps in the observations with placeholder values and optionally interpolates the values.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gap</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em>) – Tuple containing the time value and unit for identifying gaps.</p></li>
+<li><p><strong>fill</strong> (<em>Tuple</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em>) – Tuple containing the time value and unit for filling gaps.</p></li>
+<li><p><strong>interpolate_values</strong> (<em>bool</em>) – Whether to interpolate values for the filled gaps.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame of points that filled the gaps.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_filter</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hydroserverpy/quality/service.html#HydroServerQualityControl.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.filter" title="Link to this definition"></a></dt>
+<dd><p>Executes the applied filters and returns the resulting DataFrame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_filter</strong> (<em>Dict</em><em>[</em><em>str</em><em>, </em><em>Union</em><em>[</em><em>float</em><em>, </em><em>int</em><em>]</em><em>]</em>) – Dictionary containing filter operations and their values.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.find_gaps">
+<span class="sig-name descname"><span class="pre">find_gaps</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">time_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/hydroserverpy/quality/service.html#HydroServerQualityControl.find_gaps"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.find_gaps" title="Link to this definition"></a></dt>
+<dd><p>Identifies gaps in the observations based on the specified time value and unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time_value</strong> (<em>int</em>) – The time value for detecting gaps.</p></li>
+<li><p><strong>time_unit</strong> (<em>str</em>) – The unit of time (e.g., ‘s’, ‘m’, ‘h’).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>DataFrame containing the observations with gaps.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.interpolate">
+<span class="sig-name descname"><span class="pre">interpolate</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hydroserverpy/quality/service.html#HydroServerQualityControl.interpolate"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.interpolate" title="Link to this definition"></a></dt>
+<dd><p>Interpolates the values of observations at the specified indices using linear interpolation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>index_list</strong> (<em>list</em><em>[</em><em>int</em><em>]</em>) – List of indices where values will be interpolated.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.observations">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observations</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">DataFrame</span></em><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.observations" title="Link to this definition"></a></dt>
+<dd><p>Returns the observations DataFrame, filtered if a filter has been applied.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Observations DataFrame.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.HydroServerQualityControl.shift_points">
+<span class="sig-name descname"><span class="pre">shift_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">index_list</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time_unit</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hydroserverpy/quality/service.html#HydroServerQualityControl.shift_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.HydroServerQualityControl.shift_points" title="Link to this definition"></a></dt>
+<dd><p>Shifts the timestamps of the observations at the specified indices by a given time value and unit.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>index_list</strong> (<em>List</em><em>[</em><em>int</em><em>]</em>) – List of indices where timestamps will be shifted.</p></li>
+<li><p><strong>time_value</strong> (<em>int</em>) – The amount of time to shift the timestamps.</p></li>
+<li><p><strong>time_unit</strong> (<em>str</em>) – The unit of time (e.g., ‘s’ for seconds, ‘m’ for minutes).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="hydroserverpy documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hydroserverpy.core.html" class="btn btn-neutral float-right" title="hydroserverpy.core package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

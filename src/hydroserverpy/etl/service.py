@@ -1,11 +1,10 @@
 import csv
 import logging
 import croniter
+import pandas as pd
 from typing import IO, List
 from requests import HTTPError
 from datetime import datetime, timezone, timedelta
-
-import pandas as pd
 from dateutil.parser import isoparse
 from .exceptions import HeaderParsingError, TimestampParsingError
 from ..core.schemas import DataSource, Datastream

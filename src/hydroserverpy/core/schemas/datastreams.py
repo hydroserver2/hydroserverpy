@@ -98,7 +98,7 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
         """
 
         if self._data_source is None:
-            self._data_source = self._endpoint._service.data_sources.get(uid=self.data_source_id)  # noqa
+            self._data_source = self._endpoint._service.datasources.get(uid=self.data_source_id)  # noqa
 
         return self._data_source
 
@@ -113,7 +113,7 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
         """
 
         if self._observed_property is None:
-            self._observed_property = self._endpoint._service.observed_properties.get(uid=self.observed_property_id)  # noqa
+            self._observed_property = self._endpoint._service.observedproperties.get(uid=self.observed_property_id)  # noqa
 
         return self._observed_property
 
@@ -128,7 +128,7 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
         """
 
         if self._processing_level is None:
-            self._processing_level = self._endpoint._service.processing_levels.get(uid=self.processing_level_id)  # noqa
+            self._processing_level = self._endpoint._service.processinglevels.get(uid=self.processing_level_id)  # noqa
 
         return self._processing_level
 
@@ -172,11 +172,11 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
         if self._thing is not None:
             self._thing = self._endpoint._service.things.get(uid=self.thing_id)  # noqa
         if self._data_source is not None:
-            self._data_source = self._endpoint._service.data_sources.get(uid=self.data_source_id)  # noqa
+            self._data_source = self._endpoint._service.datasources.get(uid=self.data_source_id)  # noqa
         if self._observed_property is not None:
-            self._observed_property = self._endpoint._service.observed_properties.get(uid=self.observed_property_id)  # noqa
+            self._observed_property = self._endpoint._service.observedproperties.get(uid=self.observed_property_id)  # noqa
         if self._processing_level is not None:
-            self._processing_level = self._endpoint._service.processing_levels.get(uid=self.processing_level_id)  # noqa
+            self._processing_level = self._endpoint._service.processinglevels.get(uid=self.processing_level_id)  # noqa
         if self._unit is not None:
             self._unit = self._endpoint._service.units.get(uid=self.unit_id)  # noqa
         if self._sensor is not None:

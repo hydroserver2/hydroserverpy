@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hydroserverpy.quality.service &mdash; hydroserverpy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            hydroserverpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../hydroserverpy.html">hydroserverpy package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">hydroserverpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">hydroserverpy.quality.service</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for hydroserverpy.quality.service</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span> <span class="nn">enum</span> <span class="kn">import</span> <span class="n">Enum</span>
+
+<span class="c1"># Tools</span>
+<span class="c1"># [x] Interpolate</span>
+<span class="c1"># [x] Set a value to a constant</span>
+<span class="c1"># [x] Change value by applying arithmetic (+, -, *, /)</span>
+<span class="c1"># [x] Shift</span>
+<span class="c1"># [x] Drift correction (linear)</span>
+<span class="c1"># [x] Delete values</span>
+<span class="c1"># [x] Fill values</span>
+
+<span class="c1"># Automation</span>
+<span class="c1"># [x] Gap filling</span>
+
+
+<div class="viewcode-block" id="TimeUnit">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.TimeUnit">[docs]</a>
+<span class="k">class</span> <span class="nc">TimeUnit</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumeration for time units.&quot;&quot;&quot;</span>
+
+    <span class="n">SECOND</span> <span class="o">=</span> <span class="s1">&#39;s&#39;</span>
+    <span class="n">MINUTE</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
+    <span class="n">HOUR</span> <span class="o">=</span> <span class="s1">&#39;h&#39;</span>
+    <span class="n">DAY</span> <span class="o">=</span> <span class="s1">&#39;D&#39;</span>
+    <span class="n">WEEK</span> <span class="o">=</span> <span class="s1">&#39;W&#39;</span>
+    <span class="n">MONTH</span> <span class="o">=</span> <span class="s1">&#39;M&#39;</span>
+    <span class="n">YEAR</span> <span class="o">=</span> <span class="s1">&#39;Y&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="FilterOperation">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.FilterOperation">[docs]</a>
+<span class="k">class</span> <span class="nc">FilterOperation</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumeration for filter operations.&quot;&quot;&quot;</span>
+
+    <span class="n">LT</span> <span class="o">=</span> <span class="s1">&#39;LT&#39;</span>
+    <span class="n">LTE</span> <span class="o">=</span> <span class="s1">&#39;LTE&#39;</span>
+    <span class="n">GT</span> <span class="o">=</span> <span class="s1">&#39;GT&#39;</span>
+    <span class="n">GTE</span> <span class="o">=</span> <span class="s1">&#39;GTE&#39;</span>
+    <span class="n">E</span> <span class="o">=</span> <span class="s1">&#39;E&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="Operator">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.Operator">[docs]</a>
+<span class="k">class</span> <span class="nc">Operator</span><span class="p">(</span><span class="n">Enum</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Enumeration for mathematical operations.&quot;&quot;&quot;</span>
+
+    <span class="n">MULT</span> <span class="o">=</span> <span class="s1">&#39;MULT&#39;</span>
+    <span class="n">DIV</span> <span class="o">=</span> <span class="s1">&#39;DIV&#39;</span>
+    <span class="n">ADD</span> <span class="o">=</span> <span class="s1">&#39;ADD&#39;</span>
+    <span class="n">SUB</span> <span class="o">=</span> <span class="s1">&#39;SUB&#39;</span>
+    <span class="n">ASSIGN</span> <span class="o">=</span> <span class="s1">&#39;ASSIGN&#39;</span></div>
+
+
+
+<div class="viewcode-block" id="HydroServerQualityControl">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.HydroServerQualityControl">[docs]</a>
+<span class="k">class</span> <span class="nc">HydroServerQualityControl</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Quality control operations for HydroServer observations.</span>
+
+<span class="sd">    :param datastream_id: The ID of the datastream.</span>
+<span class="sd">    :type datastream_id: Union[UUID, str]</span>
+<span class="sd">    :param observations: DataFrame containing &#39;timestamp&#39; and &#39;value&#39; columns.</span>
+<span class="sd">    :type observations: pd.DataFrame</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">datastream_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">datastream_id</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">observations</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+        <span class="k">assert</span> <span class="s1">&#39;timestamp&#39;</span> <span class="ow">in</span> <span class="n">observations</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="s2">&quot;Observations must have a &#39;timestamp&#39; column&quot;</span>
+        <span class="k">assert</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_datetime64_any_dtype</span><span class="p">(</span><span class="n">observations</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]),</span> \
+            <span class="s2">&quot;Observations &#39;timestamp&#39; column must be of datetime type&quot;</span>
+
+        <span class="k">assert</span> <span class="s1">&#39;value&#39;</span> <span class="ow">in</span> <span class="n">observations</span><span class="o">.</span><span class="n">columns</span><span class="p">,</span> <span class="s2">&quot;Observations must have a &#39;value&#39; column&quot;</span>
+        <span class="k">assert</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_float_dtype</span><span class="p">(</span><span class="n">observations</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]),</span> \
+            <span class="s2">&quot;Observations &#39;value&#39; column must be of float type&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">datastream_id</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">datastream_id</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">observations</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filtered_observations</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">observations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the observations DataFrame, filtered if a filter has been applied.</span>
+
+<span class="sd">        :return: Observations DataFrame.</span>
+<span class="sd">        :rtype: pd.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filtered_observations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_filtered_observations</span>
+
+    <span class="c1">###################</span>
+    <span class="c1"># Filters</span>
+    <span class="c1">###################</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span> <span class="nf">_has_filter</span><span class="p">(</span><span class="n">data_filter</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]],</span> <span class="n">key</span><span class="p">:</span> <span class="n">FilterOperation</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if a given filter operation exists in the filter dictionary.</span>
+
+<span class="sd">        :param data_filter: Dictionary containing the filters.</span>
+<span class="sd">        :type data_filter: Dict[str, Union[float, int]]</span>
+<span class="sd">        :param key: Filter operation to check for.</span>
+<span class="sd">        :type key: FilterOperation</span>
+<span class="sd">        :return: True if the filter operation exists, False otherwise.</span>
+<span class="sd">        :rtype: bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="n">key</span><span class="o">.</span><span class="n">value</span> <span class="ow">in</span> <span class="n">data_filter</span> <span class="ow">and</span>
+            <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">data_filter</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">value</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data_filter</span><span class="p">[</span><span class="n">key</span><span class="o">.</span><span class="n">value</span><span class="p">],</span> <span class="nb">int</span><span class="p">))</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="HydroServerQualityControl.filter">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.HydroServerQualityControl.filter">[docs]</a>
+    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data_filter</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">int</span><span class="p">]])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Executes the applied filters and returns the resulting DataFrame.</span>
+
+<span class="sd">        :param data_filter: Dictionary containing filter operations and their values.</span>
+<span class="sd">        :type data_filter: Dict[str, Union[float, int]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">query</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_filter</span><span class="p">(</span><span class="n">data_filter</span><span class="p">,</span> <span class="n">FilterOperation</span><span class="o">.</span><span class="n">LT</span><span class="p">):</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;`value` &lt; </span><span class="si">{</span><span class="n">data_filter</span><span class="p">[</span><span class="n">FilterOperation</span><span class="o">.</span><span class="n">LT</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_filter</span><span class="p">(</span><span class="n">data_filter</span><span class="p">,</span> <span class="n">FilterOperation</span><span class="o">.</span><span class="n">LTE</span><span class="p">):</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;`value` &lt;= </span><span class="si">{</span><span class="n">data_filter</span><span class="p">[</span><span class="n">FilterOperation</span><span class="o">.</span><span class="n">LTE</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_filter</span><span class="p">(</span><span class="n">data_filter</span><span class="p">,</span> <span class="n">FilterOperation</span><span class="o">.</span><span class="n">GT</span><span class="p">):</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;`value` &gt; </span><span class="si">{</span><span class="n">data_filter</span><span class="p">[</span><span class="n">FilterOperation</span><span class="o">.</span><span class="n">GT</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_filter</span><span class="p">(</span><span class="n">data_filter</span><span class="p">,</span> <span class="n">FilterOperation</span><span class="o">.</span><span class="n">GTE</span><span class="p">):</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;`value` &gt;= </span><span class="si">{</span><span class="n">data_filter</span><span class="p">[</span><span class="n">FilterOperation</span><span class="o">.</span><span class="n">GTE</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_has_filter</span><span class="p">(</span><span class="n">data_filter</span><span class="p">,</span> <span class="n">FilterOperation</span><span class="o">.</span><span class="n">E</span><span class="p">):</span>
+            <span class="n">query</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s1">&#39;`value` == </span><span class="si">{</span><span class="n">data_filter</span><span class="p">[</span><span class="n">FilterOperation</span><span class="o">.</span><span class="n">E</span><span class="o">.</span><span class="n">value</span><span class="p">]</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">query</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filtered_observations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="s2">&quot; | &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">query</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_filtered_observations</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+    <span class="c1">###################</span>
+    <span class="c1"># Gap Analysis</span>
+    <span class="c1">###################</span>
+
+<div class="viewcode-block" id="HydroServerQualityControl.find_gaps">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.HydroServerQualityControl.find_gaps">[docs]</a>
+    <span class="k">def</span> <span class="nf">find_gaps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Identifies gaps in the observations based on the specified time value and unit.</span>
+
+<span class="sd">        :param time_value: The time value for detecting gaps.</span>
+<span class="sd">        :type time_value: int</span>
+<span class="sd">        :param time_unit: The unit of time (e.g., &#39;s&#39;, &#39;m&#39;, &#39;h&#39;).</span>
+<span class="sd">        :type time_unit: str</span>
+<span class="sd">        :return: DataFrame containing the observations with gaps.</span>
+<span class="sd">        :rtype: pd.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">observations</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">diff</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="n">time_value</span><span class="p">,</span> <span class="n">time_unit</span><span class="p">)]</span></div>
+
+
+<div class="viewcode-block" id="HydroServerQualityControl.fill_gap">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.HydroServerQualityControl.fill_gap">[docs]</a>
+    <span class="k">def</span> <span class="nf">fill_gap</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gap</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">fill</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">interpolate_values</span><span class="p">:</span> <span class="nb">bool</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Fills identified gaps in the observations with placeholder values and optionally interpolates the values.</span>
+
+<span class="sd">        :param gap: Tuple containing the time value and unit for identifying gaps.</span>
+<span class="sd">        :type gap: Tuple[int, str]</span>
+<span class="sd">        :param fill: Tuple containing the time value and unit for filling gaps.</span>
+<span class="sd">        :type fill: Tuple[int, str]</span>
+<span class="sd">        :param interpolate_values: Whether to interpolate values for the filled gaps.</span>
+<span class="sd">        :type interpolate_values: bool</span>
+<span class="sd">        :return: DataFrame of points that filled the gaps.</span>
+<span class="sd">        :rtype: pd.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">gaps_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_gaps</span><span class="p">(</span><span class="n">gap</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">gap</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">time_gap</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="n">fill</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">fill</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">added_index</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">gap_row</span> <span class="ow">in</span> <span class="n">gaps_df</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">gap_end_index</span> <span class="o">=</span> <span class="n">gap_row</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">gap_start_index</span> <span class="o">=</span> <span class="n">gap_end_index</span> <span class="o">-</span> <span class="mi">1</span>
+
+            <span class="n">gap_start_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">gap_start_index</span><span class="p">][</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
+            <span class="n">gap_end_date</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">gap_end_index</span><span class="p">][</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
+
+            <span class="n">start</span> <span class="o">=</span> <span class="n">gap_start_date</span> <span class="o">+</span> <span class="n">time_gap</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="n">gap_end_date</span>
+
+            <span class="c1"># Annotate the points that will fill this gap</span>
+            <span class="k">while</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="n">end</span><span class="p">:</span>
+                <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">start</span><span class="p">,</span> <span class="o">-</span><span class="mi">9999</span><span class="p">])</span>
+                <span class="n">index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gap_start_index</span><span class="p">)</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="n">start</span> <span class="o">+</span> <span class="n">time_gap</span>
+
+                <span class="k">if</span> <span class="n">interpolate_values</span><span class="p">:</span>
+                    <span class="c1"># Keep an index of the position where the points will end up</span>
+                    <span class="n">added_index</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gap_start_index</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">added_index</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">add_points</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">index</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">interpolate_values</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">added_index</span><span class="p">)</span>
+
+        <span class="c1"># Return the list of points that filled the gaps</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+            <span class="n">points</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]</span>
+        <span class="p">)</span></div>
+
+
+    <span class="c1">######################################</span>
+    <span class="c1"># Data point operations</span>
+    <span class="c1">######################################</span>
+
+<div class="viewcode-block" id="HydroServerQualityControl.add_points">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.HydroServerQualityControl.add_points">[docs]</a>
+    <span class="k">def</span> <span class="nf">add_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]],</span> <span class="n">index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds new points to the observations, optionally at specified indices.</span>
+
+<span class="sd">        :param points: List of points to be added.</span>
+<span class="sd">        :type points: List[List[Union[str, float]]]</span>
+<span class="sd">        :param index: Optional list of indices at which to insert the points.</span>
+<span class="sd">        :type index: Optional[List[int]]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># If an index list was provided, insert the points to the DataFrame at the corresponding index.</span>
+        <span class="c1"># We do this by creating a dictionary of slices where the key is the index to insert at, and the value is an</span>
+        <span class="c1"># array of points to insert at that index</span>
+        <span class="c1"># We iterate through the dictionary keys in reverse order, so that we can insert without altering the position</span>
+        <span class="c1"># of elements before</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># This is the most efficient way to insert into a DataFrame for a large dataset.</span>
+
+            <span class="c1"># create a dictionary of points to insert at each index</span>
+            <span class="n">slices</span> <span class="o">=</span> <span class="p">{}</span>
+            <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">slices</span><span class="p">:</span>
+                    <span class="n">slices</span><span class="p">[</span><span class="n">value</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="n">slices</span><span class="p">[</span><span class="n">value</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">idx</span><span class="p">])</span>
+
+            <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">slices</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+                <span class="c1"># Split DataFrame and insert new row.</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">s</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="n">df1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[:</span><span class="n">idx</span><span class="p">,</span> <span class="p">:]</span>
+                <span class="n">df2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">idx</span><span class="p">:,</span> <span class="p">:]</span>
+
+                <span class="n">points_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                    <span class="n">val</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">])</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">df1</span><span class="p">,</span> <span class="n">points_df</span><span class="p">,</span> <span class="n">df2</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># This way of inserting is not as efficient, but performance should be good enough given that the existing</span>
+            <span class="c1"># data in the DataFrame is pre-sorted.</span>
+
+            <span class="c1"># Create a new dataframe with the points</span>
+            <span class="n">points_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                <span class="n">points</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">])</span>
+
+            <span class="c1"># Concatenate both dataframes. New rows will be at the end.</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">,</span> <span class="n">points_df</span><span class="p">])</span>
+
+            <span class="c1"># Sort and reset index</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HydroServerQualityControl.change_values">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.HydroServerQualityControl.change_values">[docs]</a>
+    <span class="k">def</span> <span class="nf">change_values</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">operator</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Changes the values of observations based on the specified operator and value.</span>
+
+<span class="sd">        :param index_list: List of indices for which values will be changed.</span>
+<span class="sd">        :type index_list: List[int]</span>
+<span class="sd">        :param operator: The operation to perform (&#39;MULT&#39;, &#39;DIV&#39;, &#39;ADD&#39;, &#39;SUB&#39;, &#39;ASSIGN&#39;).</span>
+<span class="sd">        :type operator: str</span>
+<span class="sd">        :param value: The value to use in the operation.</span>
+<span class="sd">        :type value: Union[int, float]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span> <span class="nf">operation</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">operator</span> <span class="o">==</span> <span class="n">Operator</span><span class="o">.</span><span class="n">MULT</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">x</span> <span class="o">*</span> <span class="n">value</span>
+            <span class="k">elif</span> <span class="n">operator</span> <span class="o">==</span> <span class="n">Operator</span><span class="o">.</span><span class="n">DIV</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">value</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Error: cannot divide by 0&quot;</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="n">x</span>
+                <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="n">value</span>
+            <span class="k">elif</span> <span class="n">operator</span> <span class="o">==</span> <span class="n">Operator</span><span class="o">.</span><span class="n">ADD</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="n">value</span>
+            <span class="k">elif</span> <span class="n">operator</span> <span class="o">==</span> <span class="n">Operator</span><span class="o">.</span><span class="n">SUB</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">x</span> <span class="o">-</span> <span class="n">value</span>
+            <span class="k">elif</span> <span class="n">operator</span> <span class="o">==</span> <span class="n">Operator</span><span class="o">.</span><span class="n">ASSIGN</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">x</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index_list</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">index_list</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">operation</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HydroServerQualityControl.delete_points">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.HydroServerQualityControl.delete_points">[docs]</a>
+    <span class="k">def</span> <span class="nf">delete_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Deletes points from the observations at the specified indices.</span>
+
+<span class="sd">        :param index_list: List of indices for which points will be deleted.</span>
+<span class="sd">        :type index_list: List[int]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">index_list</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HydroServerQualityControl.shift_points">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.HydroServerQualityControl.shift_points">[docs]</a>
+    <span class="k">def</span> <span class="nf">shift_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">],</span> <span class="n">time_value</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">time_unit</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Shifts the timestamps of the observations at the specified indices by a given time value and unit.</span>
+
+<span class="sd">        :param index_list: List of indices where timestamps will be shifted.</span>
+<span class="sd">        :type index_list: List[int]</span>
+<span class="sd">        :param time_value: The amount of time to shift the timestamps.</span>
+<span class="sd">        :type time_value: int</span>
+<span class="sd">        :param time_unit: The unit of time (e.g., &#39;s&#39; for seconds, &#39;m&#39; for minutes).</span>
+<span class="sd">        :type time_unit: str</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">shift_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">timedelta64</span><span class="p">(</span><span class="n">time_value</span><span class="p">,</span> <span class="n">time_unit</span><span class="p">)</span>
+        <span class="n">condition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">index_list</span><span class="p">)</span>
+
+        <span class="c1"># Apply the shift</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">condition</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">condition</span><span class="p">,</span> <span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">shift_value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="s1">&#39;timestamp&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HydroServerQualityControl.interpolate">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.HydroServerQualityControl.interpolate">[docs]</a>
+    <span class="k">def</span> <span class="nf">interpolate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Interpolates the values of observations at the specified indices using linear interpolation.</span>
+
+<span class="sd">        :param index_list: List of indices where values will be interpolated.</span>
+<span class="sd">        :type index_list: list[int]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">condition</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">index_list</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">mask</span><span class="p">(</span><span class="n">condition</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">interpolate</span><span class="p">(</span><span class="n">method</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="HydroServerQualityControl.drift_correction">
+<a class="viewcode-back" href="../../../hydroserverpy.quality.html#hydroserverpy.HydroServerQualityControl.drift_correction">[docs]</a>
+    <span class="k">def</span> <span class="nf">drift_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">gap_width</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Applies drift correction to the values of observations within the specified index range.</span>
+
+<span class="sd">        :param start: Start index of the range to apply drift correction.</span>
+<span class="sd">        :type start: int</span>
+<span class="sd">        :param end: End index of the range to apply drift correction.</span>
+<span class="sd">        :type end: int</span>
+<span class="sd">        :param gap_width: The width of the drift gap to correct.</span>
+<span class="sd">        :type gap_width: float</span>
+<span class="sd">        :return: DataFrame after applying drift correction.</span>
+<span class="sd">        :rtype: pd.DataFrame</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># validate range</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="o">&gt;=</span> <span class="n">end</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Start and end index cannot overlap&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+        <span class="k">elif</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;End index out of range&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+        <span class="k">elif</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Start index must be greater than or equal to 0&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span>
+
+        <span class="n">points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">start_date</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
+        <span class="n">end_date</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span>
+
+        <span class="n">x_l</span> <span class="o">=</span> <span class="p">(</span><span class="n">end_date</span> <span class="o">-</span> <span class="n">start_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span>
+        <span class="n">ndv</span> <span class="o">=</span> <span class="o">-</span><span class="mi">9999</span>
+        <span class="c1"># y_n = y_0 + G(x_i / x_l)</span>
+
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">!=</span> <span class="n">ndv</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">(</span>
+                    <span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">+</span>
+                    <span class="p">(</span><span class="n">gap_width</span> <span class="o">*</span> <span class="p">((</span><span class="n">row</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">-</span> <span class="n">start_date</span><span class="p">)</span><span class="o">.</span><span class="n">total_seconds</span><span class="p">()</span> <span class="o">/</span> <span class="n">x_l</span><span class="p">))</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">row</span><span class="p">[</span><span class="s1">&#39;value&#39;</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_df</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">points</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">points</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_df</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hydroserverpy.etl.service &mdash; hydroserverpy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="../../../_static/doctools.js?v=9a2dae69"></script>
+        <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            hydroserverpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../hydroserverpy.html">hydroserverpy package</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">hydroserverpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">hydroserverpy.etl.service</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for hydroserverpy.etl.service</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">csv</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">croniter</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">HTTPError</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
+<span class="kn">from</span> <span class="nn">dateutil.parser</span> <span class="kn">import</span> <span class="n">isoparse</span>
+<span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">HeaderParsingError</span><span class="p">,</span> <span class="n">TimestampParsingError</span>
+<span class="kn">from</span> <span class="nn">..core.schemas</span> <span class="kn">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">Datastream</span>
+
+<span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;hydroserver_etl&#39;</span><span class="p">)</span>
+<span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
+
+
+<div class="viewcode-block" id="HydroServerETL">
+<a class="viewcode-back" href="../../../hydroserverpy.etl.html#hydroserverpy.HydroServerETL">[docs]</a>
+<span class="k">class</span> <span class="nc">HydroServerETL</span><span class="p">:</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">service</span><span class="p">,</span>
+            <span class="n">data_file</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+            <span class="n">data_source</span><span class="p">:</span> <span class="n">DataSource</span><span class="p">,</span>
+            <span class="n">datastreams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Datastream</span><span class="p">]</span>
+    <span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_service</span> <span class="o">=</span> <span class="n">service</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_file</span> <span class="o">=</span> <span class="n">data_file</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span> <span class="o">=</span> <span class="n">data_source</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_datastreams</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span> <span class="n">datastream</span> <span class="k">for</span> <span class="n">datastream</span> <span class="ow">in</span> <span class="n">datastreams</span>
+        <span class="p">}</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_column_index</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_datastream_column_indexes</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_datastream_start_row_indexes</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_last_loaded_timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">data_source_thru</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_failed_datastreams</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_header_error</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_file_timestamp_error</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_size</span> <span class="o">=</span> <span class="mi">10000</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="HydroServerETL.run">
+<a class="viewcode-back" href="../../../hydroserverpy.etl.html#hydroserverpy.HydroServerETL.run">[docs]</a>
+    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The run function is the main function of this class. It reads in a data file and parses it into observations,</span>
+<span class="sd">        which are then posted to HydroServer. The run function also updates the DataSource object with information about</span>
+<span class="sd">        the sync process.</span>
+
+<span class="sd">        :param self</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">data_reader</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">reader</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_file</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">delimiter</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">data_reader</span><span class="p">):</span>
+
+                <span class="c1"># Parse through the data file to get header info and start reading observations.</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_parse_data_file_row</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">row</span><span class="p">)</span>
+
+                <span class="c1"># Post chunked observations once chunk size has been reached.</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">i</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">_chunk_size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_failed_datastreams</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_post_observations</span><span class="p">())</span>
+
+        <span class="k">except</span> <span class="n">HeaderParsingError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Failed to parse header for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> with error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_message</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_header_error</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">except</span> <span class="n">TimestampParsingError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;Failed to parse one or more timestamps for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1"> with error: </span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_message</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_file_timestamp_error</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="c1"># Post final chunk of observations after file has been fully parsed.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_failed_datastreams</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_post_observations</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_failed_datastreams</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_message</span> <span class="o">=</span> <span class="sa">f</span><span class="s1">&#39;One or more datastreams failed to sync with HydroServer for </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">.&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_update_data_source</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_parse_data_file_row</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The parse_data_file_row function is used to parse the data file row by row. The function takes in two</span>
+<span class="sd">        arguments: index and row. The index argument is the current line number of the data file, and it&#39;s used to</span>
+<span class="sd">        determine if we are at a header or not (if so, then we need to determine the column index for each named</span>
+<span class="sd">        column). The second argument is a list containing all the values for each column on that particular line. If</span>
+<span class="sd">        this isn&#39;t a header, then we check if there are any observations with timestamps later than the latest</span>
+<span class="sd">        timestamp for the associated datastream; if so, then add them into our observation_bodies to be posted.</span>
+
+<span class="sd">        :param self</span>
+<span class="sd">        :param index: Keep track of the row number in the file</span>
+<span class="sd">        :param row: Access the row of data in the csv file</span>
+<span class="sd">        :return: A list of datetime and value pairs for each datastream</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">header_row</span> <span class="ow">or</span> <span class="p">(</span>
+                <span class="n">index</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">data_start_row</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_column_index</span> <span class="ow">is</span> <span class="kc">None</span>
+        <span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_parse_file_header</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">data_start_row</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">timestamp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_row_timestamp</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">datastream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datastreams</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datastream_start_row_indexes</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">datastream</span><span class="o">.</span><span class="n">phenomenon_end_time</span> <span class="ow">or</span> <span class="n">timestamp</span> <span class="o">&gt;</span> <span class="n">datastream</span><span class="o">.</span><span class="n">phenomenon_end_time</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_datastream_start_row_indexes</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">)]</span> <span class="o">=</span> <span class="n">index</span>
+
+            <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datastream_start_row_indexes</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span> \
+                    <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datastream_start_row_indexes</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">)]</span> <span class="o">&lt;=</span> <span class="n">index</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">)]</span> <span class="o">=</span> <span class="p">[]</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">)]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+                    <span class="s1">&#39;phenomenon_time&#39;</span><span class="p">:</span> <span class="n">timestamp</span><span class="p">,</span>
+                    <span class="s1">&#39;result&#39;</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_datastream_column_indexes</span><span class="p">[</span><span class="n">datastream</span><span class="o">.</span><span class="n">data_source_column</span><span class="p">]]</span>
+                <span class="p">})</span>
+
+    <span class="k">def</span> <span class="nf">_parse_file_header</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The _parse_file_header function is used to parse the header of a file.</span>
+<span class="sd">        It takes in a row (a list of strings) and parses it for the timestamp column index,</span>
+<span class="sd">        and datastream column indexes. It then sets these values as attributes on self._timestamp_column_index,</span>
+<span class="sd">        and self._datastream_column_indexes respectively.</span>
+
+<span class="sd">        :param self: Refer to the object itself</span>
+<span class="sd">        :param row: List[str]: Parse the header of a csv file</span>
+<span class="sd">        :return: A dictionary of the datastreams with their column index</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_column_index</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">timestamp_column</span><span class="p">)</span> \
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">timestamp_column</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> \
+                <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">timestamp_column</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_column_index</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_datastream_column_indexes</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">datastream</span><span class="o">.</span><span class="n">data_source_column</span><span class="p">:</span> <span class="n">row</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">datastream</span><span class="o">.</span><span class="n">data_source_column</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">datastream</span><span class="o">.</span><span class="n">data_source_column</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span>
+                <span class="k">else</span> <span class="nb">int</span><span class="p">(</span><span class="n">datastream</span><span class="o">.</span><span class="n">data_source_column</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="k">for</span> <span class="n">datastream</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datastreams</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">}</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_datastream_column_indexes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> \
+                    <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_datastream_column_indexes</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to load data from data source: &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="n">HeaderParsingError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+
+    <span class="k">def</span> <span class="nf">_parse_row_timestamp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">row</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">datetime</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The _parse_row_timestamp function takes a row of data from the CSV file and parses it into a datetime object.</span>
+
+<span class="sd">        :param self</span>
+<span class="sd">        :param row: List[str]: Parse the timestamp from a row of data</span>
+<span class="sd">        :return: A datetime object, which is a python standard library class</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">timestamp_format</span> <span class="o">==</span> <span class="s1">&#39;iso&#39;</span> <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">timestamp_format</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">isoparse</span><span class="p">(</span>
+                    <span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_column_index</span><span class="p">]</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+                    <span class="n">row</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_column_index</span><span class="p">],</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">timestamp_format</span>
+                <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="n">TimestampParsingError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="k">if</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">tzinfo</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">timestamp_offset</span><span class="p">:</span>
+                <span class="n">timestamp</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                    <span class="n">tzinfo</span><span class="o">=</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">timestamp</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span>
+                        <span class="n">tzinfo</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">strptime</span><span class="p">(</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">timestamp_offset</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span> <span class="o">+</span> <span class="s1">&#39;:&#39;</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">timestamp_offset</span><span class="p">[</span><span class="mi">3</span><span class="p">:],</span> <span class="s1">&#39;%z&#39;</span>
+                        <span class="p">)</span><span class="o">.</span><span class="n">tzinfo</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Failed to load data from data source: &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;&#39;</span><span class="p">)</span>
+                    <span class="k">raise</span> <span class="n">TimestampParsingError</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">e</span><span class="p">))</span> <span class="kn">from</span> <span class="nn">e</span>
+
+        <span class="k">return</span> <span class="n">timestamp</span>
+
+    <span class="k">def</span> <span class="nf">_post_observations</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The _post_observations function is used to post observations to the SensorThings API.</span>
+<span class="sd">        The function returns a list of datastreams that failed to be posted.</span>
+<span class="sd">        The function iterates through all datastreams in self._observations, which is a dictionary with keys being</span>
+<span class="sd">        datastream IDs and values being lists of observation dictionaries (see _load_observations for more details).</span>
+<span class="sd">        For each datastream, if it has not previously failed posting observations or if there are any new observations</span>
+<span class="sd">        to post, the function posts the new observations to HydroServer using the SensorThings API.</span>
+
+<span class="sd">        :param self</span>
+<span class="sd">        :return: A list of failed datastreams</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">failed_datastreams</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">datastream_id</span><span class="p">,</span> <span class="n">observations</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">datastream_id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failed_datastreams</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">observations</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Loading observations from &#39;</span> <span class="o">+</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">observations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;phenomenon_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S%z&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"> to &#39;</span> <span class="o">+</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">observations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;phenomenon_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S%z&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"> for datastream: &#39;</span> <span class="o">+</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">datastream_id</span><span class="p">)</span><span class="si">}</span><span class="s1"> in data source &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;.&#39;</span>
+                <span class="p">)</span>
+
+                <span class="n">observations_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+                    <span class="p">[[</span><span class="n">observation</span><span class="p">[</span><span class="s1">&#39;phenomenon_time&#39;</span><span class="p">],</span> <span class="n">observation</span><span class="p">[</span><span class="s1">&#39;result&#39;</span><span class="p">]]</span> <span class="k">for</span> <span class="n">observation</span> <span class="ow">in</span> <span class="n">observations</span><span class="p">],</span>
+                    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]</span>
+                <span class="p">)</span>
+
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">upload_observations</span><span class="p">(</span>
+                        <span class="n">uid</span><span class="o">=</span><span class="n">datastream_id</span><span class="p">,</span>
+                        <span class="n">observations_df</span><span class="o">=</span><span class="n">observations_df</span><span class="p">,</span>
+                    <span class="p">)</span>
+                <span class="k">except</span> <span class="n">HTTPError</span><span class="p">:</span>
+                    <span class="n">failed_datastreams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datastream_id</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_loaded_timestamp</span> <span class="ow">or</span> <span class="p">(</span>
+                        <span class="n">observations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;phenomenon_time&#39;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">observations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;phenomenon_time&#39;</span><span class="p">]</span> <span class="o">&gt;</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">_last_loaded_timestamp</span>
+                <span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_last_loaded_timestamp</span> <span class="o">=</span> <span class="n">observations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s1">&#39;phenomenon_time&#39;</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">datastream_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_failed_datastreams</span><span class="p">:</span>
+                <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s1">&#39;Skipping observations POST request from &#39;</span> <span class="o">+</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">observations</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;phenomenon_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S%z&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"> to &#39;</span> <span class="o">+</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">observations</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">&quot;phenomenon_time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s2">&quot;%Y-%m-</span><span class="si">%d</span><span class="s2">T%H:%M:%S%z&quot;</span><span class="p">)</span><span class="si">}</span><span class="s1"> for datastream: &#39;</span> <span class="o">+</span>
+                    <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">datastream_id</span><span class="p">)</span><span class="si">}</span><span class="s1"> in data source &quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s1">&quot;,&#39;</span> <span class="o">+</span>
+                    <span class="sa">f</span><span class="s1">&#39;due to previous failed POST request.&#39;</span>
+                <span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_observations</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="k">return</span> <span class="n">failed_datastreams</span>
+
+    <span class="k">def</span> <span class="nf">_update_data_source</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The _update_data_source function updates the data source with information about the last sync.</span>
+
+<span class="sd">        :param self</span>
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">crontab</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">next_sync</span> <span class="o">=</span> <span class="n">croniter</span><span class="o">.</span><span class="n">croniter</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">crontab</span><span class="p">,</span>
+                <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span>
+            <span class="p">)</span><span class="o">.</span><span class="n">get_next</span><span class="p">(</span><span class="n">datetime</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">interval</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">interval_units</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">next_sync</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span> <span class="o">+</span> <span class="n">timedelta</span><span class="p">(</span>
+                <span class="o">**</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">interval_units</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">interval</span><span class="p">}</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">next_sync</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">data_source_thru</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_last_loaded_timestamp</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">last_sync_successful</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="kc">True</span> <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_timestamp_error</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_file_header_error</span>
+            <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_failed_datastreams</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">last_sync_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_message</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">last_synced</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">timezone</span><span class="o">.</span><span class="n">utc</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">next_sync</span> <span class="o">=</span> <span class="n">next_sync</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span><span class="o">.</span><span class="n">save</span><span class="p">()</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

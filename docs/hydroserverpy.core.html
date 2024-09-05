@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>hydroserverpy.core package &mdash; hydroserverpy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="hydroserverpy.core.endpoints package" href="hydroserverpy.core.endpoints.html" />
+    <link rel="prev" title="hydroserverpy package" href="hydroserverpy.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            hydroserverpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="hydroserverpy.html">hydroserverpy package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="hydroserverpy.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">hydroserverpy.core package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-hydroserverpy.core.service">hydroserverpy.core.service module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-hydroserverpy.core">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html">hydroserverpy.etl package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html">hydroserverpy.quality package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.html#module-hydroserverpy">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hydroserverpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="hydroserverpy.html">hydroserverpy package</a></li>
+      <li class="breadcrumb-item active">hydroserverpy.core package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hydroserverpy.core.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hydroserverpy-core-package">
+<h1>hydroserverpy.core package<a class="headerlink" href="#hydroserverpy-core-package" title="Link to this heading"></a></h1>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.core.endpoints.html">hydroserverpy.core.endpoints package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.base">hydroserverpy.core.endpoints.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.base.HydroServerEndpoint"><code class="docutils literal notranslate"><span class="pre">HydroServerEndpoint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.base.HydroServerEndpoint.create"><code class="docutils literal notranslate"><span class="pre">HydroServerEndpoint.create()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.base.HydroServerEndpoint.delete"><code class="docutils literal notranslate"><span class="pre">HydroServerEndpoint.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.base.HydroServerEndpoint.get"><code class="docutils literal notranslate"><span class="pre">HydroServerEndpoint.get()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.base.HydroServerEndpoint.list"><code class="docutils literal notranslate"><span class="pre">HydroServerEndpoint.list()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.base.HydroServerEndpoint.update"><code class="docutils literal notranslate"><span class="pre">HydroServerEndpoint.update()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.data_loaders">hydroserverpy.core.endpoints.data_loaders module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint"><code class="docutils literal notranslate"><span class="pre">DataLoaderEndpoint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.list_data_sources"><code class="docutils literal notranslate"><span class="pre">DataLoaderEndpoint.list_data_sources()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.data_sources">hydroserverpy.core.endpoints.data_sources module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint"><code class="docutils literal notranslate"><span class="pre">DataSourceEndpoint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.list_datastreams"><code class="docutils literal notranslate"><span class="pre">DataSourceEndpoint.list_datastreams()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.datastreams">hydroserverpy.core.endpoints.datastreams module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint"><code class="docutils literal notranslate"><span class="pre">DatastreamEndpoint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.get_observations"><code class="docutils literal notranslate"><span class="pre">DatastreamEndpoint.get_observations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.upload_observations"><code class="docutils literal notranslate"><span class="pre">DatastreamEndpoint.upload_observations()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.observed_properties">hydroserverpy.core.endpoints.observed_properties module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint"><code class="docutils literal notranslate"><span class="pre">ObservedPropertyEndpoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.processing_levels">hydroserverpy.core.endpoints.processing_levels module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint"><code class="docutils literal notranslate"><span class="pre">ProcessingLevelEndpoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.result_qualifiers">hydroserverpy.core.endpoints.result_qualifiers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint"><code class="docutils literal notranslate"><span class="pre">ResultQualifierEndpoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.sensors">hydroserverpy.core.endpoints.sensors module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.sensors.SensorEndpoint"><code class="docutils literal notranslate"><span class="pre">SensorEndpoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.things">hydroserverpy.core.endpoints.things module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint"><code class="docutils literal notranslate"><span class="pre">ThingEndpoint</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.create_tag"><code class="docutils literal notranslate"><span class="pre">ThingEndpoint.create_tag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.delete_photo"><code class="docutils literal notranslate"><span class="pre">ThingEndpoint.delete_photo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.delete_tag"><code class="docutils literal notranslate"><span class="pre">ThingEndpoint.delete_tag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.get_archive"><code class="docutils literal notranslate"><span class="pre">ThingEndpoint.get_archive()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.list_datastreams"><code class="docutils literal notranslate"><span class="pre">ThingEndpoint.list_datastreams()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.list_photos"><code class="docutils literal notranslate"><span class="pre">ThingEndpoint.list_photos()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.list_tags"><code class="docutils literal notranslate"><span class="pre">ThingEndpoint.list_tags()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.update_tag"><code class="docutils literal notranslate"><span class="pre">ThingEndpoint.update_tag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.upload_photo"><code class="docutils literal notranslate"><span class="pre">ThingEndpoint.upload_photo()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.units">hydroserverpy.core.endpoints.units module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.units.UnitEndpoint"><code class="docutils literal notranslate"><span class="pre">UnitEndpoint</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.core.schemas.html">hydroserverpy.core.schemas package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.base">hydroserverpy.core.schemas.base module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerBaseModel"><code class="docutils literal notranslate"><span class="pre">HydroServerBaseModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerBaseModel.Config"><code class="docutils literal notranslate"><span class="pre">HydroServerBaseModel.Config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerBaseModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">HydroServerBaseModel.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerBaseModel.model_config"><code class="docutils literal notranslate"><span class="pre">HydroServerBaseModel.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerBaseModel.model_fields"><code class="docutils literal notranslate"><span class="pre">HydroServerBaseModel.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerBaseModel.model_post_init"><code class="docutils literal notranslate"><span class="pre">HydroServerBaseModel.model_post_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerBaseModel.uid"><code class="docutils literal notranslate"><span class="pre">HydroServerBaseModel.uid</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel"><code class="docutils literal notranslate"><span class="pre">HydroServerCoreModel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel.delete"><code class="docutils literal notranslate"><span class="pre">HydroServerCoreModel.delete()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">HydroServerCoreModel.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel.model_config"><code class="docutils literal notranslate"><span class="pre">HydroServerCoreModel.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel.model_fields"><code class="docutils literal notranslate"><span class="pre">HydroServerCoreModel.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel.model_post_init"><code class="docutils literal notranslate"><span class="pre">HydroServerCoreModel.model_post_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel.refresh"><code class="docutils literal notranslate"><span class="pre">HydroServerCoreModel.refresh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel.save"><code class="docutils literal notranslate"><span class="pre">HydroServerCoreModel.save()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.data_loaders">hydroserverpy.core.schemas.data_loaders module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader"><code class="docutils literal notranslate"><span class="pre">DataLoader</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader.data_sources"><code class="docutils literal notranslate"><span class="pre">DataLoader.data_sources</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">DataLoader.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader.model_config"><code class="docutils literal notranslate"><span class="pre">DataLoader.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader.model_fields"><code class="docutils literal notranslate"><span class="pre">DataLoader.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader.model_post_init"><code class="docutils literal notranslate"><span class="pre">DataLoader.model_post_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader.refresh"><code class="docutils literal notranslate"><span class="pre">DataLoader.refresh()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoaderFields"><code class="docutils literal notranslate"><span class="pre">DataLoaderFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoaderFields.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">DataLoaderFields.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoaderFields.model_config"><code class="docutils literal notranslate"><span class="pre">DataLoaderFields.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoaderFields.model_fields"><code class="docutils literal notranslate"><span class="pre">DataLoaderFields.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoaderFields.name"><code class="docutils literal notranslate"><span class="pre">DataLoaderFields.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.data_sources">hydroserverpy.core.schemas.data_sources module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource"><code class="docutils literal notranslate"><span class="pre">DataSource</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource.data_loader"><code class="docutils literal notranslate"><span class="pre">DataSource.data_loader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource.datastreams"><code class="docutils literal notranslate"><span class="pre">DataSource.datastreams</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">DataSource.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource.model_config"><code class="docutils literal notranslate"><span class="pre">DataSource.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource.model_fields"><code class="docutils literal notranslate"><span class="pre">DataSource.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource.model_post_init"><code class="docutils literal notranslate"><span class="pre">DataSource.model_post_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource.refresh"><code class="docutils literal notranslate"><span class="pre">DataSource.refresh()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields"><code class="docutils literal notranslate"><span class="pre">DataSourceFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.crontab"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.crontab</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.data_loader_id"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.data_loader_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.data_source_thru"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.data_source_thru</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.data_start_row"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.data_start_row</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.delimiter"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.delimiter</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.end_time"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.end_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.header_row"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.header_row</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.interval"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.interval</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.interval_units"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.interval_units</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.last_sync_message"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.last_sync_message</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.last_sync_successful"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.last_sync_successful</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.last_synced"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.last_synced</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.link"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.link</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.model_config"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.model_fields"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.name"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.next_sync"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.next_sync</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.path"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.paused"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.paused</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.quote_char"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.quote_char</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.start_time"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.start_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.timestamp_column"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.timestamp_column</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.timestamp_format"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.timestamp_format</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSourceFields.timestamp_offset"><code class="docutils literal notranslate"><span class="pre">DataSourceFields.timestamp_offset</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.datastreams">hydroserverpy.core.schemas.datastreams module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream"><code class="docutils literal notranslate"><span class="pre">Datastream</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.data_source"><code class="docutils literal notranslate"><span class="pre">Datastream.data_source</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.get_observations"><code class="docutils literal notranslate"><span class="pre">Datastream.get_observations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Datastream.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.model_config"><code class="docutils literal notranslate"><span class="pre">Datastream.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.model_fields"><code class="docutils literal notranslate"><span class="pre">Datastream.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.model_post_init"><code class="docutils literal notranslate"><span class="pre">Datastream.model_post_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.observed_property"><code class="docutils literal notranslate"><span class="pre">Datastream.observed_property</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.processing_level"><code class="docutils literal notranslate"><span class="pre">Datastream.processing_level</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.refresh"><code class="docutils literal notranslate"><span class="pre">Datastream.refresh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.sensor"><code class="docutils literal notranslate"><span class="pre">Datastream.sensor</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.thing"><code class="docutils literal notranslate"><span class="pre">Datastream.thing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.unit"><code class="docutils literal notranslate"><span class="pre">Datastream.unit</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.upload_observations"><code class="docutils literal notranslate"><span class="pre">Datastream.upload_observations()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields"><code class="docutils literal notranslate"><span class="pre">DatastreamFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.aggregation_statistic"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.aggregation_statistic</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.data_source_column"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.data_source_column</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.data_source_id"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.data_source_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.description"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.intended_time_spacing"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.intended_time_spacing</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.intended_time_spacing_units"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.intended_time_spacing_units</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.is_data_visible"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.is_data_visible</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.is_visible"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.is_visible</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.model_config"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.model_fields"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.name"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.no_data_value"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.no_data_value</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.observation_type"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.observation_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.observed_property_id"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.observed_property_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.phenomenon_begin_time"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.phenomenon_begin_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.phenomenon_end_time"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.phenomenon_end_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.processing_level_id"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.processing_level_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.result_begin_time"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.result_begin_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.result_end_time"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.result_end_time</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.result_type"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.result_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.sampled_medium"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.sampled_medium</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.sensor_id"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.sensor_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.status"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.status</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.thing_id"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.thing_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.time_aggregation_interval"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.time_aggregation_interval</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.time_aggregation_interval_units"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.time_aggregation_interval_units</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.unit_id"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.unit_id</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields.value_count"><code class="docutils literal notranslate"><span class="pre">DatastreamFields.value_count</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.observed_properties">hydroserverpy.core.schemas.observed_properties module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty"><code class="docutils literal notranslate"><span class="pre">ObservedProperty</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ObservedProperty.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty.model_config"><code class="docutils literal notranslate"><span class="pre">ObservedProperty.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty.model_fields"><code class="docutils literal notranslate"><span class="pre">ObservedProperty.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty.model_post_init"><code class="docutils literal notranslate"><span class="pre">ObservedProperty.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedPropertyFields"><code class="docutils literal notranslate"><span class="pre">ObservedPropertyFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedPropertyFields.code"><code class="docutils literal notranslate"><span class="pre">ObservedPropertyFields.code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedPropertyFields.definition"><code class="docutils literal notranslate"><span class="pre">ObservedPropertyFields.definition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedPropertyFields.description"><code class="docutils literal notranslate"><span class="pre">ObservedPropertyFields.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedPropertyFields.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ObservedPropertyFields.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedPropertyFields.model_config"><code class="docutils literal notranslate"><span class="pre">ObservedPropertyFields.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedPropertyFields.model_fields"><code class="docutils literal notranslate"><span class="pre">ObservedPropertyFields.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedPropertyFields.name"><code class="docutils literal notranslate"><span class="pre">ObservedPropertyFields.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedPropertyFields.type"><code class="docutils literal notranslate"><span class="pre">ObservedPropertyFields.type</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.processing_levels">hydroserverpy.core.schemas.processing_levels module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel"><code class="docutils literal notranslate"><span class="pre">ProcessingLevel</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ProcessingLevel.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel.model_config"><code class="docutils literal notranslate"><span class="pre">ProcessingLevel.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel.model_fields"><code class="docutils literal notranslate"><span class="pre">ProcessingLevel.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel.model_post_init"><code class="docutils literal notranslate"><span class="pre">ProcessingLevel.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevelFields"><code class="docutils literal notranslate"><span class="pre">ProcessingLevelFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevelFields.code"><code class="docutils literal notranslate"><span class="pre">ProcessingLevelFields.code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevelFields.definition"><code class="docutils literal notranslate"><span class="pre">ProcessingLevelFields.definition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevelFields.explanation"><code class="docutils literal notranslate"><span class="pre">ProcessingLevelFields.explanation</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevelFields.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ProcessingLevelFields.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevelFields.model_config"><code class="docutils literal notranslate"><span class="pre">ProcessingLevelFields.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevelFields.model_fields"><code class="docutils literal notranslate"><span class="pre">ProcessingLevelFields.model_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.result_qualifiers">hydroserverpy.core.schemas.result_qualifiers module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier"><code class="docutils literal notranslate"><span class="pre">ResultQualifier</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ResultQualifier.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier.model_config"><code class="docutils literal notranslate"><span class="pre">ResultQualifier.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier.model_fields"><code class="docutils literal notranslate"><span class="pre">ResultQualifier.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier.model_post_init"><code class="docutils literal notranslate"><span class="pre">ResultQualifier.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifierFields"><code class="docutils literal notranslate"><span class="pre">ResultQualifierFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifierFields.code"><code class="docutils literal notranslate"><span class="pre">ResultQualifierFields.code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifierFields.description"><code class="docutils literal notranslate"><span class="pre">ResultQualifierFields.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifierFields.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ResultQualifierFields.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifierFields.model_config"><code class="docutils literal notranslate"><span class="pre">ResultQualifierFields.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifierFields.model_fields"><code class="docutils literal notranslate"><span class="pre">ResultQualifierFields.model_fields</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.sensors">hydroserverpy.core.schemas.sensors module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor"><code class="docutils literal notranslate"><span class="pre">Sensor</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Sensor.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor.model_config"><code class="docutils literal notranslate"><span class="pre">Sensor.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor.model_fields"><code class="docutils literal notranslate"><span class="pre">Sensor.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor.model_post_init"><code class="docutils literal notranslate"><span class="pre">Sensor.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields"><code class="docutils literal notranslate"><span class="pre">SensorFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.description"><code class="docutils literal notranslate"><span class="pre">SensorFields.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.encoding_type"><code class="docutils literal notranslate"><span class="pre">SensorFields.encoding_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.manufacturer"><code class="docutils literal notranslate"><span class="pre">SensorFields.manufacturer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.method_code"><code class="docutils literal notranslate"><span class="pre">SensorFields.method_code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.method_link"><code class="docutils literal notranslate"><span class="pre">SensorFields.method_link</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.method_type"><code class="docutils literal notranslate"><span class="pre">SensorFields.method_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.model"><code class="docutils literal notranslate"><span class="pre">SensorFields.model</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">SensorFields.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.model_config"><code class="docutils literal notranslate"><span class="pre">SensorFields.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.model_fields"><code class="docutils literal notranslate"><span class="pre">SensorFields.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.model_link"><code class="docutils literal notranslate"><span class="pre">SensorFields.model_link</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.SensorFields.name"><code class="docutils literal notranslate"><span class="pre">SensorFields.name</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.things">hydroserverpy.core.schemas.things module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive"><code class="docutils literal notranslate"><span class="pre">Archive</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive.datastream_ids"><code class="docutils literal notranslate"><span class="pre">Archive.datastream_ids</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive.frequency"><code class="docutils literal notranslate"><span class="pre">Archive.frequency</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive.link"><code class="docutils literal notranslate"><span class="pre">Archive.link</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Archive.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive.model_config"><code class="docutils literal notranslate"><span class="pre">Archive.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive.model_fields"><code class="docutils literal notranslate"><span class="pre">Archive.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive.model_post_init"><code class="docutils literal notranslate"><span class="pre">Archive.model_post_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive.path"><code class="docutils literal notranslate"><span class="pre">Archive.path</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields"><code class="docutils literal notranslate"><span class="pre">LocationFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.check_country_code"><code class="docutils literal notranslate"><span class="pre">LocationFields.check_country_code()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.country"><code class="docutils literal notranslate"><span class="pre">LocationFields.country</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.county"><code class="docutils literal notranslate"><span class="pre">LocationFields.county</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.elevation_datum"><code class="docutils literal notranslate"><span class="pre">LocationFields.elevation_datum</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.elevation_m"><code class="docutils literal notranslate"><span class="pre">LocationFields.elevation_m</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.latitude"><code class="docutils literal notranslate"><span class="pre">LocationFields.latitude</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.longitude"><code class="docutils literal notranslate"><span class="pre">LocationFields.longitude</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">LocationFields.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.model_config"><code class="docutils literal notranslate"><span class="pre">LocationFields.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.model_fields"><code class="docutils literal notranslate"><span class="pre">LocationFields.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.LocationFields.state"><code class="docutils literal notranslate"><span class="pre">LocationFields.state</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo"><code class="docutils literal notranslate"><span class="pre">Photo</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo.file_path"><code class="docutils literal notranslate"><span class="pre">Photo.file_path</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo.link"><code class="docutils literal notranslate"><span class="pre">Photo.link</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Photo.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo.model_config"><code class="docutils literal notranslate"><span class="pre">Photo.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo.model_fields"><code class="docutils literal notranslate"><span class="pre">Photo.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo.model_post_init"><code class="docutils literal notranslate"><span class="pre">Photo.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag"><code class="docutils literal notranslate"><span class="pre">Tag</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag.key"><code class="docutils literal notranslate"><span class="pre">Tag.key</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Tag.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag.model_config"><code class="docutils literal notranslate"><span class="pre">Tag.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag.model_fields"><code class="docutils literal notranslate"><span class="pre">Tag.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag.model_post_init"><code class="docutils literal notranslate"><span class="pre">Tag.model_post_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag.value"><code class="docutils literal notranslate"><span class="pre">Tag.value</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing"><code class="docutils literal notranslate"><span class="pre">Thing</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.add_photo"><code class="docutils literal notranslate"><span class="pre">Thing.add_photo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.add_tag"><code class="docutils literal notranslate"><span class="pre">Thing.add_tag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.archive"><code class="docutils literal notranslate"><span class="pre">Thing.archive</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.datastreams"><code class="docutils literal notranslate"><span class="pre">Thing.datastreams</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.delete_photo"><code class="docutils literal notranslate"><span class="pre">Thing.delete_photo()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.delete_tag"><code class="docutils literal notranslate"><span class="pre">Thing.delete_tag()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Thing.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.model_config"><code class="docutils literal notranslate"><span class="pre">Thing.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.model_fields"><code class="docutils literal notranslate"><span class="pre">Thing.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.model_post_init"><code class="docutils literal notranslate"><span class="pre">Thing.model_post_init()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.photos"><code class="docutils literal notranslate"><span class="pre">Thing.photos</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.refresh"><code class="docutils literal notranslate"><span class="pre">Thing.refresh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.tags"><code class="docutils literal notranslate"><span class="pre">Thing.tags</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.update_tag"><code class="docutils literal notranslate"><span class="pre">Thing.update_tag()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields"><code class="docutils literal notranslate"><span class="pre">ThingFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields.data_disclaimer"><code class="docutils literal notranslate"><span class="pre">ThingFields.data_disclaimer</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields.description"><code class="docutils literal notranslate"><span class="pre">ThingFields.description</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">ThingFields.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields.model_config"><code class="docutils literal notranslate"><span class="pre">ThingFields.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields.model_fields"><code class="docutils literal notranslate"><span class="pre">ThingFields.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields.name"><code class="docutils literal notranslate"><span class="pre">ThingFields.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields.sampling_feature_code"><code class="docutils literal notranslate"><span class="pre">ThingFields.sampling_feature_code</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields.sampling_feature_type"><code class="docutils literal notranslate"><span class="pre">ThingFields.sampling_feature_type</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields.site_type"><code class="docutils literal notranslate"><span class="pre">ThingFields.site_type</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.units">hydroserverpy.core.schemas.units module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit"><code class="docutils literal notranslate"><span class="pre">Unit</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit.model_computed_fields"><code class="docutils literal notranslate"><span class="pre">Unit.model_computed_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit.model_config"><code class="docutils literal notranslate"><span class="pre">Unit.model_config</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit.model_fields"><code class="docutils literal notranslate"><span class="pre">Unit.model_fields</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit.model_post_init"><code class="docutils literal notranslate"><span class="pre">Unit.model_post_init()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.UnitFields"><code class="docutils literal notranslate"><span class="pre">UnitFields</span></code></a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.UnitFields.definition"><code class="docutils literal notranslate"><span class="pre">UnitFields.definition</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.UnitFields.name"><code class="docutils literal notranslate"><span class="pre">UnitFields.name</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.UnitFields.symbol"><code class="docutils literal notranslate"><span class="pre">UnitFields.symbol</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.UnitFields.type"><code class="docutils literal notranslate"><span class="pre">UnitFields.type</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+</section>
+<section id="module-hydroserverpy.core.service">
+<span id="hydroserverpy-core-service-module"></span><h2>hydroserverpy.core.service module<a class="headerlink" href="#module-hydroserverpy.core.service" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServerConnection">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.service.</span></span><span class="sig-name descname"><span class="pre">HydroServerConnection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_route</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'api'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/service.html#HydroServerConnection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.service.HydroServerConnection" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Connects to a HydroServer instance and used to interact with HydroServer’s Data Management API endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<em>str</em>) – The base URL or host of the HydroServer API.</p></li>
+<li><p><strong>username</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The username for basic authentication, if required.</p></li>
+<li><p><strong>password</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The password for basic authentication, if required.</p></li>
+<li><p><strong>apikey</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The API key for authentication, if using API key authentication.</p></li>
+<li><p><strong>api_route</strong> (<em>str</em>) – The API route to use, default is ‘api’.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServerConnection.dataloaders">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataloaders</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServerConnection.dataloaders" title="Link to this definition"></a></dt>
+<dd><p>Data Loader Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of DataLoaderEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint" title="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint">DataLoaderEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServerConnection.datasources">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datasources</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServerConnection.datasources" title="Link to this definition"></a></dt>
+<dd><p>Data Source Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of DataSourceEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint" title="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint">DataSourceEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServerConnection.datastreams">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datastreams</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServerConnection.datastreams" title="Link to this definition"></a></dt>
+<dd><p>Datastream Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of DatastreamEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint" title="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint">DatastreamEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServerConnection.observedproperties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observedproperties</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServerConnection.observedproperties" title="Link to this definition"></a></dt>
+<dd><p>Observed Property Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ObservedPropertyEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint" title="hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint">ObservedPropertyEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServerConnection.processinglevels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processinglevels</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServerConnection.processinglevels" title="Link to this definition"></a></dt>
+<dd><p>Processing Level Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ProcessingLevelEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint" title="hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint">ProcessingLevelEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServerConnection.resultqualifiers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resultqualifiers</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServerConnection.resultqualifiers" title="Link to this definition"></a></dt>
+<dd><p>Result Qualifier Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ResultQualifierEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint" title="hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint">ResultQualifierEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServerConnection.sensors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sensors</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServerConnection.sensors" title="Link to this definition"></a></dt>
+<dd><p>Sensor Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of SensorEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.sensors.SensorEndpoint" title="hydroserverpy.core.endpoints.sensors.SensorEndpoint">SensorEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServerConnection.things">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">things</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServerConnection.things" title="Link to this definition"></a></dt>
+<dd><p>Thing Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ThingEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint" title="hydroserverpy.core.endpoints.things.ThingEndpoint">ThingEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServerConnection.units">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">units</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServerConnection.units" title="Link to this definition"></a></dt>
+<dd><p>Unit Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of UnitEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.units.UnitEndpoint" title="hydroserverpy.core.endpoints.units.UnitEndpoint">UnitEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+<section id="module-hydroserverpy.core">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hydroserverpy.core" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hydroserverpy.html" class="btn btn-neutral float-left" title="hydroserverpy package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hydroserverpy.core.endpoints.html" class="btn btn-neutral float-right" title="hydroserverpy.core.endpoints package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Author.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

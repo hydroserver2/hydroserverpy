@@ -1,1 +1,1 @@
-from .service import QualityControl, TimeUnit, FilterOperation, Operator
+from .service import HydroServerQualityControl, TimeUnit, FilterOperation, Operator

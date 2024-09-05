@@ -86,7 +86,7 @@ class HydroServerConnection:
                     raise e
 
     @property
-    def data_loaders(self):
+    def dataloaders(self):
         """
         Data Loader Endpoint.
 
@@ -97,7 +97,7 @@ class HydroServerConnection:
         return DataLoaderEndpoint(self)
 
     @property
-    def data_sources(self):
+    def datasources(self):
         """
         Data Source Endpoint.
 
@@ -119,7 +119,7 @@ class HydroServerConnection:
         return DatastreamEndpoint(self)
 
     @property
-    def observed_properties(self):
+    def observedproperties(self):
         """
         Observed Property Endpoint.
 
@@ -130,7 +130,7 @@ class HydroServerConnection:
         return ObservedPropertyEndpoint(self)
 
     @property
-    def processing_levels(self):
+    def processinglevels(self):
         """
         Processing Level Endpoint.
 
@@ -141,7 +141,7 @@ class HydroServerConnection:
         return ProcessingLevelEndpoint(self)
 
     @property
-    def result_qualifiers(self):
+    def resultqualifiers(self):
         """
         Result Qualifier Endpoint.
 

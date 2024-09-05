@@ -85,7 +85,7 @@ class DataSource(HydroServerCoreModel, DataSourceFields):
         """
 
         if self._data_loader is None:
-            self._data_loader = self._endpoint._service.data_loaders.get(uid=self.data_loader_id)  # noqa
+            self._data_loader = self._endpoint._service.dataloaders.get(uid=self.data_loader_id)  # noqa
         return self._data_loader
 
     def refresh(self) -> None:
@@ -100,4 +100,4 @@ class DataSource(HydroServerCoreModel, DataSourceFields):
         if self._datastreams is not None:
             self._datastreams = self._endpoint.list_datastreams(uid=self.uid)
         if self._data_loader is not None:
-            self._data_loader = self._endpoint._service.data_loaders.get(uid=self.data_loader_id)  # noqa
+            self._data_loader = self._endpoint._service.dataloaders.get(uid=self.data_loader_id)  # noqa
