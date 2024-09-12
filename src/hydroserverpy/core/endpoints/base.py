@@ -1,10 +1,29 @@
 import json
 from uuid import UUID
-from typing import TYPE_CHECKING, Type, Union, List
+from typing import TYPE_CHECKING, Type, Union, List, TypeVar, Optional
 
 if TYPE_CHECKING:
-    from ..schemas.base import HydroServerCoreModel
-    from ..service import HydroServer
+    from hydroserverpy import HydroServer
+    from hydroserverpy.core.schemas.base import HydroServerCoreModel
+
+    HydroServerModelType = TypeVar('HydroServerModelType', bound=HydroServerCoreModel)
+
+
+def expand_docstring(model: Optional[Type['HydroServerCoreModel']] = None, include_uid: bool = False):
+    def decorator(func):
+        docstring = func.__doc__
+        if model is not None or include_uid is True:
+            docstring += '\n'
+        if include_uid is True:
+            docstring += f':param uid: The entity ID.\n'
+            docstring += f':type uid: Union[UUID, str]\n'
+        if model is not None:
+            for field_name, field in model.model_fields.items():
+                docstring += f':param {field_name}: {field.description}\n'
+                docstring += f':type {field_name}: {getattr(field.annotation, "__name__", field.annotation)}\n'
+        func.__doc__ = docstring
+        return func
+    return decorator
 
 
 class HydroServerEndpoint:
@@ -30,47 +49,39 @@ class HydroServerEndpoint:
 
         self._service = service
 
-    def list(self) -> List['HydroServerCoreModel']:
+    def _get(self, uid: Optional[Union[UUID, str]] = None) -> Union[
+        List['HydroServerModelType'], 'HydroServerModelType'
+    ]:
         """
-        Retrieve a list of entities from the endpoint.
-
-        :returns: A list of model instances representing the entities.
-        :rtype: List[HydroServerCoreModel]
-        """
-
-        response = getattr(self._service, '_request')(
-            'get', f'{self._api_route}/data/{self._endpoint_route}'
-        )
-
-        return [
-            self._model(_endpoint=self, _uid=entity.pop('id'), **entity)
-            for entity in json.loads(response.content)
-        ]
-
-    def get(self, uid: Union[UUID, str]) -> 'HydroServerCoreModel':
-        """
-        Retrieve a single entity from the endpoint by its unique identifier.
+        Fetch an entity collection or single entity from a HydroServer endpoint.
 
         :param uid: The unique identifier of the entity to retrieve.
-        :type uid: Union[UUID, str]
+        :type uid: Optional[Union[UUID, str]]
         :returns: A model instance representing the entity.
         :rtype: HydroServerCoreModel
         """
 
-        response = getattr(self._service, '_request')(
-            'get', f'{self._api_route}/data/{self._endpoint_route}/{str(uid)}'
-        )
-        entity = json.loads(response.content)
+        path = f'{self._api_route}/data/{self._endpoint_route}{"/" + str(uid) if uid else ""}'
+        response = getattr(self._service, '_request')('get', path)
 
-        return self._model(_endpoint=self, _uid=entity.pop('id'), **entity)
+        if uid:
+            entity = json.loads(response.content)
+            result = self._model(_endpoint=self, _uid=entity.pop('id'), **entity)
+        else:
+            result = [
+                self._model(_endpoint=self, _uid=entity.pop('id'), **entity)
+                for entity in json.loads(response.content)
+            ]
 
-    def create(self, **kwargs) -> 'HydroServerCoreModel':
+        return result
+
+    def _post(self, **kwargs) -> 'HydroServerModelType':
         """
-        Create a new entity in the endpoint.
+        Create a new entity using the endpoint.
 
         :param kwargs: The attributes to set on the new entity.
         :returns: A model instance representing the newly created entity.
-        :rtype: HydroServerCoreModel
+        :rtype: HydroServerModelType
         """
 
         response = getattr(self._service, '_request')(
@@ -82,7 +93,7 @@ class HydroServerEndpoint:
 
         return self._model(_endpoint=self, _uid=entity.pop('id'), **entity)
 
-    def update(self, uid: Union[UUID, str], **kwargs) -> 'HydroServerCoreModel':
+    def _patch(self, uid: Union[UUID, str], **kwargs) -> 'HydroServerModelType':
         """
         Update an existing entity in the endpoint.
 
@@ -90,7 +101,7 @@ class HydroServerEndpoint:
         :type uid: Union[UUID, str]
         :param kwargs: The attributes to update on the entity.
         :returns: A model instance representing the updated entity.
-        :rtype: HydroServerCoreModel
+        :rtype: HydroServerModelType
         """
 
         response = getattr(self._service, '_request')(
@@ -105,7 +116,7 @@ class HydroServerEndpoint:
 
         return self._model(_endpoint=self, _uid=entity.pop('id'), **entity)
 
-    def delete(self, uid: Union[UUID, str]) -> None:
+    def _delete(self, uid: Union[UUID, str]) -> None:
         """
         Delete an entity from the endpoint by its unique identifier.
 

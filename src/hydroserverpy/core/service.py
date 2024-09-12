@@ -1,10 +1,11 @@
 import requests
 from typing import Optional
-from .endpoints import (DataLoaderEndpoint, DataSourceEndpoint, DatastreamEndpoint, ThingEndpoint, SensorEndpoint,
-                        UnitEndpoint, ProcessingLevelEndpoint, ObservedPropertyEndpoint, ResultQualifierEndpoint)
+from hydroserverpy.core.endpoints import (DataLoaderEndpoint, DataSourceEndpoint, DatastreamEndpoint, ThingEndpoint,
+                                          SensorEndpoint, UnitEndpoint, ProcessingLevelEndpoint,
+                                          ObservedPropertyEndpoint, ResultQualifierEndpoint)
 
 
-class HydroServerConnection:
+class HydroServer:
     """
     Connects to a HydroServer instance and used to interact with HydroServer's Data Management API endpoints.
 

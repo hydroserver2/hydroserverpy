@@ -75,12 +75,14 @@
 <span class="kn">import</span> <span class="nn">logging</span>
 <span class="kn">import</span> <span class="nn">croniter</span>
 <span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">IO</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span> <span class="nn">requests</span> <span class="kn">import</span> <span class="n">HTTPError</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span><span class="p">,</span> <span class="n">timezone</span><span class="p">,</span> <span class="n">timedelta</span>
 <span class="kn">from</span> <span class="nn">dateutil.parser</span> <span class="kn">import</span> <span class="n">isoparse</span>
 <span class="kn">from</span> <span class="nn">.exceptions</span> <span class="kn">import</span> <span class="n">HeaderParsingError</span><span class="p">,</span> <span class="n">TimestampParsingError</span>
-<span class="kn">from</span> <span class="nn">..core.schemas</span> <span class="kn">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">Datastream</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">..core.schemas</span> <span class="kn">import</span> <span class="n">DataSource</span>
 
 <span class="n">logger</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLogger</span><span class="p">(</span><span class="s1">&#39;hydroserver_etl&#39;</span><span class="p">)</span>
 <span class="n">logger</span><span class="o">.</span><span class="n">addHandler</span><span class="p">(</span><span class="n">logging</span><span class="o">.</span><span class="n">NullHandler</span><span class="p">())</span>
@@ -94,14 +96,13 @@
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">service</span><span class="p">,</span>
             <span class="n">data_file</span><span class="p">:</span> <span class="n">IO</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
-            <span class="n">data_source</span><span class="p">:</span> <span class="n">DataSource</span><span class="p">,</span>
-            <span class="n">datastreams</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Datastream</span><span class="p">]</span>
+            <span class="n">data_source</span><span class="p">:</span> <span class="s1">&#39;DataSource&#39;</span><span class="p">,</span>
     <span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_service</span> <span class="o">=</span> <span class="n">service</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_file</span> <span class="o">=</span> <span class="n">data_file</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_data_source</span> <span class="o">=</span> <span class="n">data_source</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_datastreams</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span> <span class="n">datastream</span> <span class="k">for</span> <span class="n">datastream</span> <span class="ow">in</span> <span class="n">datastreams</span>
+            <span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">:</span> <span class="n">datastream</span> <span class="k">for</span> <span class="n">datastream</span> <span class="ow">in</span> <span class="n">data_source</span><span class="o">.</span><span class="n">datastreams</span>
         <span class="p">}</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_timestamp_column_index</span> <span class="o">=</span> <span class="kc">None</span>
@@ -302,7 +303,7 @@
                 <span class="p">)</span>
 
                 <span class="k">try</span><span class="p">:</span>
-                    <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">upload_observations</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">load_observations</span><span class="p">(</span>
                         <span class="n">uid</span><span class="o">=</span><span class="n">datastream_id</span><span class="p">,</span>
                         <span class="n">observations_df</span><span class="o">=</span><span class="n">observations_df</span><span class="p">,</span>
                     <span class="p">)</span>
@@ -367,7 +368,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Author.</p>
+    <p>&#169; Copyright 2024, Utah State University.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

@@ -2,12 +2,14 @@ import csv
 import logging
 import croniter
 import pandas as pd
-from typing import IO, List
+from typing import IO, List, TYPE_CHECKING
 from requests import HTTPError
 from datetime import datetime, timezone, timedelta
 from dateutil.parser import isoparse
 from .exceptions import HeaderParsingError, TimestampParsingError
-from ..core.schemas import DataSource, Datastream
+
+if TYPE_CHECKING:
+    from ..core.schemas import DataSource
 
 logger = logging.getLogger('hydroserver_etl')
 logger.addHandler(logging.NullHandler())
@@ -19,14 +21,13 @@ class HydroServerETL:
             self,
             service,
             data_file: IO[str],
-            data_source: DataSource,
-            datastreams: List[Datastream]
+            data_source: 'DataSource',
     ):
         self._service = service
         self._data_file = data_file
         self._data_source = data_source
         self._datastreams = {
-            datastream.uid: datastream for datastream in datastreams
+            datastream.uid: datastream for datastream in data_source.datastreams
         }
 
         self._timestamp_column_index = None
@@ -224,7 +225,7 @@ class HydroServerETL:
                 )
 
                 try:
-                    self._service.datastreams.upload_observations(
+                    self._service.datastreams.load_observations(
                         uid=datastream_id,
                         observations_df=observations_df,
                     )

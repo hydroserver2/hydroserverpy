@@ -6,6 +6,7 @@
   <title>hydroserverpy.core.schemas.things &mdash; hydroserverpy  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css?v=a0a71c94" />
 
   
   <!--[if lt IE 9]>
@@ -71,25 +72,43 @@
            <div itemprop="articleBody">
              
   <h1>Source code for hydroserverpy.core.schemas.things</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">,</span> <span class="n">AliasChoices</span><span class="p">,</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">StringConstraints</span> <span class="k">as</span> <span class="n">StrCon</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">IO</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">,</span> <span class="n">AliasChoices</span><span class="p">,</span> <span class="n">field_validator</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">IO</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
 <span class="kn">from</span> <span class="nn">country_list</span> <span class="kn">import</span> <span class="n">countries_for_language</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">HydroServerCoreModel</span><span class="p">,</span> <span class="n">HydroServerBaseModel</span>
+<span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas.base</span> <span class="kn">import</span> <span class="n">HydroServerCoreModel</span><span class="p">,</span> <span class="n">HydroServerBaseModel</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.datastreams</span> <span class="kn">import</span> <span class="n">Datastream</span>
+    <span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas.datastreams</span> <span class="kn">import</span> <span class="n">Datastream</span>
 
 
 <div class="viewcode-block" id="ThingFields">
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.ThingFields">[docs]</a>
 <span class="k">class</span> <span class="nc">ThingFields</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)]</span>
-    <span class="n">description</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
-    <span class="n">sampling_feature_type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)]</span>
-    <span class="n">sampling_feature_code</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)]</span>
-    <span class="n">site_type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)]</span>
-    <span class="n">data_disclaimer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">)]]</span> <span class="o">=</span> <span class="kc">None</span></div>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The name of the site/thing.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A description of the site/thing.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">sampling_feature_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The sampling feature type of the site/thing.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">sampling_feature_code</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A code representing the sampling feature of the site/thing.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">site_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The type of the site/thing.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">data_disclaimer</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;An optional data disclaimer to attach to observations collected at this site/thing.&#39;</span>
+    <span class="p">)</span></div>
 
 
 
@@ -102,31 +121,38 @@
 <span class="k">class</span> <span class="nc">LocationFields</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
     <span class="n">latitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="o">...</span><span class="p">,</span> <span class="n">ge</span><span class="o">=-</span><span class="mi">90</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span>
-        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">))</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;latitude&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;latitude&#39;</span><span class="p">)),</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The WGS84 latitude of the location.&#39;</span>
     <span class="p">)</span>
     <span class="n">longitude</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="o">...</span><span class="p">,</span> <span class="n">ge</span><span class="o">=-</span><span class="mi">180</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">180</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span>
-        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">))</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;longitude&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;longitude&#39;</span><span class="p">)),</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The WGS84 longitude of the location.&#39;</span>
     <span class="p">)</span>
     <span class="n">elevation_m</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
         <span class="kc">None</span><span class="p">,</span> <span class="n">ge</span><span class="o">=-</span><span class="mi">99999</span><span class="p">,</span> <span class="n">le</span><span class="o">=</span><span class="mi">99999</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;elevation_m&#39;</span><span class="p">,</span>
-        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;elevation_m&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;elevation_m&#39;</span><span class="p">))</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;elevation_m&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;elevation_m&#39;</span><span class="p">)),</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The elevation in meters of the location.&#39;</span>
     <span class="p">)</span>
-    <span class="n">elevation_datum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;elevationDatum&#39;</span><span class="p">,</span>
-        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;elevationDatum&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;elevationDatum&#39;</span><span class="p">))</span>
+    <span class="n">elevation_datum</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;elevationDatum&#39;</span><span class="p">,</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;elevationDatum&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;elevationDatum&#39;</span><span class="p">)),</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The datum used to represent the elevation of the location.&#39;</span>
     <span class="p">)</span>
-    <span class="n">state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;state&#39;</span><span class="p">,</span>
-        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">))</span>
+    <span class="n">state</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;state&#39;</span><span class="p">,</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;state&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;state&#39;</span><span class="p">)),</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The state/province of the location.&#39;</span>
     <span class="p">)</span>
-    <span class="n">county</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;county&#39;</span><span class="p">,</span>
-        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;county&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;county&#39;</span><span class="p">))</span>
+    <span class="n">county</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;county&#39;</span><span class="p">,</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;county&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;county&#39;</span><span class="p">)),</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The county/district of the location.&#39;</span>
     <span class="p">)</span>
-    <span class="n">country</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">2</span><span class="p">)]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
-        <span class="kc">None</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;country&#39;</span><span class="p">,</span>
-        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">))</span>
+    <span class="n">country</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">serialization_alias</span><span class="o">=</span><span class="s1">&#39;country&#39;</span><span class="p">,</span>
+        <span class="n">validation_alias</span><span class="o">=</span><span class="n">AliasChoices</span><span class="p">(</span><span class="s1">&#39;country&#39;</span><span class="p">,</span> <span class="n">AliasPath</span><span class="p">(</span><span class="s1">&#39;location&#39;</span><span class="p">,</span> <span class="s1">&#39;country&#39;</span><span class="p">)),</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The ISO 3166-1 alpha-2 country code of the location.&#39;</span>
     <span class="p">)</span>
 
 <div class="viewcode-block" id="LocationFields.check_country_code">
@@ -155,23 +181,24 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing">[docs]</a>
 <span class="k">class</span> <span class="nc">Thing</span><span class="p">(</span><span class="n">HydroServerCoreModel</span><span class="p">,</span> <span class="n">ThingFields</span><span class="p">,</span> <span class="n">LocationFields</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A model representing a Thing, combining core attributes from ThingFields and LocationFields with methods for</span>
+<span class="sd">    A model representing a site/thing, combining core attributes from ThingFields and LocationFields with methods for</span>
 <span class="sd">    interacting with related entities.</span>
 
-<span class="sd">    :ivar _datastreams: A private attribute to cache the list of datastreams associated with the Thing.</span>
-<span class="sd">    :ivar _tags: A private attribute to cache the list of tags associated with the Thing.</span>
-<span class="sd">    :ivar _photos: A private attribute to cache the list of photos associated with the Thing.</span>
-<span class="sd">    :ivar _archive: A private attribute to cache the archive associated with the Thing.</span>
+<span class="sd">    :ivar _datastreams: A private attribute to cache the list of datastreams associated with the thing.</span>
+<span class="sd">    :ivar _tags: A private attribute to cache the list of tags associated with the thing.</span>
+<span class="sd">    :ivar _photos: A private attribute to cache the list of photos associated with the thing.</span>
+<span class="sd">    :ivar _archive: A private attribute to cache the archive associated with the thing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_endpoint</span><span class="p">,</span> <span class="n">_uid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize a Thing instance.</span>
 
-<span class="sd">        :param _endpoint: The endpoint associated with the Thing.</span>
-<span class="sd">        :param _uid: The unique identifier for the Thing.</span>
+<span class="sd">        :param _endpoint: The endpoint associated with the thing.</span>
+<span class="sd">        :type _endpoint: str</span>
+<span class="sd">        :param _uid: The unique identifier for the thing.</span>
 <span class="sd">        :type _uid: Optional[UUID]</span>
-<span class="sd">        :param data: Additional attributes for the Thing.</span>
+<span class="sd">        :param data: Additional attributes for the thing.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">_endpoint</span><span class="o">=</span><span class="n">_endpoint</span><span class="p">,</span> <span class="n">_uid</span><span class="o">=</span><span class="n">_uid</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">)</span>
@@ -183,10 +210,10 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">datastreams</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;Datastream&#39;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The datastreams associated with the Thing. If not already cached, fetch the datastreams from the</span>
+<span class="sd">        The datastreams associated with the thing. If not already cached, fetch the datastreams from the</span>
 <span class="sd">        server.</span>
 
-<span class="sd">        :return: A list of datastreams associated with the Thing.</span>
+<span class="sd">        :return: A list of datastreams associated with the thing.</span>
 <span class="sd">        :rtype: List[Datastream]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -198,9 +225,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">tags</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;Tag&#39;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The tags associated with the Thing. If not already cached, fetch the tags from the server.</span>
+<span class="sd">        The tags associated with the thing. If not already cached, fetch the tags from the server.</span>
 
-<span class="sd">        :return: A list of tags associated with the Thing.</span>
+<span class="sd">        :return: A list of tags associated with the thing.</span>
 <span class="sd">        :rtype: List[Tag]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -212,9 +239,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">photos</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="s1">&#39;Photo&#39;</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The photos associated with the Thing. If not already cached, fetch the photos from the server.</span>
+<span class="sd">        The photos associated with the thing. If not already cached, fetch the photos from the server.</span>
 
-<span class="sd">        :return: A list of photos associated with the Thing.</span>
+<span class="sd">        :return: A list of photos associated with the thing.</span>
 <span class="sd">        :rtype: List[Photo]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -226,9 +253,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">archive</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Archive&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The archive associated with the Thing. If not already cached, fetch the archive from the server.</span>
+<span class="sd">        The archive associated with the thing. If not already cached, fetch the archive from the server.</span>
 
-<span class="sd">        :return: The archive associated with the Thing.</span>
+<span class="sd">        :return: The archive associated with the thing.</span>
 <span class="sd">        :rtype: Archive</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -241,7 +268,7 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.refresh">[docs]</a>
     <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Refresh the Thing with the latest data from the server and update cached datastreams, tags, photos, and archive</span>
+<span class="sd">        Refresh the thing with the latest data from the server and update cached datastreams, tags, photos, and archive</span>
 <span class="sd">        if they were previously loaded.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -262,7 +289,7 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.add_tag">[docs]</a>
     <span class="k">def</span> <span class="nf">add_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a new tag to the Thing.</span>
+<span class="sd">        Add a new tag to the thing.</span>
 
 <span class="sd">        :param key: The key of the new tag.</span>
 <span class="sd">        :param value: The value of the new tag.</span>
@@ -276,7 +303,7 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.update_tag">[docs]</a>
     <span class="k">def</span> <span class="nf">update_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update the value of an existing tag on the Thing.</span>
+<span class="sd">        Update the value of an existing tag on the thing.</span>
 
 <span class="sd">        :param key: The key of the tag to update.</span>
 <span class="sd">        :param value: The new value for the tag.</span>
@@ -291,7 +318,7 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.delete_tag">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete a tag from the Thing.</span>
+<span class="sd">        Delete a tag from the thing.</span>
 
 <span class="sd">        :param key: The key of the tag to delete.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -305,7 +332,7 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.add_photo">[docs]</a>
     <span class="k">def</span> <span class="nf">add_photo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">photo</span><span class="p">:</span> <span class="n">IO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Add a photo to the Thing.</span>
+<span class="sd">        Add a photo to the thing.</span>
 
 <span class="sd">        :param photo: The photo file to upload.</span>
 <span class="sd">        :type photo: IO</span>
@@ -319,7 +346,7 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing.delete_photo">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_photo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">link</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete a photo from the Thing.</span>
+<span class="sd">        Delete a photo from the thing.</span>
 
 <span class="sd">        :param link: The link to the photo to delete.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -335,13 +362,25 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive">[docs]</a>
 <span class="k">class</span> <span class="nc">Archive</span><span class="p">(</span><span class="n">HydroServerBaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A model representing an archive associated with a Thing.</span>
+<span class="sd">    A model representing an archive associated with a thing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">link</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">frequency</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;daily&#39;</span><span class="p">,</span> <span class="s1">&#39;weekly&#39;</span><span class="p">,</span> <span class="s1">&#39;monthly&#39;</span><span class="p">]]</span>
-    <span class="n">path</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]</span>
-    <span class="n">datastream_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">UUID</span><span class="p">]</span></div>
+    <span class="n">link</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A link to the HydroShare resource containing the archived site/thing.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;daily&#39;</span><span class="p">,</span> <span class="s1">&#39;weekly&#39;</span><span class="p">,</span> <span class="s1">&#39;monthly&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The frequency at which the site/thing should be archived.&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The path within the HydroShare resource containing the archived data.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">datastream_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The list of datastreams that are included in the archived data.&#39;</span><span class="p">,</span>
+    <span class="p">)</span></div>
 
 
 
@@ -349,11 +388,17 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag">[docs]</a>
 <span class="k">class</span> <span class="nc">Tag</span><span class="p">(</span><span class="n">HydroServerBaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A model representing a tag associated with a Thing.</span>
+<span class="sd">    A model representing a tag associated with a thing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">key</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]</span>
-    <span class="n">value</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]</span></div>
+    <span class="n">key</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The key of the tag.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The value of the tag.&#39;</span>
+    <span class="p">)</span></div>
 
 
 
@@ -361,11 +406,17 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo">[docs]</a>
 <span class="k">class</span> <span class="nc">Photo</span><span class="p">(</span><span class="n">HydroServerBaseModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A model representing a photo associated with a Thing.</span>
+<span class="sd">    A model representing a photo associated with a thing.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">file_path</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
-    <span class="n">link</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span></div>
+    <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The file path of the photo.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">link</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The link to the photo.&#39;</span>
+    <span class="p">)</span></div>
 
 </pre></div>
 
@@ -376,7 +427,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Author.</p>
+    <p>&#169; Copyright 2024, Utah State University.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

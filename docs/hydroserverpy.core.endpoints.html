@@ -7,6 +7,7 @@
   <title>hydroserverpy.core.endpoints package &mdash; hydroserverpy  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css?v=a0a71c94" />
 
   
   <!--[if lt IE 9]>
@@ -100,7 +101,7 @@
 <span id="hydroserverpy-core-endpoints-base-module"></span><h2>hydroserverpy.core.endpoints.base module<a class="headerlink" href="#module-hydroserverpy.core.endpoints.base" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.base.HydroServerEndpoint">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.base.</span></span><span class="sig-name descname"><span class="pre">HydroServerEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HydroServer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/base.html#HydroServerEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.base.</span></span><span class="sig-name descname"><span class="pre">HydroServerEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/base.html#HydroServerEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>A base class for interacting with specific API endpoints within a HydroServer service.</p>
 <dl class="field-list simple">
@@ -112,96 +113,19 @@
 </ul>
 </dd>
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.base.HydroServerEndpoint.create">
-<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel" title="hydroserverpy.core.schemas.base.HydroServerCoreModel"><span class="pre">HydroServerCoreModel</span></a></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/base.html#HydroServerEndpoint.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint.create" title="Link to this definition"></a></dt>
-<dd><p>Create a new entity in the endpoint.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>kwargs</strong> – The attributes to set on the new entity.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A model instance representing the newly created entity.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel" title="hydroserverpy.core.schemas.base.HydroServerCoreModel">HydroServerCoreModel</a></p>
-</dd>
-</dl>
 </dd></dl>
 
-<dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.base.HydroServerEndpoint.delete">
-<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/base.html#HydroServerEndpoint.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint.delete" title="Link to this definition"></a></dt>
-<dd><p>Delete an entity from the endpoint by its unique identifier.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the entity to delete.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.base.HydroServerEndpoint.get">
-<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel" title="hydroserverpy.core.schemas.base.HydroServerCoreModel"><span class="pre">HydroServerCoreModel</span></a></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/base.html#HydroServerEndpoint.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint.get" title="Link to this definition"></a></dt>
-<dd><p>Retrieve a single entity from the endpoint by its unique identifier.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the entity to retrieve.</p>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A model instance representing the entity.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel" title="hydroserverpy.core.schemas.base.HydroServerCoreModel">HydroServerCoreModel</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.base.HydroServerEndpoint.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel" title="hydroserverpy.core.schemas.base.HydroServerCoreModel"><span class="pre">HydroServerCoreModel</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/base.html#HydroServerEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint.list" title="Link to this definition"></a></dt>
-<dd><p>Retrieve a list of entities from the endpoint.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Returns<span class="colon">:</span></dt>
-<dd class="field-odd"><p>A list of model instances representing the entities.</p>
-</dd>
-<dt class="field-even">Return type<span class="colon">:</span></dt>
-<dd class="field-even"><p>List[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel" title="hydroserverpy.core.schemas.base.HydroServerCoreModel">HydroServerCoreModel</a>]</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.base.HydroServerEndpoint.update">
-<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel" title="hydroserverpy.core.schemas.base.HydroServerCoreModel"><span class="pre">HydroServerCoreModel</span></a></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/base.html#HydroServerEndpoint.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint.update" title="Link to this definition"></a></dt>
-<dd><p>Update an existing entity in the endpoint.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the entity to update.</p></li>
-<li><p><strong>kwargs</strong> – The attributes to update on the entity.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A model instance representing the updated entity.</p>
-</dd>
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.base.HydroServerCoreModel" title="hydroserverpy.core.schemas.base.HydroServerCoreModel">HydroServerCoreModel</a></p>
-</dd>
-</dl>
-</dd></dl>
-
-</dd></dl>
+<dl class="py function">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.base.expand_docstring">
+<span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.base.</span></span><span class="sig-name descname"><span class="pre">expand_docstring</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_uid</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/base.html#expand_docstring"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.base.expand_docstring" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </section>
 <section id="module-hydroserverpy.core.endpoints.data_loaders">
 <span id="hydroserverpy-core-endpoints-data-loaders-module"></span><h2>hydroserverpy.core.endpoints.data_loaders module<a class="headerlink" href="#module-hydroserverpy.core.endpoints.data_loaders" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.data_loaders.</span></span><span class="sig-name descname"><span class="pre">DataLoaderEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HydroServer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_loaders.html#DataLoaderEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.data_loaders.</span></span><span class="sig-name descname"><span class="pre">DataLoaderEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_loaders.html#DataLoaderEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="hydroserverpy.core.endpoints.base.HydroServerEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">HydroServerEndpoint</span></code></a></p>
 <p>An endpoint for interacting with DataLoader entities in the HydroServer service.</p>
 <dl class="field-list simple">
@@ -214,18 +138,96 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.list_data_sources">
-<span class="sig-name descname"><span class="pre">list_data_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource" title="hydroserverpy.core.schemas.data_sources.DataSource"><span class="pre">DataSource</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_loaders.html#DataLoaderEndpoint.list_data_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.list_data_sources" title="Link to this definition"></a></dt>
-<dd><p>Retrieve a list of DataSource entities associated with a specific DataLoader.</p>
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_loaders.html#DataLoaderEndpoint.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.create" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Create a new data loader in HydroServer.</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the DataLoader.</p>
+<dd class="field-odd"><p><strong>name</strong> (<em>str</em>) – The name of the data loader.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader" title="hydroserverpy.core.schemas.data_loaders.DataLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_loaders.html#DataLoaderEndpoint.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.delete" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Delete an existing data loader in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_loaders.html#DataLoaderEndpoint.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.get" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Retrieve a data loader owned by the logged-in user.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader" title="hydroserverpy.core.schemas.data_loaders.DataLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_loaders.html#DataLoaderEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of data loaders owned by the logged-in user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader" title="hydroserverpy.core.schemas.data_loaders.DataLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.list_data_sources">
+<span class="sig-name descname"><span class="pre">list_data_sources</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_loaders.html#DataLoaderEndpoint.list_data_sources"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.list_data_sources" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a list of data source entities associated with a specific data loader.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the data loader.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of DataSource instances associated with the DataLoader.</p>
+<dd class="field-even"><p>A list of data sour instances associated with the data loader.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource" title="hydroserverpy.core.schemas.data_sources.DataSource">DataSource</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_loaders.html#DataLoaderEndpoint.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint.update" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Update an existing data loader in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the data loader.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_loaders.DataLoader" title="hydroserverpy.core.schemas.data_loaders.DataLoader"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataLoader</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -237,9 +239,9 @@
 <span id="hydroserverpy-core-endpoints-data-sources-module"></span><h2>hydroserverpy.core.endpoints.data_sources module<a class="headerlink" href="#module-hydroserverpy.core.endpoints.data_sources" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.data_sources.</span></span><span class="sig-name descname"><span class="pre">DataSourceEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HydroServer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_sources.html#DataSourceEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.data_sources.</span></span><span class="sig-name descname"><span class="pre">DataSourceEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_sources.html#DataSourceEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="hydroserverpy.core.endpoints.base.HydroServerEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">HydroServerEndpoint</span></code></a></p>
-<p>An endpoint for interacting with DataSource entities in the HydroServer service.</p>
+<p>An endpoint for interacting with data source entities in the HydroServer service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -250,18 +252,140 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.list_datastreams">
-<span class="sig-name descname"><span class="pre">list_datastreams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream"><span class="pre">Datastream</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_sources.html#DataSourceEndpoint.list_datastreams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.list_datastreams" title="Link to this definition"></a></dt>
-<dd><p>Retrieve a list of Datastream entities associated with a specific DataSource.</p>
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_sources.html#DataSourceEndpoint.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.create" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Create a new data source in HydroServer.</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the DataSource.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the data source.</p></li>
+<li><p><strong>path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The path to a local data source file.</p></li>
+<li><p><strong>link</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The link to a remote data source file.</p></li>
+<li><p><strong>header_row</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The row number where the data begins.</p></li>
+<li><p><strong>data_start_row</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The row number where the data begins.</p></li>
+<li><p><strong>delimiter</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The delimiter used by the data source file.</p></li>
+<li><p><strong>quote_char</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The quote delimiter character used by the data source file.</p></li>
+<li><p><strong>interval</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The time interval at which the data source should be loaded.</p></li>
+<li><p><strong>interval_units</strong> (<em>Optional</em><em>[</em><em>Literal</em><em>[</em><em>'minutes'</em><em>, </em><em>'hours'</em><em>, </em><em>'days'</em><em>, </em><em>'weeks'</em><em>, </em><em>'months'</em><em>]</em><em>]</em>) – The interval units used by the data source file.</p></li>
+<li><p><strong>crontab</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The crontab used to schedule when the data source should be loaded.</p></li>
+<li><p><strong>start_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – When the data source should begin being loaded.</p></li>
+<li><p><strong>end_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – When the data source should stop being loaded.</p></li>
+<li><p><strong>paused</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – Whether loading the data source should be paused or not.</p></li>
+<li><p><strong>timestamp_column</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em>) – The column of the data source file containing the timestamps.</p></li>
+<li><p><strong>timestamp_format</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The format of the timestamps, using Python’s datetime strftime codes.</p></li>
+<li><p><strong>timestamp_offset</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – An ISO 8601 time zone offset designator code to be applied to timestamps in the data source file.</p></li>
+<li><p><strong>data_loader_id</strong> (<em>UUID</em>) – The ID of the data loader responsible for loading this data source.</p></li>
+<li><p><strong>data_source_thru</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The timestamp through which the data source contains data.</p></li>
+<li><p><strong>last_sync_successful</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – Whether the last data loading attempt was successful of not.</p></li>
+<li><p><strong>last_sync_message</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A message generated by the data loader it attempted to load data from this data source.</p></li>
+<li><p><strong>last_synced</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The last time the data loader attempted to load data from this data source.</p></li>
+<li><p><strong>next_sync</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The next time the data loader will attempt to load data from this data source.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource" title="hydroserverpy.core.schemas.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_sources.html#DataSourceEndpoint.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.delete" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Delete an existing data source in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_sources.html#DataSourceEndpoint.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.get" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Retrieve a data source owned by the logged-in user.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource" title="hydroserverpy.core.schemas.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_sources.html#DataSourceEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of data sources owned by the logged-in user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource" title="hydroserverpy.core.schemas.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.list_datastreams">
+<span class="sig-name descname"><span class="pre">list_datastreams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_sources.html#DataSourceEndpoint.list_datastreams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.list_datastreams" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a list of datastream entities associated with a specific data source.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the data source.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of Datastream instances associated with the DataSource.</p>
+<dd class="field-even"><p>A list of datastream instances associated with the data source.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream">Datastream</a>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/data_sources.html#DataSourceEndpoint.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.update" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Update an existing data source in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the data source.</p></li>
+<li><p><strong>path</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The path to a local data source file.</p></li>
+<li><p><strong>link</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The link to a remote data source file.</p></li>
+<li><p><strong>header_row</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The row number where the data begins.</p></li>
+<li><p><strong>data_start_row</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The row number where the data begins.</p></li>
+<li><p><strong>delimiter</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The delimiter used by the data source file.</p></li>
+<li><p><strong>quote_char</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The quote delimiter character used by the data source file.</p></li>
+<li><p><strong>interval</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The time interval at which the data source should be loaded.</p></li>
+<li><p><strong>interval_units</strong> (<em>Optional</em><em>[</em><em>Literal</em><em>[</em><em>'minutes'</em><em>, </em><em>'hours'</em><em>, </em><em>'days'</em><em>, </em><em>'weeks'</em><em>, </em><em>'months'</em><em>]</em><em>]</em>) – The interval units used by the data source file.</p></li>
+<li><p><strong>crontab</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The crontab used to schedule when the data source should be loaded.</p></li>
+<li><p><strong>start_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – When the data source should begin being loaded.</p></li>
+<li><p><strong>end_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – When the data source should stop being loaded.</p></li>
+<li><p><strong>paused</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – Whether loading the data source should be paused or not.</p></li>
+<li><p><strong>timestamp_column</strong> (<em>Union</em><em>[</em><em>int</em><em>, </em><em>str</em><em>]</em>) – The column of the data source file containing the timestamps.</p></li>
+<li><p><strong>timestamp_format</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The format of the timestamps, using Python’s datetime strftime codes.</p></li>
+<li><p><strong>timestamp_offset</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – An ISO 8601 time zone offset designator code to be applied to timestamps in the data source file.</p></li>
+<li><p><strong>data_loader_id</strong> (<em>UUID</em>) – The ID of the data loader responsible for loading this data source.</p></li>
+<li><p><strong>data_source_thru</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The timestamp through which the data source contains data.</p></li>
+<li><p><strong>last_sync_successful</strong> (<em>Optional</em><em>[</em><em>bool</em><em>]</em>) – Whether the last data loading attempt was successful of not.</p></li>
+<li><p><strong>last_sync_message</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A message generated by the data loader it attempted to load data from this data source.</p></li>
+<li><p><strong>last_synced</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The last time the data loader attempted to load data from this data source.</p></li>
+<li><p><strong>next_sync</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The next time the data loader will attempt to load data from this data source.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.data_sources.DataSource" title="hydroserverpy.core.schemas.data_sources.DataSource"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataSource</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -275,7 +399,7 @@
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.datastreams.</span></span><span class="sig-name descname"><span class="pre">DatastreamEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="hydroserverpy.core.endpoints.base.HydroServerEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">HydroServerEndpoint</span></code></a></p>
-<p>An endpoint for interacting with Datastream entities in the HydroServer service.</p>
+<p>An endpoint for interacting with datastream entities in the HydroServer service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -286,13 +410,88 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.get_observations">
-<span class="sig-name descname"><span class="pre">get_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">datetime</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_quality</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_all</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">DataFrame</span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.get_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.get_observations" title="Link to this definition"></a></dt>
-<dd><p>Retrieve observations from a specific Datastream.</p>
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.create" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Create a new datastream in HydroServer.</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the Datastream.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the datastream.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – A description of the datastream.</p></li>
+<li><p><strong>observation_type</strong> (<em>str</em>) – The type of observation recorded in this datastream</p></li>
+<li><p><strong>sampled_medium</strong> (<em>str</em>) – The physical medium in which the observations were sampled.</p></li>
+<li><p><strong>no_data_value</strong> (<em>float</em>) – A numerical value representing no data at a given timestamp.</p></li>
+<li><p><strong>aggregation_statistic</strong> (<em>str</em>) – The statistic calculated over the time aggregation interval of observations in this datastream.</p></li>
+<li><p><strong>time_aggregation_interval</strong> (<em>float</em>) – The time interval over which the aggregation statistic is applied to observations.</p></li>
+<li><p><strong>status</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The current status of this datastream.</p></li>
+<li><p><strong>result_type</strong> (<em>str</em>) – The type of result recorded in this datastream.</p></li>
+<li><p><strong>value_count</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The total number of observations in this datastream.</p></li>
+<li><p><strong>phenomenon_begin_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The timestamp representing when the first phenomenon recorded in this datastream occurred.</p></li>
+<li><p><strong>phenomenon_end_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The timestamp representing when the last phenomenon recorded in this datastream occurred.</p></li>
+<li><p><strong>result_begin_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The timestamp representing when the first observation of this datastream was recorded.</p></li>
+<li><p><strong>result_end_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The timestamp representing when the last observation of this datastream was recorded.</p></li>
+<li><p><strong>data_source_id</strong> (<em>Optional</em><em>[</em><em>uuid.UUID</em><em>]</em>) – The data source for observations of this datastream.</p></li>
+<li><p><strong>data_source_column</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The name of the column containing this datastream’s observations in the data source file.</p></li>
+<li><p><strong>is_visible</strong> (<em>bool</em>) – Whether this datastream is publicly visible.</p></li>
+<li><p><strong>is_data_visible</strong> (<em>bool</em>) – Whether this observations associated with this datastream are publicly visible.</p></li>
+<li><p><strong>thing_id</strong> (<em>UUID</em>) – The site/thing from which observations of this datastream were recorded.</p></li>
+<li><p><strong>sensor_id</strong> (<em>UUID</em>) – The sensor used to record observations of this datastream.</p></li>
+<li><p><strong>observed_property_id</strong> (<em>UUID</em>) – The physical property being observed for this datastream.</p></li>
+<li><p><strong>processing_level_id</strong> (<em>UUID</em>) – The processing level applied to this datastream.</p></li>
+<li><p><strong>unit_id</strong> (<em>UUID</em>) – The unit used to record observations for this datastream.</p></li>
+<li><p><strong>time_aggregation_interval_units</strong> (<em>Literal</em><em>[</em><em>'seconds'</em><em>, </em><em>'minutes'</em><em>, </em><em>'hours'</em><em>, </em><em>'days'</em><em>]</em>) – The time unit for this datastream’s time aggregation interval</p></li>
+<li><p><strong>intended_time_spacing</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The time interval at which observations should be made for this datastream.</p></li>
+<li><p><strong>intended_time_spacing_units</strong> (<em>Optional</em><em>[</em><em>Literal</em><em>[</em><em>'seconds'</em><em>, </em><em>'minutes'</em><em>, </em><em>'hours'</em><em>, </em><em>'days'</em><em>]</em><em>]</em>) – The time unit for this datastream’s intended time spacing interval</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datastream</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.delete" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Delete an existing datastream in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.get" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Retrieve a datastream owned by the logged-in user.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datastream</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.get_observations">
+<span class="sig-name descname"><span class="pre">get_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">start_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">end_time</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">page_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_quality</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">fetch_all</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.get_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.get_observations" title="Link to this definition"></a></dt>
+<dd><p>Retrieve observations from a specific datastream.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the datastream.</p></li>
 <li><p><strong>start_time</strong> (<em>datetime</em><em>, </em><em>optional</em>) – The start time for filtering observations.</p></li>
 <li><p><strong>end_time</strong> (<em>datetime</em><em>, </em><em>optional</em>) – The end time for filtering observations.</p></li>
 <li><p><strong>page</strong> (<em>int</em><em>, </em><em>optional</em>) – The page number to retrieve (used for pagination).</p></li>
@@ -311,18 +510,76 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.upload_observations">
-<span class="sig-name descname"><span class="pre">upload_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observations</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.upload_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.upload_observations" title="Link to this definition"></a></dt>
-<dd><p>Upload observations to a specific Datastream.</p>
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of datastreams owned by the logged-in user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datastream</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.load_observations">
+<span class="sig-name descname"><span class="pre">load_observations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observations</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.load_observations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.load_observations" title="Link to this definition"></a></dt>
+<dd><p>Load observations to a specific datastream.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the Datastream.</p></li>
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The unique identifier of the datastream.</p></li>
 <li><p><strong>observations</strong> (<em>pd.DataFrame</em>) – A DataFrame containing the observations to upload.</p></li>
 </ul>
 </dd>
-<dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>None</p>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.update" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Update an existing datastream in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the datastream.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – A description of the datastream.</p></li>
+<li><p><strong>observation_type</strong> (<em>str</em>) – The type of observation recorded in this datastream</p></li>
+<li><p><strong>sampled_medium</strong> (<em>str</em>) – The physical medium in which the observations were sampled.</p></li>
+<li><p><strong>no_data_value</strong> (<em>float</em>) – A numerical value representing no data at a given timestamp.</p></li>
+<li><p><strong>aggregation_statistic</strong> (<em>str</em>) – The statistic calculated over the time aggregation interval of observations in this datastream.</p></li>
+<li><p><strong>time_aggregation_interval</strong> (<em>float</em>) – The time interval over which the aggregation statistic is applied to observations.</p></li>
+<li><p><strong>status</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The current status of this datastream.</p></li>
+<li><p><strong>result_type</strong> (<em>str</em>) – The type of result recorded in this datastream.</p></li>
+<li><p><strong>value_count</strong> (<em>Optional</em><em>[</em><em>int</em><em>]</em>) – The total number of observations in this datastream.</p></li>
+<li><p><strong>phenomenon_begin_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The timestamp representing when the first phenomenon recorded in this datastream occurred.</p></li>
+<li><p><strong>phenomenon_end_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The timestamp representing when the last phenomenon recorded in this datastream occurred.</p></li>
+<li><p><strong>result_begin_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The timestamp representing when the first observation of this datastream was recorded.</p></li>
+<li><p><strong>result_end_time</strong> (<em>Optional</em><em>[</em><em>datetime.datetime</em><em>]</em>) – The timestamp representing when the last observation of this datastream was recorded.</p></li>
+<li><p><strong>data_source_id</strong> (<em>Optional</em><em>[</em><em>uuid.UUID</em><em>]</em>) – The data source for observations of this datastream.</p></li>
+<li><p><strong>data_source_column</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The name of the column containing this datastream’s observations in the data source file.</p></li>
+<li><p><strong>is_visible</strong> (<em>bool</em>) – Whether this datastream is publicly visible.</p></li>
+<li><p><strong>is_data_visible</strong> (<em>bool</em>) – Whether this observations associated with this datastream are publicly visible.</p></li>
+<li><p><strong>thing_id</strong> (<em>UUID</em>) – The site/thing from which observations of this datastream were recorded.</p></li>
+<li><p><strong>sensor_id</strong> (<em>UUID</em>) – The sensor used to record observations of this datastream.</p></li>
+<li><p><strong>observed_property_id</strong> (<em>UUID</em>) – The physical property being observed for this datastream.</p></li>
+<li><p><strong>processing_level_id</strong> (<em>UUID</em>) – The processing level applied to this datastream.</p></li>
+<li><p><strong>unit_id</strong> (<em>UUID</em>) – The unit used to record observations for this datastream.</p></li>
+<li><p><strong>time_aggregation_interval_units</strong> (<em>Literal</em><em>[</em><em>'seconds'</em><em>, </em><em>'minutes'</em><em>, </em><em>'hours'</em><em>, </em><em>'days'</em><em>]</em>) – The time unit for this datastream’s time aggregation interval</p></li>
+<li><p><strong>intended_time_spacing</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The time interval at which observations should be made for this datastream.</p></li>
+<li><p><strong>intended_time_spacing_units</strong> (<em>Optional</em><em>[</em><em>Literal</em><em>[</em><em>'seconds'</em><em>, </em><em>'minutes'</em><em>, </em><em>'hours'</em><em>, </em><em>'days'</em><em>]</em><em>]</em>) – The time unit for this datastream’s intended time spacing interval</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datastream</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -336,7 +593,7 @@
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.observed_properties.</span></span><span class="sig-name descname"><span class="pre">ObservedPropertyEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/observed_properties.html#ObservedPropertyEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="hydroserverpy.core.endpoints.base.HydroServerEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">HydroServerEndpoint</span></code></a></p>
-<p>An endpoint for interacting with ObservedProperty entities in the HydroServer service.</p>
+<p>An endpoint for interacting with observed property entities in the HydroServer service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -346,6 +603,94 @@
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/observed_properties.html#ObservedPropertyEndpoint.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.create" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Create a new observed property in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the observed property.</p></li>
+<li><p><strong>definition</strong> (<em>str</em>) – The definition of the observed property.</p></li>
+<li><p><strong>description</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A description of the observed property.</p></li>
+<li><p><strong>type</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The type of the observed property.</p></li>
+<li><p><strong>code</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A code representing the observed property.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty" title="hydroserverpy.core.schemas.observed_properties.ObservedProperty"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedProperty</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/observed_properties.html#ObservedPropertyEndpoint.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.delete" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Delete an existing observed property in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/observed_properties.html#ObservedPropertyEndpoint.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.get" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Retrieve an observed property owned by the logged-in user.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty" title="hydroserverpy.core.schemas.observed_properties.ObservedProperty"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedProperty</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/observed_properties.html#ObservedPropertyEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of observed properties owned by the logged-in user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty" title="hydroserverpy.core.schemas.observed_properties.ObservedProperty"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedProperty</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/observed_properties.html#ObservedPropertyEndpoint.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.update" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Update an existing observed property in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the observed property.</p></li>
+<li><p><strong>definition</strong> (<em>str</em>) – The definition of the observed property.</p></li>
+<li><p><strong>description</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A description of the observed property.</p></li>
+<li><p><strong>type</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The type of the observed property.</p></li>
+<li><p><strong>code</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A code representing the observed property.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty" title="hydroserverpy.core.schemas.observed_properties.ObservedProperty"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedProperty</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -355,7 +700,7 @@
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint">
 <em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.processing_levels.</span></span><span class="sig-name descname"><span class="pre">ProcessingLevelEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/processing_levels.html#ProcessingLevelEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="hydroserverpy.core.endpoints.base.HydroServerEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">HydroServerEndpoint</span></code></a></p>
-<p>An endpoint for interacting with ProcessingLevel entities in the HydroServer service.</p>
+<p>An endpoint for interacting with processing level entities in the HydroServer service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -365,6 +710,90 @@
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/processing_levels.html#ProcessingLevelEndpoint.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.create" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Create a new processing level in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>code</strong> (<em>str</em>) – A code representing the processing level.</p></li>
+<li><p><strong>definition</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The definition of the processing level.</p></li>
+<li><p><strong>explanation</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The explanation of the processing level.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel" title="hydroserverpy.core.schemas.processing_levels.ProcessingLevel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessingLevel</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/processing_levels.html#ProcessingLevelEndpoint.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.delete" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Delete an existing processing level in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/processing_levels.html#ProcessingLevelEndpoint.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.get" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Retrieve a processing level owned by the logged-in user.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel" title="hydroserverpy.core.schemas.processing_levels.ProcessingLevel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessingLevel</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/processing_levels.html#ProcessingLevelEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of processing levels owned by the logged-in user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel" title="hydroserverpy.core.schemas.processing_levels.ProcessingLevel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessingLevel</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/processing_levels.html#ProcessingLevelEndpoint.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.update" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Update an existing processing level in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p></li>
+<li><p><strong>code</strong> (<em>str</em>) – A code representing the processing level.</p></li>
+<li><p><strong>definition</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The definition of the processing level.</p></li>
+<li><p><strong>explanation</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The explanation of the processing level.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel" title="hydroserverpy.core.schemas.processing_levels.ProcessingLevel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessingLevel</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -372,9 +801,9 @@
 <span id="hydroserverpy-core-endpoints-result-qualifiers-module"></span><h2>hydroserverpy.core.endpoints.result_qualifiers module<a class="headerlink" href="#module-hydroserverpy.core.endpoints.result_qualifiers" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.result_qualifiers.</span></span><span class="sig-name descname"><span class="pre">ResultQualifierEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HydroServer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/result_qualifiers.html#ResultQualifierEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.result_qualifiers.</span></span><span class="sig-name descname"><span class="pre">ResultQualifierEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/result_qualifiers.html#ResultQualifierEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="hydroserverpy.core.endpoints.base.HydroServerEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">HydroServerEndpoint</span></code></a></p>
-<p>An endpoint for interacting with ResultQualifier entities in the HydroServer service.</p>
+<p>An endpoint for interacting with result qualifier entities in the HydroServer service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -384,6 +813,88 @@
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/result_qualifiers.html#ResultQualifierEndpoint.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.create" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Create a new result qualifier in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>code</strong> (<em>str</em>) – A code representing the result qualifier.</p></li>
+<li><p><strong>description</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A description of the result qualifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier" title="hydroserverpy.core.schemas.result_qualifiers.ResultQualifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultQualifier</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/result_qualifiers.html#ResultQualifierEndpoint.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.delete" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Delete an existing result qualifier in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/result_qualifiers.html#ResultQualifierEndpoint.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.get" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Retrieve a result qualifier owned by the logged-in user.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier" title="hydroserverpy.core.schemas.result_qualifiers.ResultQualifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultQualifier</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/result_qualifiers.html#ResultQualifierEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of result qualifiers owned by the logged-in user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier" title="hydroserverpy.core.schemas.result_qualifiers.ResultQualifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultQualifier</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/result_qualifiers.html#ResultQualifierEndpoint.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.update" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Update an existing result qualifier in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p></li>
+<li><p><strong>code</strong> (<em>str</em>) – A code representing the result qualifier.</p></li>
+<li><p><strong>description</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A description of the result qualifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier" title="hydroserverpy.core.schemas.result_qualifiers.ResultQualifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultQualifier</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -391,9 +902,9 @@
 <span id="hydroserverpy-core-endpoints-sensors-module"></span><h2>hydroserverpy.core.endpoints.sensors module<a class="headerlink" href="#module-hydroserverpy.core.endpoints.sensors" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.sensors.SensorEndpoint">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.sensors.</span></span><span class="sig-name descname"><span class="pre">SensorEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HydroServer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/sensors.html#SensorEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.sensors.SensorEndpoint" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.sensors.</span></span><span class="sig-name descname"><span class="pre">SensorEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/sensors.html#SensorEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.sensors.SensorEndpoint" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="hydroserverpy.core.endpoints.base.HydroServerEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">HydroServerEndpoint</span></code></a></p>
-<p>An endpoint for interacting with Sensor entities in the HydroServer service.</p>
+<p>An endpoint for interacting with sensor entities in the HydroServer service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -403,6 +914,102 @@
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.sensors.SensorEndpoint.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/sensors.html#SensorEndpoint.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.sensors.SensorEndpoint.create" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Create a new sensor in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the sensor.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – A description of the sensor.</p></li>
+<li><p><strong>encoding_type</strong> (<em>str</em>) – The encoding type of the sensor.</p></li>
+<li><p><strong>manufacturer</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The manufacturer of the sensor.</p></li>
+<li><p><strong>model</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The model of the sensor.</p></li>
+<li><p><strong>model_link</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A link to a website or file that describes the sensor model.</p></li>
+<li><p><strong>method_type</strong> (<em>str</em>) – The type of method used by this sensor to collect observations.</p></li>
+<li><p><strong>method_link</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A link to a website or file that describes the sensor method.</p></li>
+<li><p><strong>method_code</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A code representing the sensor method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor" title="hydroserverpy.core.schemas.sensors.Sensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sensor</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.sensors.SensorEndpoint.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/sensors.html#SensorEndpoint.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.sensors.SensorEndpoint.delete" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Delete an existing sensor in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.sensors.SensorEndpoint.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/sensors.html#SensorEndpoint.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.sensors.SensorEndpoint.get" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Retrieve a sensor owned by the logged-in user.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor" title="hydroserverpy.core.schemas.sensors.Sensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sensor</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.sensors.SensorEndpoint.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/sensors.html#SensorEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.sensors.SensorEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of sensors owned by the logged-in user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor" title="hydroserverpy.core.schemas.sensors.Sensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sensor</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.sensors.SensorEndpoint.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/sensors.html#SensorEndpoint.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.sensors.SensorEndpoint.update" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Update an existing sensor in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the sensor.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – A description of the sensor.</p></li>
+<li><p><strong>encoding_type</strong> (<em>str</em>) – The encoding type of the sensor.</p></li>
+<li><p><strong>manufacturer</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The manufacturer of the sensor.</p></li>
+<li><p><strong>model</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The model of the sensor.</p></li>
+<li><p><strong>model_link</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A link to a website or file that describes the sensor model.</p></li>
+<li><p><strong>method_type</strong> (<em>str</em>) – The type of method used by this sensor to collect observations.</p></li>
+<li><p><strong>method_link</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A link to a website or file that describes the sensor method.</p></li>
+<li><p><strong>method_code</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – A code representing the sensor method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor" title="hydroserverpy.core.schemas.sensors.Sensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sensor</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -410,9 +1017,9 @@
 <span id="hydroserverpy-core-endpoints-things-module"></span><h2>hydroserverpy.core.endpoints.things module<a class="headerlink" href="#module-hydroserverpy.core.endpoints.things" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.things.</span></span><span class="sig-name descname"><span class="pre">ThingEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HydroServer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.things.</span></span><span class="sig-name descname"><span class="pre">ThingEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="hydroserverpy.core.endpoints.base.HydroServerEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">HydroServerEndpoint</span></code></a></p>
-<p>An endpoint for interacting with Thing entities in the HydroServer service.</p>
+<p>An endpoint for interacting with thing entities in the HydroServer service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -423,19 +1030,49 @@
 </dd>
 </dl>
 <dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.create_tag">
-<span class="sig-name descname"><span class="pre">create_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag" title="hydroserverpy.core.schemas.things.Tag"><span class="pre">Tag</span></a></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.create_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.create_tag" title="Link to this definition"></a></dt>
-<dd><p>Create a new Tag for a specific Thing.</p>
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.create" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Create a new thing in HydroServer.</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Thing.</p></li>
-<li><p><strong>key</strong> (<em>str</em>) – The key of the Tag.</p></li>
-<li><p><strong>value</strong> (<em>str</em>) – The value of the Tag.</p></li>
+<li><p><strong>latitude</strong> (<em>float</em>) – The WGS84 latitude of the location.</p></li>
+<li><p><strong>longitude</strong> (<em>float</em>) – The WGS84 longitude of the location.</p></li>
+<li><p><strong>elevation_m</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The elevation in meters of the location.</p></li>
+<li><p><strong>elevation_datum</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The datum used to represent the elevation of the location.</p></li>
+<li><p><strong>state</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The state/province of the location.</p></li>
+<li><p><strong>county</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The county/district of the location.</p></li>
+<li><p><strong>country</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The ISO 3166-1 alpha-2 country code of the location.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the site/thing.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – A description of the site/thing.</p></li>
+<li><p><strong>sampling_feature_type</strong> (<em>str</em>) – The sampling feature type of the site/thing.</p></li>
+<li><p><strong>sampling_feature_code</strong> (<em>str</em>) – A code representing the sampling feature of the site/thing.</p></li>
+<li><p><strong>site_type</strong> (<em>str</em>) – The type of the site/thing.</p></li>
+<li><p><strong>data_disclaimer</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – An optional data disclaimer to attach to observations collected at this site/thing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing" title="hydroserverpy.core.schemas.things.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.create_tag">
+<span class="sig-name descname"><span class="pre">create_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">key</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.create_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.create_tag" title="Link to this definition"></a></dt>
+<dd><p>Create a new tag for a specific thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the thing.</p></li>
+<li><p><strong>key</strong> (<em>str</em>) – The key of the tag.</p></li>
+<li><p><strong>value</strong> (<em>str</em>) – The value of the tag.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The created Tag instance.</p>
+<dd class="field-even"><p>The created tag instance.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag" title="hydroserverpy.core.schemas.things.Tag">Tag</a></p>
@@ -444,43 +1081,81 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.delete" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Delete an existing thing in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.delete_photo">
-<span class="sig-name descname"><span class="pre">delete_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">photo_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.delete_photo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.delete_photo" title="Link to this definition"></a></dt>
-<dd><p>Delete a Photo from a specific Thing.</p>
+<span class="sig-name descname"><span class="pre">delete_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">photo_uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.delete_photo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.delete_photo" title="Link to this definition"></a></dt>
+<dd><p>Delete a photo from a specific thing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Thing.</p></li>
-<li><p><strong>photo_uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Photo.</p></li>
+<li><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the thing.</p></li>
+<li><p><strong>photo_uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the photo.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.delete_tag">
-<span class="sig-name descname"><span class="pre">delete_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">None</span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.delete_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.delete_tag" title="Link to this definition"></a></dt>
-<dd><p>Delete a Tag from a specific Thing.</p>
+<span class="sig-name descname"><span class="pre">delete_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.delete_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.delete_tag" title="Link to this definition"></a></dt>
+<dd><p>Delete a tag from a specific thing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Thing.</p></li>
-<li><p><strong>tag_uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Tag.</p></li>
+<li><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the thing.</p></li>
+<li><p><strong>tag_uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the tag.</p></li>
 </ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.get" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Retrieve a thing owned by the logged-in user.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing" title="hydroserverpy.core.schemas.things.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a></span></p>
 </dd>
 </dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.get_archive">
-<span class="sig-name descname"><span class="pre">get_archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive" title="hydroserverpy.core.schemas.things.Archive"><span class="pre">Archive</span></a></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.get_archive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.get_archive" title="Link to this definition"></a></dt>
-<dd><p>Retrieve the Archive associated with a specific Thing.</p>
+<span class="sig-name descname"><span class="pre">get_archive</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.get_archive"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.get_archive" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the archive associated with a specific thing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Thing.</p>
+<dd class="field-odd"><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the thing.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The Archive instance associated with the Thing.</p>
+<dd class="field-even"><p>The archive instance associated with the thing.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Archive" title="hydroserverpy.core.schemas.things.Archive">Archive</a></p>
@@ -489,15 +1164,26 @@
 </dd></dl>
 
 <dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of things owned by the logged-in user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing" title="hydroserverpy.core.schemas.things.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.list_datastreams">
-<span class="sig-name descname"><span class="pre">list_datastreams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream"><span class="pre">Datastream</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.list_datastreams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.list_datastreams" title="Link to this definition"></a></dt>
-<dd><p>List all Datastreams associated with a specific Thing.</p>
+<span class="sig-name descname"><span class="pre">list_datastreams</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.list_datastreams"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.list_datastreams" title="Link to this definition"></a></dt>
+<dd><p>List all datastreams associated with a specific thing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Thing.</p>
+<dd class="field-odd"><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the thing.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of Datastream instances.</p>
+<dd class="field-even"><p>A list of datastream instances.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream">Datastream</a>]</p>
@@ -507,14 +1193,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.list_photos">
-<span class="sig-name descname"><span class="pre">list_photos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo" title="hydroserverpy.core.schemas.things.Photo"><span class="pre">Photo</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.list_photos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.list_photos" title="Link to this definition"></a></dt>
-<dd><p>List all Photos associated with a specific Thing.</p>
+<span class="sig-name descname"><span class="pre">list_photos</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.list_photos"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.list_photos" title="Link to this definition"></a></dt>
+<dd><p>List all photos associated with a specific thing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Thing.</p>
+<dd class="field-odd"><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the thing.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of Photo instances.</p>
+<dd class="field-even"><p>A list of photo instances.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo" title="hydroserverpy.core.schemas.things.Photo">Photo</a>]</p>
@@ -524,14 +1210,14 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.list_tags">
-<span class="sig-name descname"><span class="pre">list_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag" title="hydroserverpy.core.schemas.things.Tag"><span class="pre">Tag</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.list_tags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.list_tags" title="Link to this definition"></a></dt>
-<dd><p>List all Tags associated with a specific Thing.</p>
+<span class="sig-name descname"><span class="pre">list_tags</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.list_tags"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.list_tags" title="Link to this definition"></a></dt>
+<dd><p>List all tags associated with a specific thing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Thing.</p>
+<dd class="field-odd"><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the thing.</p>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of Tag instances.</p>
+<dd class="field-even"><p>A list of tag instances.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag" title="hydroserverpy.core.schemas.things.Tag">Tag</a>]</p>
@@ -540,19 +1226,50 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.update_tag">
-<span class="sig-name descname"><span class="pre">update_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag" title="hydroserverpy.core.schemas.things.Tag"><span class="pre">Tag</span></a></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.update_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.update_tag" title="Link to this definition"></a></dt>
-<dd><p>Update an existing Tag for a specific Thing.</p>
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.update" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Update an existing thing in HydroServer.</p>
+</div></blockquote>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Thing.</p></li>
-<li><p><strong>tag_uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Tag.</p></li>
-<li><p><strong>value</strong> (<em>str</em>) – The new value for the Tag.</p></li>
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p></li>
+<li><p><strong>latitude</strong> (<em>float</em>) – The WGS84 latitude of the location.</p></li>
+<li><p><strong>longitude</strong> (<em>float</em>) – The WGS84 longitude of the location.</p></li>
+<li><p><strong>elevation_m</strong> (<em>Optional</em><em>[</em><em>float</em><em>]</em>) – The elevation in meters of the location.</p></li>
+<li><p><strong>elevation_datum</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The datum used to represent the elevation of the location.</p></li>
+<li><p><strong>state</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The state/province of the location.</p></li>
+<li><p><strong>county</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The county/district of the location.</p></li>
+<li><p><strong>country</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The ISO 3166-1 alpha-2 country code of the location.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the site/thing.</p></li>
+<li><p><strong>description</strong> (<em>str</em>) – A description of the site/thing.</p></li>
+<li><p><strong>sampling_feature_type</strong> (<em>str</em>) – The sampling feature type of the site/thing.</p></li>
+<li><p><strong>sampling_feature_code</strong> (<em>str</em>) – A code representing the sampling feature of the site/thing.</p></li>
+<li><p><strong>site_type</strong> (<em>str</em>) – The type of the site/thing.</p></li>
+<li><p><strong>data_disclaimer</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – An optional data disclaimer to attach to observations collected at this site/thing.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing" title="hydroserverpy.core.schemas.things.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.update_tag">
+<span class="sig-name descname"><span class="pre">update_tag</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tag_uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.update_tag"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.update_tag" title="Link to this definition"></a></dt>
+<dd><p>Update an existing tag for a specific thing.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the thing.</p></li>
+<li><p><strong>tag_uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the tag.</p></li>
+<li><p><strong>value</strong> (<em>str</em>) – The new value for the tag.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>The updated Tag instance.</p>
+<dd class="field-even"><p>The updated tag instance.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Tag" title="hydroserverpy.core.schemas.things.Tag">Tag</a></p>
@@ -562,17 +1279,17 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.upload_photo">
-<span class="sig-name descname"><span class="pre">upload_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">UUID</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">IO</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">List</span><span class="p"><span class="pre">[</span></span><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo" title="hydroserverpy.core.schemas.things.Photo"><span class="pre">Photo</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.upload_photo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.upload_photo" title="Link to this definition"></a></dt>
-<dd><p>Upload a new Photo to a specific Thing.</p>
+<span class="sig-name descname"><span class="pre">upload_photo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.upload_photo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.upload_photo" title="Link to this definition"></a></dt>
+<dd><p>Upload a new photo to a specific thing.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the Thing.</p></li>
+<li><p><strong>uid</strong> (<em>UUID</em><em> or </em><em>str</em>) – The unique identifier of the thing.</p></li>
 <li><p><strong>file</strong> (<em>IO</em>) – The file-like object representing the photo to upload.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
-<dd class="field-even"><p>A list of Photo instances created by the upload.</p>
+<dd class="field-even"><p>A list of photo instances created by the upload.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
 <dd class="field-odd"><p>List[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Photo" title="hydroserverpy.core.schemas.things.Photo">Photo</a>]</p>
@@ -587,9 +1304,9 @@
 <span id="hydroserverpy-core-endpoints-units-module"></span><h2>hydroserverpy.core.endpoints.units module<a class="headerlink" href="#module-hydroserverpy.core.endpoints.units" title="Link to this heading"></a></h2>
 <dl class="py class">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.units.UnitEndpoint">
-<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.units.</span></span><span class="sig-name descname"><span class="pre">UnitEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">HydroServer</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/units.html#UnitEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.units.UnitEndpoint" title="Link to this definition"></a></dt>
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.endpoints.units.</span></span><span class="sig-name descname"><span class="pre">UnitEndpoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">service</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/units.html#UnitEndpoint"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.units.UnitEndpoint" title="Link to this definition"></a></dt>
 <dd><p>Bases: <a class="reference internal" href="#hydroserverpy.core.endpoints.base.HydroServerEndpoint" title="hydroserverpy.core.endpoints.base.HydroServerEndpoint"><code class="xref py py-class docutils literal notranslate"><span class="pre">HydroServerEndpoint</span></code></a></p>
-<p>An endpoint for interacting with Unit entities in the HydroServer service.</p>
+<p>An endpoint for interacting with unit entities in the HydroServer service.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Variables<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -599,6 +1316,92 @@
 </ul>
 </dd>
 </dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.units.UnitEndpoint.create">
+<span class="sig-name descname"><span class="pre">create</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/units.html#UnitEndpoint.create"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.units.UnitEndpoint.create" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Create a new unit in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<em>str</em>) – The name of the unit.</p></li>
+<li><p><strong>symbol</strong> (<em>str</em>) – The symbol of the unit.</p></li>
+<li><p><strong>definition</strong> (<em>str</em>) – The definition of the unit.</p></li>
+<li><p><strong>type</strong> (<em>str</em>) – The type of the unit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit" title="hydroserverpy.core.schemas.units.Unit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unit</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.units.UnitEndpoint.delete">
+<span class="sig-name descname"><span class="pre">delete</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/units.html#UnitEndpoint.delete"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.units.UnitEndpoint.delete" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Delete an existing unit in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.units.UnitEndpoint.get">
+<span class="sig-name descname"><span class="pre">get</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/units.html#UnitEndpoint.get"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.units.UnitEndpoint.get" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Retrieve a unit owned by the logged-in user.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit" title="hydroserverpy.core.schemas.units.Unit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unit</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.units.UnitEndpoint.list">
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/units.html#UnitEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.units.UnitEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of units owned by the logged-in user.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit" title="hydroserverpy.core.schemas.units.Unit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unit</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="hydroserverpy.core.endpoints.units.UnitEndpoint.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">uid</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/units.html#UnitEndpoint.update"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.units.UnitEndpoint.update" title="Link to this definition"></a></dt>
+<dd><blockquote>
+<div><p>Update an existing unit in HydroServer.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>uid</strong> (<em>Union</em><em>[</em><em>UUID</em><em>, </em><em>str</em><em>]</em>) – The entity ID.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the unit.</p></li>
+<li><p><strong>symbol</strong> (<em>str</em>) – The symbol of the unit.</p></li>
+<li><p><strong>definition</strong> (<em>str</em>) – The definition of the unit.</p></li>
+<li><p><strong>type</strong> (<em>str</em>) – The type of the unit.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit" title="hydroserverpy.core.schemas.units.Unit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unit</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 </section>
@@ -618,7 +1421,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Author.</p>
+    <p>&#169; Copyright 2024, Utah State University.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

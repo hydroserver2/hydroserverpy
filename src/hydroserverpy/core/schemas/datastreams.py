@@ -1,59 +1,137 @@
-from pydantic import BaseModel, Field, StringConstraints as StrCon
+from pydantic import BaseModel, Field
 from pandas import DataFrame
-from typing import Optional, Literal, Annotated, Union, TYPE_CHECKING
+from typing import Optional, Literal, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
-from .base import HydroServerCoreModel
+from hydroserverpy.core.schemas.base import HydroServerCoreModel
 
 if TYPE_CHECKING:
-    from .things import Thing
-    from .data_sources import DataSource
-    from .sensors import Sensor
-    from .units import Unit
-    from .processing_levels import ProcessingLevel
-    from .observed_properties import ObservedProperty
+    from hydroserverpy.core.schemas.things import Thing
+    from hydroserverpy.core.schemas.data_sources import DataSource
+    from hydroserverpy.core.schemas.sensors import Sensor
+    from hydroserverpy.core.schemas.units import Unit
+    from hydroserverpy.core.schemas.processing_levels import ProcessingLevel
+    from hydroserverpy.core.schemas.observed_properties import ObservedProperty
 
 
 class DatastreamFields(BaseModel):
-    name: Union[UUID, Annotated[str, StrCon(strip_whitespace=True, max_length=255)]]
-    description: Annotated[str, StrCon(strip_whitespace=True)]
-    observation_type: Annotated[str, StrCon(strip_whitespace=True, max_length=255)]
-    sampled_medium: Annotated[str, StrCon(strip_whitespace=True, max_length=255)]
-    no_data_value: float
-    aggregation_statistic: Annotated[str, StrCon(strip_whitespace=True, max_length=255)]
-    time_aggregation_interval: float
-    status: Optional[Annotated[str, StrCon(strip_whitespace=True, max_length=255)]] = None
-    result_type: Annotated[str, StrCon(strip_whitespace=True, max_length=255)]
-    value_count: Optional[Annotated[int, Field(ge=0)]] = None
-    phenomenon_begin_time: Optional[datetime] = None
-    phenomenon_end_time: Optional[datetime] = None
-    result_begin_time: Optional[datetime] = None
-    result_end_time: Optional[datetime] = None
-    data_source_id: Optional[UUID] = None
-    data_source_column: Optional[Annotated[str, StrCon(strip_whitespace=True, max_length=255)]] = None
-    is_visible: bool = True
-    is_data_visible: bool = True
-    thing_id: UUID
-    sensor_id: UUID
-    observed_property_id: UUID
-    processing_level_id: UUID
-    unit_id: UUID
-    time_aggregation_interval_units: Literal['seconds', 'minutes', 'hours', 'days']
-    intended_time_spacing: Optional[float] = None
-    intended_time_spacing_units: Optional[Literal['seconds', 'minutes', 'hours', 'days']] = None
+    name: str = Field(
+        ..., strip_whitespace=True, max_length=255,
+        description='The name of the datastream.'
+    )
+    description: str = Field(
+        ..., strip_whitespace=True,
+        description='A description of the datastream.'
+    )
+    observation_type: str = Field(
+        ..., strip_whitespace=True, max_length=255,
+        description='The type of observation recorded in this datastream'
+    )
+    sampled_medium: str = Field(
+        ..., strip_whitespace=True, max_length=255,
+        description='The physical medium in which the observations were sampled.'
+    )
+    no_data_value: float = Field(
+        ...,
+        description='A numerical value representing no data at a given timestamp.',
+    )
+    aggregation_statistic: str = Field(
+        ..., strip_whitespace=True, max_length=255,
+        description='The statistic calculated over the time aggregation interval of observations in this datastream.'
+    )
+    time_aggregation_interval: float = Field(
+        ...,
+        description='The time interval over which the aggregation statistic is applied to observations.',
+    )
+    status: Optional[str] = Field(
+        None, strip_whitespace=True, max_length=255,
+        description='The current status of this datastream.'
+    )
+    result_type: str = Field(
+        ..., strip_whitespace=True, max_length=255,
+        description='The type of result recorded in this datastream.'
+    )
+    value_count: Optional[int] = Field(
+        None, ge=0,
+        description='The total number of observations in this datastream.'
+    )
+    phenomenon_begin_time: Optional[datetime] = Field(
+        None,
+        description='The timestamp representing when the first phenomenon recorded in this datastream occurred.'
+    )
+    phenomenon_end_time: Optional[datetime] = Field(
+        None,
+        description='The timestamp representing when the last phenomenon recorded in this datastream occurred.'
+    )
+    result_begin_time: Optional[datetime] = Field(
+        None,
+        description='The timestamp representing when the first observation of this datastream was recorded.'
+    )
+    result_end_time: Optional[datetime] = Field(
+        None,
+        description='The timestamp representing when the last observation of this datastream was recorded.'
+    )
+    data_source_id: Optional[UUID] = Field(
+        None,
+        description='The data source for observations of this datastream.'
+    )
+    data_source_column: Optional[str] = Field(
+        None, strip_whitespace=True, max_length=255,
+        description='The name of the column containing this datastream\'s observations in the data source file.'
+    )
+    is_visible: bool = Field(
+        True,
+        description='Whether this datastream is publicly visible.'
+    )
+    is_data_visible: bool = Field(
+        True,
+        description='Whether this observations associated with this datastream are publicly visible.'
+    )
+    thing_id: UUID = Field(
+        ...,
+        description='The site/thing from which observations of this datastream were recorded.'
+    )
+    sensor_id: UUID = Field(
+        ...,
+        description='The sensor used to record observations of this datastream.'
+    )
+    observed_property_id: UUID = Field(
+        ...,
+        description='The physical property being observed for this datastream.'
+    )
+    processing_level_id: UUID = Field(
+        ...,
+        description='The processing level applied to this datastream.'
+    )
+    unit_id: UUID = Field(
+        ...,
+        description='The unit used to record observations for this datastream.'
+    )
+    time_aggregation_interval_units: Literal['seconds', 'minutes', 'hours', 'days'] = Field(
+        ...,
+        description='The time unit for this datastream\'s time aggregation interval'
+    )
+    intended_time_spacing: Optional[float] = Field(
+        None,
+        description='The time interval at which observations should be made for this datastream.'
+    )
+    intended_time_spacing_units: Optional[Literal['seconds', 'minutes', 'hours', 'days']] = Field(
+        None,
+        description='The time unit for this datastream\'s intended time spacing interval'
+    )
 
 
 class Datastream(HydroServerCoreModel, DatastreamFields):
     """
-    A model representing a Datastream, extending the core functionality of HydroServerCoreModel with additional
+    A model representing a datastream, extending the core functionality of HydroServerCoreModel with additional
     properties and methods.
 
-    :ivar _thing: A private attribute to cache the associated Thing entity.
-    :ivar _data_source: A private attribute to cache the associated Data Source entity.
-    :ivar _observed_property: A private attribute to cache the associated Observed Property entity.
-    :ivar _processing_level: A private attribute to cache the associated Processing Level entity.
-    :ivar _unit: A private attribute to cache the associated Unit entity.
-    :ivar _sensor: A private attribute to cache the associated Sensor entity.
+    :ivar _thing: A private attribute to cache the associated thing entity.
+    :ivar _data_source: A private attribute to cache the associated data source entity.
+    :ivar _observed_property: A private attribute to cache the associated observed property entity.
+    :ivar _processing_level: A private attribute to cache the associated processing level entity.
+    :ivar _unit: A private attribute to cache the associated unit entity.
+    :ivar _sensor: A private attribute to cache the associated sensor entity.
     """
 
     def __init__(self, _endpoint, _uid: Optional[UUID] = None, **data):
@@ -77,9 +155,9 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
     @property
     def thing(self) -> 'Thing':
         """
-        The Thing entity associated with the Datastream. If not already cached, fetch it from the server.
+        The thing entity associated with the datastream. If not already cached, fetch it from the server.
 
-        :return: The Thing entity associated with the Datastream.
+        :return: The thing entity associated with the datastream.
         :rtype: Thing
         """
 
@@ -91,9 +169,9 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
     @property
     def data_source(self) -> 'DataSource':
         """
-        The Data Source entity associated with the Datastream. If not already cached, fetch it from the server.
+        The data source entity associated with the datastream. If not already cached, fetch it from the server.
 
-        :return: The Data Source entity associated with the Datastream.
+        :return: The data source entity associated with the datastream.
         :rtype: DataSource
         """
 
@@ -105,10 +183,10 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
     @property
     def observed_property(self) -> 'ObservedProperty':
         """
-        Retrieve the Observed Property entity associated with the Datastream. If not already cached, fetch it from the
+        Retrieve the observed property entity associated with the datastream. If not already cached, fetch it from the
         server.
 
-        :return: The Observed Property entity associated with the Datastream.
+        :return: The observed property entity associated with the datastream.
         :rtype: ObservedProperty
         """
 
@@ -120,10 +198,10 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
     @property
     def processing_level(self) -> 'ProcessingLevel':
         """
-        Retrieve the Processing Level entity associated with the Datastream. If not already cached, fetch it from the
+        Retrieve the processing level entity associated with the datastream. If not already cached, fetch it from the
         server.
 
-        :return: The Processing Level entity associated with the Datastream.
+        :return: The processing level entity associated with the datastream.
         :rtype: ProcessingLevel
         """
 
@@ -135,9 +213,9 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
     @property
     def unit(self) -> 'Unit':
         """
-        Retrieve the Unit entity associated with the Datastream. If not already cached, fetch it from the server.
+        Retrieve the unit entity associated with the datastream. If not already cached, fetch it from the server.
 
-        :return: The Unit entity associated with the Datastream.
+        :return: The unit entity associated with the datastream.
         :rtype: Unit
         """
 
@@ -149,9 +227,9 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
     @property
     def sensor(self) -> 'Sensor':
         """
-        Retrieve the Sensor entity associated with the Datastream. If not already cached, fetch it from the server.
+        Retrieve the sensor entity associated with the datastream. If not already cached, fetch it from the server.
 
-        :return: The Sensor entity associated with the Datastream.
+        :return: The sensor entity associated with the datastream.
         :rtype: Any
         """
 
@@ -162,7 +240,7 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
 
     def refresh(self) -> None:
         """
-        Refresh the Datastream with the latest data from the server and update cached entities if they were previously
+        Refresh the datastream with the latest data from the server and update cached entities if they were previously
         loaded.
         """
 
@@ -192,9 +270,9 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
             fetch_all: bool = False
     ) -> DataFrame:
         """
-        Retrieve the observations for this Datastream.
+        Retrieve the observations for this datastream.
 
-        :return: A DataFrame containing the observations associated with the Datastream.
+        :return: A DataFrame containing the observations associated with the datastream.
         :rtype: DataFrame
         """
 
@@ -203,19 +281,19 @@ class Datastream(HydroServerCoreModel, DatastreamFields):
             include_quality=include_quality, fetch_all=fetch_all
         )
 
-    def upload_observations(
+    def load_observations(
             self,
             observations: DataFrame,
     ) -> None:
         """
-        Upload a DataFrame of observations to the Datastream.
+        Load a DataFrame of observations to the datastream.
 
         :param observations: A pandas DataFrame containing the observations to be uploaded.
         :type observations: DataFrame
         :return: None
         """
 
-        return self._endpoint.upload_observations(
+        return self._endpoint.load_observations(
             uid=self.uid,
             observations=observations,
         )

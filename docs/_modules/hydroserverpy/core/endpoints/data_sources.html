@@ -6,6 +6,7 @@
   <title>hydroserverpy.core.endpoints.data_sources &mdash; hydroserverpy  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css?v=a0a71c94" />
 
   
   <!--[if lt IE 9]>
@@ -74,18 +75,19 @@
 <span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">HydroServerEndpoint</span>
-<span class="kn">from</span> <span class="nn">..schemas</span> <span class="kn">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">Datastream</span>
+<span class="kn">from</span> <span class="nn">hydroserverpy.core.endpoints.base</span> <span class="kn">import</span> <span class="n">HydroServerEndpoint</span><span class="p">,</span> <span class="n">expand_docstring</span>
+<span class="kn">from</span> <span class="nn">hydroserverpy.core.endpoints.datastreams</span> <span class="kn">import</span> <span class="n">DatastreamEndpoint</span>
+<span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas</span> <span class="kn">import</span> <span class="n">DataSource</span><span class="p">,</span> <span class="n">Datastream</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">..service</span> <span class="kn">import</span> <span class="n">HydroServer</span>
+    <span class="kn">from</span> <span class="nn">hydroserverpy.core.service</span> <span class="kn">import</span> <span class="n">HydroServer</span>
 
 
 <div class="viewcode-block" id="DataSourceEndpoint">
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint">[docs]</a>
 <span class="k">class</span> <span class="nc">DataSourceEndpoint</span><span class="p">(</span><span class="n">HydroServerEndpoint</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An endpoint for interacting with DataSource entities in the HydroServer service.</span>
+<span class="sd">    An endpoint for interacting with data source entities in the HydroServer service.</span>
 
 <span class="sd">    :ivar _model: The model class associated with this endpoint, set to `DataSource`.</span>
 <span class="sd">    :ivar _api_route: The base route of the API, derived from the service.</span>
@@ -105,23 +107,80 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_api_route</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">api_route</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_endpoint_route</span> <span class="o">=</span> <span class="s1">&#39;data-sources&#39;</span>
 
+<div class="viewcode-block" id="DataSourceEndpoint.list">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.list">[docs]</a>
+    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">DataSource</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a collection of data sources owned by the logged-in user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DataSourceEndpoint.get">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.get">[docs]</a>
+    <span class="nd">@expand_docstring</span><span class="p">(</span><span class="n">include_uid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">DataSource</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a data source owned by the logged-in user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataSourceEndpoint.create">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.create">[docs]</a>
+    <span class="nd">@expand_docstring</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">DataSource</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataSource</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new data source in HydroServer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataSourceEndpoint.update">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.update">[docs]</a>
+    <span class="nd">@expand_docstring</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">DataSource</span><span class="p">,</span> <span class="n">include_uid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataSource</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update an existing data source in HydroServer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_patch</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DataSourceEndpoint.delete">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.delete">[docs]</a>
+    <span class="nd">@expand_docstring</span><span class="p">(</span><span class="n">include_uid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete an existing data source in HydroServer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_delete</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="DataSourceEndpoint.list_datastreams">
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint.list_datastreams">[docs]</a>
     <span class="k">def</span> <span class="nf">list_datastreams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Datastream</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve a list of Datastream entities associated with a specific DataSource.</span>
+<span class="sd">        Retrieve a list of datastream entities associated with a specific data source.</span>
 
-<span class="sd">        :param uid: The unique identifier of the DataSource.</span>
+<span class="sd">        :param uid: The unique identifier of the data source.</span>
 <span class="sd">        :type uid: Union[UUID, str]</span>
-<span class="sd">        :returns: A list of Datastream instances associated with the DataSource.</span>
+<span class="sd">        :returns: A list of datastream instances associated with the data source.</span>
 <span class="sd">        :rtype: List[Datastream]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
         <span class="n">response</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="p">,</span> <span class="s1">&#39;_request&#39;</span><span class="p">)(</span>
             <span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_api_route</span><span class="si">}</span><span class="s1">/data/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_endpoint_route</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span><span class="si">}</span><span class="s1">/datastreams&#39;</span>
         <span class="p">)</span>
+
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="n">DatastreamEndpoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="p">[</span>
-            <span class="n">Datastream</span><span class="p">(</span><span class="n">_endpoint</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">_uid</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span> <span class="o">**</span><span class="n">entity</span><span class="p">)</span>
+            <span class="n">Datastream</span><span class="p">(</span><span class="n">_endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">_uid</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span> <span class="o">**</span><span class="n">entity</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
         <span class="p">]</span></div>
 </div>
@@ -135,7 +194,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Author.</p>
+    <p>&#169; Copyright 2024, Utah State University.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

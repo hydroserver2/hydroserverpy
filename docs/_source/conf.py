@@ -7,8 +7,8 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'hydroserverpy'
-copyright = '2024, Author'
-author = 'Author'
+copyright = '2024, Utah State University'
+author = 'Utah State University'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -17,6 +17,8 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.viewcode',
     'sphinx.ext.todo',
+    'sphinx_autodoc_typehints',
+    'sphinxcontrib.autodoc_pydantic',
     'myst_parser',
 ]
 
@@ -36,3 +38,7 @@ html_static_path = ['_static']
 # https://www.sphinx-doc.org/en/master/usage/extensions/todo.html#configuration
 
 todo_include_todos = True
+
+# -- Options for autodoc_pydantic extension ----------------------------------
+
+autodoc_pydantic_model_show_json = False

@@ -6,6 +6,7 @@
   <title>hydroserverpy.core.schemas.datastreams &mdash; hydroserverpy  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css?v=a0a71c94" />
 
   
   <!--[if lt IE 9]>
@@ -71,51 +72,129 @@
            <div itemprop="articleBody">
              
   <h1>Source code for hydroserverpy.core.schemas.datastreams</h1><div class="highlight"><pre>
-<span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">StringConstraints</span> <span class="k">as</span> <span class="n">StrCon</span>
+<span></span><span class="kn">from</span> <span class="nn">pydantic</span> <span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">Field</span>
 <span class="kn">from</span> <span class="nn">pandas</span> <span class="kn">import</span> <span class="n">DataFrame</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">Annotated</span><span class="p">,</span> <span class="n">Union</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Literal</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
 <span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">HydroServerCoreModel</span>
+<span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas.base</span> <span class="kn">import</span> <span class="n">HydroServerCoreModel</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">.things</span> <span class="kn">import</span> <span class="n">Thing</span>
-    <span class="kn">from</span> <span class="nn">.data_sources</span> <span class="kn">import</span> <span class="n">DataSource</span>
-    <span class="kn">from</span> <span class="nn">.sensors</span> <span class="kn">import</span> <span class="n">Sensor</span>
-    <span class="kn">from</span> <span class="nn">.units</span> <span class="kn">import</span> <span class="n">Unit</span>
-    <span class="kn">from</span> <span class="nn">.processing_levels</span> <span class="kn">import</span> <span class="n">ProcessingLevel</span>
-    <span class="kn">from</span> <span class="nn">.observed_properties</span> <span class="kn">import</span> <span class="n">ObservedProperty</span>
+    <span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas.things</span> <span class="kn">import</span> <span class="n">Thing</span>
+    <span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas.data_sources</span> <span class="kn">import</span> <span class="n">DataSource</span>
+    <span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas.sensors</span> <span class="kn">import</span> <span class="n">Sensor</span>
+    <span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas.units</span> <span class="kn">import</span> <span class="n">Unit</span>
+    <span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas.processing_levels</span> <span class="kn">import</span> <span class="n">ProcessingLevel</span>
+    <span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas.observed_properties</span> <span class="kn">import</span> <span class="n">ObservedProperty</span>
 
 
 <div class="viewcode-block" id="DatastreamFields">
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.DatastreamFields">[docs]</a>
 <span class="k">class</span> <span class="nc">DatastreamFields</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
-    <span class="n">name</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]]</span>
-    <span class="n">description</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">)]</span>
-    <span class="n">observation_type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]</span>
-    <span class="n">sampled_medium</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]</span>
-    <span class="n">no_data_value</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">aggregation_statistic</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]</span>
-    <span class="n">time_aggregation_interval</span><span class="p">:</span> <span class="nb">float</span>
-    <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">result_type</span><span class="p">:</span> <span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]</span>
-    <span class="n">value_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Field</span><span class="p">(</span><span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">)]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">phenomenon_begin_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">phenomenon_end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">result_begin_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">result_end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">data_source_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">data_source_column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Annotated</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">StrCon</span><span class="p">(</span><span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">)]]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">is_visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">is_data_visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
-    <span class="n">thing_id</span><span class="p">:</span> <span class="n">UUID</span>
-    <span class="n">sensor_id</span><span class="p">:</span> <span class="n">UUID</span>
-    <span class="n">observed_property_id</span><span class="p">:</span> <span class="n">UUID</span>
-    <span class="n">processing_level_id</span><span class="p">:</span> <span class="n">UUID</span>
-    <span class="n">unit_id</span><span class="p">:</span> <span class="n">UUID</span>
-    <span class="n">time_aggregation_interval_units</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;seconds&#39;</span><span class="p">,</span> <span class="s1">&#39;minutes&#39;</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">]</span>
-    <span class="n">intended_time_spacing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
-    <span class="n">intended_time_spacing_units</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;seconds&#39;</span><span class="p">,</span> <span class="s1">&#39;minutes&#39;</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span></div>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The name of the datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A description of the datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">observation_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The type of observation recorded in this datastream&#39;</span>
+    <span class="p">)</span>
+    <span class="n">sampled_medium</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The physical medium in which the observations were sampled.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">no_data_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A numerical value representing no data at a given timestamp.&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">aggregation_statistic</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The statistic calculated over the time aggregation interval of observations in this datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">time_aggregation_interval</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The time interval over which the aggregation statistic is applied to observations.&#39;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">status</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The current status of this datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">result_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The type of result recorded in this datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">value_count</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">ge</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The total number of observations in this datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">phenomenon_begin_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The timestamp representing when the first phenomenon recorded in this datastream occurred.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">phenomenon_end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The timestamp representing when the last phenomenon recorded in this datastream occurred.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">result_begin_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The timestamp representing when the first observation of this datastream was recorded.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">result_end_time</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">datetime</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The timestamp representing when the last observation of this datastream was recorded.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">data_source_id</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The data source for observations of this datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">data_source_column</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span> <span class="n">strip_whitespace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">max_length</span><span class="o">=</span><span class="mi">255</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The name of the column containing this datastream</span><span class="se">\&#39;</span><span class="s1">s observations in the data source file.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">is_visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether this datastream is publicly visible.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">is_data_visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">True</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Whether this observations associated with this datastream are publicly visible.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">thing_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The site/thing from which observations of this datastream were recorded.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">sensor_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The sensor used to record observations of this datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">observed_property_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The physical property being observed for this datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">processing_level_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The processing level applied to this datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">unit_id</span><span class="p">:</span> <span class="n">UUID</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The unit used to record observations for this datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">time_aggregation_interval_units</span><span class="p">:</span> <span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;seconds&#39;</span><span class="p">,</span> <span class="s1">&#39;minutes&#39;</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="o">...</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The time unit for this datastream</span><span class="se">\&#39;</span><span class="s1">s time aggregation interval&#39;</span>
+    <span class="p">)</span>
+    <span class="n">intended_time_spacing</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The time interval at which observations should be made for this datastream.&#39;</span>
+    <span class="p">)</span>
+    <span class="n">intended_time_spacing_units</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s1">&#39;seconds&#39;</span><span class="p">,</span> <span class="s1">&#39;minutes&#39;</span><span class="p">,</span> <span class="s1">&#39;hours&#39;</span><span class="p">,</span> <span class="s1">&#39;days&#39;</span><span class="p">]]</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span>
+        <span class="kc">None</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s1">&#39;The time unit for this datastream</span><span class="se">\&#39;</span><span class="s1">s intended time spacing interval&#39;</span>
+    <span class="p">)</span></div>
 
 
 
@@ -123,15 +202,15 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream">[docs]</a>
 <span class="k">class</span> <span class="nc">Datastream</span><span class="p">(</span><span class="n">HydroServerCoreModel</span><span class="p">,</span> <span class="n">DatastreamFields</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    A model representing a Datastream, extending the core functionality of HydroServerCoreModel with additional</span>
+<span class="sd">    A model representing a datastream, extending the core functionality of HydroServerCoreModel with additional</span>
 <span class="sd">    properties and methods.</span>
 
-<span class="sd">    :ivar _thing: A private attribute to cache the associated Thing entity.</span>
-<span class="sd">    :ivar _data_source: A private attribute to cache the associated Data Source entity.</span>
-<span class="sd">    :ivar _observed_property: A private attribute to cache the associated Observed Property entity.</span>
-<span class="sd">    :ivar _processing_level: A private attribute to cache the associated Processing Level entity.</span>
-<span class="sd">    :ivar _unit: A private attribute to cache the associated Unit entity.</span>
-<span class="sd">    :ivar _sensor: A private attribute to cache the associated Sensor entity.</span>
+<span class="sd">    :ivar _thing: A private attribute to cache the associated thing entity.</span>
+<span class="sd">    :ivar _data_source: A private attribute to cache the associated data source entity.</span>
+<span class="sd">    :ivar _observed_property: A private attribute to cache the associated observed property entity.</span>
+<span class="sd">    :ivar _processing_level: A private attribute to cache the associated processing level entity.</span>
+<span class="sd">    :ivar _unit: A private attribute to cache the associated unit entity.</span>
+<span class="sd">    :ivar _sensor: A private attribute to cache the associated sensor entity.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">_endpoint</span><span class="p">,</span> <span class="n">_uid</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">UUID</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">data</span><span class="p">):</span>
@@ -155,9 +234,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">thing</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Thing&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The Thing entity associated with the Datastream. If not already cached, fetch it from the server.</span>
+<span class="sd">        The thing entity associated with the datastream. If not already cached, fetch it from the server.</span>
 
-<span class="sd">        :return: The Thing entity associated with the Datastream.</span>
+<span class="sd">        :return: The thing entity associated with the datastream.</span>
 <span class="sd">        :rtype: Thing</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -169,9 +248,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">data_source</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;DataSource&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        The Data Source entity associated with the Datastream. If not already cached, fetch it from the server.</span>
+<span class="sd">        The data source entity associated with the datastream. If not already cached, fetch it from the server.</span>
 
-<span class="sd">        :return: The Data Source entity associated with the Datastream.</span>
+<span class="sd">        :return: The data source entity associated with the datastream.</span>
 <span class="sd">        :rtype: DataSource</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -183,10 +262,10 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">observed_property</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ObservedProperty&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve the Observed Property entity associated with the Datastream. If not already cached, fetch it from the</span>
+<span class="sd">        Retrieve the observed property entity associated with the datastream. If not already cached, fetch it from the</span>
 <span class="sd">        server.</span>
 
-<span class="sd">        :return: The Observed Property entity associated with the Datastream.</span>
+<span class="sd">        :return: The observed property entity associated with the datastream.</span>
 <span class="sd">        :rtype: ObservedProperty</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -198,10 +277,10 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">processing_level</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;ProcessingLevel&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve the Processing Level entity associated with the Datastream. If not already cached, fetch it from the</span>
+<span class="sd">        Retrieve the processing level entity associated with the datastream. If not already cached, fetch it from the</span>
 <span class="sd">        server.</span>
 
-<span class="sd">        :return: The Processing Level entity associated with the Datastream.</span>
+<span class="sd">        :return: The processing level entity associated with the datastream.</span>
 <span class="sd">        :rtype: ProcessingLevel</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -213,9 +292,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Unit&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve the Unit entity associated with the Datastream. If not already cached, fetch it from the server.</span>
+<span class="sd">        Retrieve the unit entity associated with the datastream. If not already cached, fetch it from the server.</span>
 
-<span class="sd">        :return: The Unit entity associated with the Datastream.</span>
+<span class="sd">        :return: The unit entity associated with the datastream.</span>
 <span class="sd">        :rtype: Unit</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -227,9 +306,9 @@
     <span class="nd">@property</span>
     <span class="k">def</span> <span class="nf">sensor</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s1">&#39;Sensor&#39;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve the Sensor entity associated with the Datastream. If not already cached, fetch it from the server.</span>
+<span class="sd">        Retrieve the sensor entity associated with the datastream. If not already cached, fetch it from the server.</span>
 
-<span class="sd">        :return: The Sensor entity associated with the Datastream.</span>
+<span class="sd">        :return: The sensor entity associated with the datastream.</span>
 <span class="sd">        :rtype: Any</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -242,7 +321,7 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.refresh">[docs]</a>
     <span class="k">def</span> <span class="nf">refresh</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Refresh the Datastream with the latest data from the server and update cached entities if they were previously</span>
+<span class="sd">        Refresh the datastream with the latest data from the server and update cached entities if they were previously</span>
 <span class="sd">        loaded.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -275,9 +354,9 @@
             <span class="n">fetch_all</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">DataFrame</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve the observations for this Datastream.</span>
+<span class="sd">        Retrieve the observations for this datastream.</span>
 
-<span class="sd">        :return: A DataFrame containing the observations associated with the Datastream.</span>
+<span class="sd">        :return: A DataFrame containing the observations associated with the datastream.</span>
 <span class="sd">        :rtype: DataFrame</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -287,21 +366,21 @@
         <span class="p">)</span></div>
 
 
-<div class="viewcode-block" id="Datastream.upload_observations">
-<a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.upload_observations">[docs]</a>
-    <span class="k">def</span> <span class="nf">upload_observations</span><span class="p">(</span>
+<div class="viewcode-block" id="Datastream.load_observations">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream.load_observations">[docs]</a>
+    <span class="k">def</span> <span class="nf">load_observations</span><span class="p">(</span>
             <span class="bp">self</span><span class="p">,</span>
             <span class="n">observations</span><span class="p">:</span> <span class="n">DataFrame</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Upload a DataFrame of observations to the Datastream.</span>
+<span class="sd">        Load a DataFrame of observations to the datastream.</span>
 
 <span class="sd">        :param observations: A pandas DataFrame containing the observations to be uploaded.</span>
 <span class="sd">        :type observations: DataFrame</span>
 <span class="sd">        :return: None</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_endpoint</span><span class="o">.</span><span class="n">upload_observations</span><span class="p">(</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_endpoint</span><span class="o">.</span><span class="n">load_observations</span><span class="p">(</span>
             <span class="n">uid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
             <span class="n">observations</span><span class="o">=</span><span class="n">observations</span><span class="p">,</span>
         <span class="p">)</span></div>
@@ -316,7 +395,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Author.</p>
+    <p>&#169; Copyright 2024, Utah State University.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

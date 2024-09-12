@@ -6,6 +6,7 @@
   <title>hydroserverpy.core.endpoints.things &mdash; hydroserverpy  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../../_static/autodoc_pydantic.css?v=a0a71c94" />
 
   
   <!--[if lt IE 9]>
@@ -74,18 +75,19 @@
 <span></span><span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Union</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">IO</span><span class="p">,</span> <span class="n">TYPE_CHECKING</span>
 <span class="kn">from</span> <span class="nn">uuid</span> <span class="kn">import</span> <span class="n">UUID</span>
-<span class="kn">from</span> <span class="nn">.base</span> <span class="kn">import</span> <span class="n">HydroServerEndpoint</span>
-<span class="kn">from</span> <span class="nn">..schemas</span> <span class="kn">import</span> <span class="n">Thing</span><span class="p">,</span> <span class="n">Datastream</span><span class="p">,</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">Photo</span><span class="p">,</span> <span class="n">Archive</span>
+<span class="kn">from</span> <span class="nn">hydroserverpy.core.endpoints.base</span> <span class="kn">import</span> <span class="n">HydroServerEndpoint</span><span class="p">,</span> <span class="n">expand_docstring</span>
+<span class="kn">from</span> <span class="nn">hydroserverpy.core.endpoints.datastreams</span> <span class="kn">import</span> <span class="n">DatastreamEndpoint</span>
+<span class="kn">from</span> <span class="nn">hydroserverpy.core.schemas</span> <span class="kn">import</span> <span class="n">Thing</span><span class="p">,</span> <span class="n">Datastream</span><span class="p">,</span> <span class="n">Tag</span><span class="p">,</span> <span class="n">Photo</span><span class="p">,</span> <span class="n">Archive</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="kn">from</span> <span class="nn">..service</span> <span class="kn">import</span> <span class="n">HydroServer</span>
+    <span class="kn">from</span> <span class="nn">hydroserverpy.core.service</span> <span class="kn">import</span> <span class="n">HydroServer</span>
 
 
 <div class="viewcode-block" id="ThingEndpoint">
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint">[docs]</a>
 <span class="k">class</span> <span class="nc">ThingEndpoint</span><span class="p">(</span><span class="n">HydroServerEndpoint</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    An endpoint for interacting with Thing entities in the HydroServer service.</span>
+<span class="sd">    An endpoint for interacting with thing entities in the HydroServer service.</span>
 
 <span class="sd">    :ivar _model: The model class associated with this endpoint, set to `Thing`.</span>
 <span class="sd">    :ivar _api_route: The base route of the API, derived from the service.</span>
@@ -105,15 +107,69 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_api_route</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">api_route</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_endpoint_route</span> <span class="o">=</span> <span class="s1">&#39;things&#39;</span>
 
+<div class="viewcode-block" id="ThingEndpoint.list">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.list">[docs]</a>
+    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Thing</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a collection of things owned by the logged-in user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="ThingEndpoint.get">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.get">[docs]</a>
+    <span class="nd">@expand_docstring</span><span class="p">(</span><span class="n">include_uid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Thing</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrieve a thing owned by the logged-in user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ThingEndpoint.create">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.create">[docs]</a>
+    <span class="nd">@expand_docstring</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">Thing</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">create</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Thing</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a new thing in HydroServer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_post</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ThingEndpoint.update">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.update">[docs]</a>
+    <span class="nd">@expand_docstring</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">Thing</span><span class="p">,</span> <span class="n">include_uid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Thing</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Update an existing thing in HydroServer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_patch</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ThingEndpoint.delete">
+<a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.delete">[docs]</a>
+    <span class="nd">@expand_docstring</span><span class="p">(</span><span class="n">include_uid</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">delete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Delete an existing thing in HydroServer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_delete</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span></div>
+
+
 <div class="viewcode-block" id="ThingEndpoint.list_datastreams">
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.list_datastreams">[docs]</a>
     <span class="k">def</span> <span class="nf">list_datastreams</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Datastream</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        List all Datastreams associated with a specific Thing.</span>
+<span class="sd">        List all datastreams associated with a specific thing.</span>
 
-<span class="sd">        :param uid: The unique identifier of the Thing.</span>
+<span class="sd">        :param uid: The unique identifier of the thing.</span>
 <span class="sd">        :type uid: UUID or str</span>
-<span class="sd">        :returns: A list of Datastream instances.</span>
+<span class="sd">        :returns: A list of datastream instances.</span>
 <span class="sd">        :rtype: List[Datastream]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -121,8 +177,10 @@
             <span class="s1">&#39;get&#39;</span><span class="p">,</span> <span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_api_route</span><span class="si">}</span><span class="s1">/data/</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_endpoint_route</span><span class="si">}</span><span class="s1">/</span><span class="si">{</span><span class="nb">str</span><span class="p">(</span><span class="n">uid</span><span class="p">)</span><span class="si">}</span><span class="s1">/datastreams&#39;</span>
         <span class="p">)</span>
 
+        <span class="n">endpoint</span> <span class="o">=</span> <span class="n">DatastreamEndpoint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="p">)</span>
+
         <span class="k">return</span> <span class="p">[</span>
-            <span class="n">Datastream</span><span class="p">(</span><span class="n">_endpoint</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">_uid</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span> <span class="o">**</span><span class="n">entity</span><span class="p">)</span>
+            <span class="n">Datastream</span><span class="p">(</span><span class="n">_endpoint</span><span class="o">=</span><span class="n">endpoint</span><span class="p">,</span> <span class="n">_uid</span><span class="o">=</span><span class="n">entity</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;id&#39;</span><span class="p">),</span> <span class="o">**</span><span class="n">entity</span><span class="p">)</span>
             <span class="k">for</span> <span class="n">entity</span> <span class="ow">in</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">response</span><span class="o">.</span><span class="n">content</span><span class="p">)</span>
         <span class="p">]</span></div>
 
@@ -131,11 +189,11 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.list_tags">[docs]</a>
     <span class="k">def</span> <span class="nf">list_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Tag</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        List all Tags associated with a specific Thing.</span>
+<span class="sd">        List all tags associated with a specific thing.</span>
 
-<span class="sd">        :param uid: The unique identifier of the Thing.</span>
+<span class="sd">        :param uid: The unique identifier of the thing.</span>
 <span class="sd">        :type uid: UUID or str</span>
-<span class="sd">        :returns: A list of Tag instances.</span>
+<span class="sd">        :returns: A list of tag instances.</span>
 <span class="sd">        :rtype: List[Tag]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -150,15 +208,15 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.create_tag">[docs]</a>
     <span class="k">def</span> <span class="nf">create_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">key</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tag</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a new Tag for a specific Thing.</span>
+<span class="sd">        Create a new tag for a specific thing.</span>
 
-<span class="sd">        :param uid: The unique identifier of the Thing.</span>
+<span class="sd">        :param uid: The unique identifier of the thing.</span>
 <span class="sd">        :type uid: UUID or str</span>
-<span class="sd">        :param key: The key of the Tag.</span>
+<span class="sd">        :param key: The key of the tag.</span>
 <span class="sd">        :type key: str</span>
-<span class="sd">        :param value: The value of the Tag.</span>
+<span class="sd">        :param value: The value of the tag.</span>
 <span class="sd">        :type value: str</span>
-<span class="sd">        :returns: The created Tag instance.</span>
+<span class="sd">        :returns: The created tag instance.</span>
 <span class="sd">        :rtype: Tag</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -176,15 +234,15 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.update_tag">[docs]</a>
     <span class="k">def</span> <span class="nf">update_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">tag_uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tag</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Update an existing Tag for a specific Thing.</span>
+<span class="sd">        Update an existing tag for a specific thing.</span>
 
-<span class="sd">        :param uid: The unique identifier of the Thing.</span>
+<span class="sd">        :param uid: The unique identifier of the thing.</span>
 <span class="sd">        :type uid: UUID or str</span>
-<span class="sd">        :param tag_uid: The unique identifier of the Tag.</span>
+<span class="sd">        :param tag_uid: The unique identifier of the tag.</span>
 <span class="sd">        :type tag_uid: UUID or str</span>
-<span class="sd">        :param value: The new value for the Tag.</span>
+<span class="sd">        :param value: The new value for the tag.</span>
 <span class="sd">        :type value: str</span>
-<span class="sd">        :returns: The updated Tag instance.</span>
+<span class="sd">        :returns: The updated tag instance.</span>
 <span class="sd">        :rtype: Tag</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -202,11 +260,11 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.delete_tag">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_tag</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">tag_uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete a Tag from a specific Thing.</span>
+<span class="sd">        Delete a tag from a specific thing.</span>
 
-<span class="sd">        :param uid: The unique identifier of the Thing.</span>
+<span class="sd">        :param uid: The unique identifier of the thing.</span>
 <span class="sd">        :type uid: UUID or str</span>
-<span class="sd">        :param tag_uid: The unique identifier of the Tag.</span>
+<span class="sd">        :param tag_uid: The unique identifier of the tag.</span>
 <span class="sd">        :type tag_uid: UUID or str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -219,11 +277,11 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.list_photos">[docs]</a>
     <span class="k">def</span> <span class="nf">list_photos</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Photo</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        List all Photos associated with a specific Thing.</span>
+<span class="sd">        List all photos associated with a specific thing.</span>
 
-<span class="sd">        :param uid: The unique identifier of the Thing.</span>
+<span class="sd">        :param uid: The unique identifier of the thing.</span>
 <span class="sd">        :type uid: UUID or str</span>
-<span class="sd">        :returns: A list of Photo instances.</span>
+<span class="sd">        :returns: A list of photo instances.</span>
 <span class="sd">        :rtype: List[Photo]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -238,13 +296,13 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.upload_photo">[docs]</a>
     <span class="k">def</span> <span class="nf">upload_photo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">file</span><span class="p">:</span> <span class="n">IO</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Photo</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Upload a new Photo to a specific Thing.</span>
+<span class="sd">        Upload a new photo to a specific thing.</span>
 
-<span class="sd">        :param uid: The unique identifier of the Thing.</span>
+<span class="sd">        :param uid: The unique identifier of the thing.</span>
 <span class="sd">        :type uid: UUID or str</span>
 <span class="sd">        :param file: The file-like object representing the photo to upload.</span>
 <span class="sd">        :type file: IO</span>
-<span class="sd">        :returns: A list of Photo instances created by the upload.</span>
+<span class="sd">        :returns: A list of photo instances created by the upload.</span>
 <span class="sd">        :rtype: List[Photo]</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -260,11 +318,11 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.delete_photo">[docs]</a>
     <span class="k">def</span> <span class="nf">delete_photo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">],</span> <span class="n">photo_uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Delete a Photo from a specific Thing.</span>
+<span class="sd">        Delete a photo from a specific thing.</span>
 
-<span class="sd">        :param uid: The unique identifier of the Thing.</span>
+<span class="sd">        :param uid: The unique identifier of the thing.</span>
 <span class="sd">        :type uid: UUID or str</span>
-<span class="sd">        :param photo_uid: The unique identifier of the Photo.</span>
+<span class="sd">        :param photo_uid: The unique identifier of the photo.</span>
 <span class="sd">        :type photo_uid: UUID or str</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -277,11 +335,11 @@
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint.get_archive">[docs]</a>
     <span class="k">def</span> <span class="nf">get_archive</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">UUID</span><span class="p">,</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Archive</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve the Archive associated with a specific Thing.</span>
+<span class="sd">        Retrieve the archive associated with a specific thing.</span>
 
-<span class="sd">        :param uid: The unique identifier of the Thing.</span>
+<span class="sd">        :param uid: The unique identifier of the thing.</span>
 <span class="sd">        :type uid: UUID or str</span>
-<span class="sd">        :returns: The Archive instance associated with the Thing.</span>
+<span class="sd">        :returns: The archive instance associated with the thing.</span>
 <span class="sd">        :rtype: Archive</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
@@ -302,7 +360,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2024, Author.</p>
+    <p>&#169; Copyright 2024, Utah State University.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

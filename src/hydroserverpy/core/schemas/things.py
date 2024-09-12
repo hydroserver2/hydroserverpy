@@ -1,20 +1,38 @@
-from pydantic import BaseModel, Field, AliasPath, AliasChoices, field_validator, StringConstraints as StrCon
-from typing import Optional, Annotated, List, Literal, IO, TYPE_CHECKING
+from pydantic import BaseModel, Field, AliasPath, AliasChoices, field_validator
+from typing import Optional, List, Literal, IO, TYPE_CHECKING
 from uuid import UUID
 from country_list import countries_for_language
-from .base import HydroServerCoreModel, HydroServerBaseModel
+from hydroserverpy.core.schemas.base import HydroServerCoreModel, HydroServerBaseModel
 
 if TYPE_CHECKING:
-    from .datastreams import Datastream
+    from hydroserverpy.core.schemas.datastreams import Datastream
 
 
 class ThingFields(BaseModel):
-    name: Annotated[str, StrCon(strip_whitespace=True, max_length=200)]
-    description: Annotated[str, StrCon(strip_whitespace=True)]
-    sampling_feature_type: Annotated[str, StrCon(strip_whitespace=True, max_length=200)]
-    sampling_feature_code: Annotated[str, StrCon(strip_whitespace=True, max_length=200)]
-    site_type: Annotated[str, StrCon(strip_whitespace=True, max_length=200)]
-    data_disclaimer: Optional[Annotated[str, StrCon(strip_whitespace=True)]] = None
+    name: str = Field(
+        ..., strip_whitespace=True, max_length=200,
+        description='The name of the site/thing.'
+    )
+    description: str = Field(
+        ..., strip_whitespace=True,
+        description='A description of the site/thing.'
+    )
+    sampling_feature_type: str = Field(
+        ..., strip_whitespace=True, max_length=200,
+        description='The sampling feature type of the site/thing.'
+    )
+    sampling_feature_code: str = Field(
+        ..., strip_whitespace=True, max_length=200,
+        description='A code representing the sampling feature of the site/thing.'
+    )
+    site_type: str = Field(
+        ..., strip_whitespace=True, max_length=200,
+        description='The type of the site/thing.'
+    )
+    data_disclaimer: Optional[str] = Field(
+        None, strip_whitespace=True,
+        description='An optional data disclaimer to attach to observations collected at this site/thing.'
+    )
 
 
 # Get a list of all ISO 3166-1 alpha-2 country codes
@@ -24,31 +42,38 @@ valid_country_codes = [code for code, _ in countries_for_language('en')]
 class LocationFields(BaseModel):
     latitude: float = Field(
         ..., ge=-90, le=90, serialization_alias='latitude',
-        validation_alias=AliasChoices('latitude', AliasPath('location', 'latitude'))
+        validation_alias=AliasChoices('latitude', AliasPath('location', 'latitude')),
+        description='The WGS84 latitude of the location.'
     )
     longitude: float = Field(
         ..., ge=-180, le=180, serialization_alias='longitude',
-        validation_alias=AliasChoices('longitude', AliasPath('location', 'longitude'))
+        validation_alias=AliasChoices('longitude', AliasPath('location', 'longitude')),
+        description='The WGS84 longitude of the location.'
     )
     elevation_m: Optional[float] = Field(
         None, ge=-99999, le=99999, serialization_alias='elevation_m',
-        validation_alias=AliasChoices('elevation_m', AliasPath('location', 'elevation_m'))
+        validation_alias=AliasChoices('elevation_m', AliasPath('location', 'elevation_m')),
+        description='The elevation in meters of the location.'
     )
-    elevation_datum: Optional[Annotated[str, StrCon(strip_whitespace=True, max_length=255)]] = Field(
-        None, serialization_alias='elevationDatum',
-        validation_alias=AliasChoices('elevationDatum', AliasPath('location', 'elevationDatum'))
+    elevation_datum: Optional[str] = Field(
+        None, strip_whitespace=True, max_length=255, serialization_alias='elevationDatum',
+        validation_alias=AliasChoices('elevationDatum', AliasPath('location', 'elevationDatum')),
+        description='The datum used to represent the elevation of the location.'
     )
-    state: Optional[Annotated[str, StrCon(strip_whitespace=True, max_length=200)]] = Field(
-        None, serialization_alias='state',
-        validation_alias=AliasChoices('state', AliasPath('location', 'state'))
+    state: Optional[str] = Field(
+        None, strip_whitespace=True, max_length=200, serialization_alias='state',
+        validation_alias=AliasChoices('state', AliasPath('location', 'state')),
+        description='The state/province of the location.'
     )
-    county: Optional[Annotated[str, StrCon(strip_whitespace=True, max_length=200)]] = Field(
-        None, serialization_alias='county',
-        validation_alias=AliasChoices('county', AliasPath('location', 'county'))
+    county: Optional[str] = Field(
+        None, strip_whitespace=True, max_length=200, serialization_alias='county',
+        validation_alias=AliasChoices('county', AliasPath('location', 'county')),
+        description='The county/district of the location.'
     )
-    country: Optional[Annotated[str, StrCon(strip_whitespace=True, max_length=2)]] = Field(
-        None, serialization_alias='country',
-        validation_alias=AliasChoices('country', AliasPath('location', 'country'))
+    country: Optional[str] = Field(
+        None, strip_whitespace=True, max_length=2, serialization_alias='country',
+        validation_alias=AliasChoices('country', AliasPath('location', 'country')),
+        description='The ISO 3166-1 alpha-2 country code of the location.'
     )
 
     @field_validator('country', mode='after')
@@ -71,23 +96,24 @@ class LocationFields(BaseModel):
 
 class Thing(HydroServerCoreModel, ThingFields, LocationFields):
     """
-    A model representing a Thing, combining core attributes from ThingFields and LocationFields with methods for
+    A model representing a site/thing, combining core attributes from ThingFields and LocationFields with methods for
     interacting with related entities.
 
-    :ivar _datastreams: A private attribute to cache the list of datastreams associated with the Thing.
-    :ivar _tags: A private attribute to cache the list of tags associated with the Thing.
-    :ivar _photos: A private attribute to cache the list of photos associated with the Thing.
-    :ivar _archive: A private attribute to cache the archive associated with the Thing.
+    :ivar _datastreams: A private attribute to cache the list of datastreams associated with the thing.
+    :ivar _tags: A private attribute to cache the list of tags associated with the thing.
+    :ivar _photos: A private attribute to cache the list of photos associated with the thing.
+    :ivar _archive: A private attribute to cache the archive associated with the thing.
     """
 
     def __init__(self, _endpoint, _uid: Optional[UUID] = None, **data):
         """
         Initialize a Thing instance.
 
-        :param _endpoint: The endpoint associated with the Thing.
-        :param _uid: The unique identifier for the Thing.
+        :param _endpoint: The endpoint associated with the thing.
+        :type _endpoint: str
+        :param _uid: The unique identifier for the thing.
         :type _uid: Optional[UUID]
-        :param data: Additional attributes for the Thing.
+        :param data: Additional attributes for the thing.
         """
 
         super().__init__(_endpoint=_endpoint, _uid=_uid, **data)
@@ -99,10 +125,10 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
     @property
     def datastreams(self) -> List['Datastream']:
         """
-        The datastreams associated with the Thing. If not already cached, fetch the datastreams from the
+        The datastreams associated with the thing. If not already cached, fetch the datastreams from the
         server.
 
-        :return: A list of datastreams associated with the Thing.
+        :return: A list of datastreams associated with the thing.
         :rtype: List[Datastream]
         """
 
@@ -114,9 +140,9 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
     @property
     def tags(self) -> List['Tag']:
         """
-        The tags associated with the Thing. If not already cached, fetch the tags from the server.
+        The tags associated with the thing. If not already cached, fetch the tags from the server.
 
-        :return: A list of tags associated with the Thing.
+        :return: A list of tags associated with the thing.
         :rtype: List[Tag]
         """
 
@@ -128,9 +154,9 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
     @property
     def photos(self) -> List['Photo']:
         """
-        The photos associated with the Thing. If not already cached, fetch the photos from the server.
+        The photos associated with the thing. If not already cached, fetch the photos from the server.
 
-        :return: A list of photos associated with the Thing.
+        :return: A list of photos associated with the thing.
         :rtype: List[Photo]
         """
 
@@ -142,9 +168,9 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
     @property
     def archive(self) -> 'Archive':
         """
-        The archive associated with the Thing. If not already cached, fetch the archive from the server.
+        The archive associated with the thing. If not already cached, fetch the archive from the server.
 
-        :return: The archive associated with the Thing.
+        :return: The archive associated with the thing.
         :rtype: Archive
         """
 
@@ -155,7 +181,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
 
     def refresh(self) -> None:
         """
-        Refresh the Thing with the latest data from the server and update cached datastreams, tags, photos, and archive
+        Refresh the thing with the latest data from the server and update cached datastreams, tags, photos, and archive
         if they were previously loaded.
         """
 
@@ -173,7 +199,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
 
     def add_tag(self, key: str, value: str) -> None:
         """
-        Add a new tag to the Thing.
+        Add a new tag to the thing.
 
         :param key: The key of the new tag.
         :param value: The value of the new tag.
@@ -184,7 +210,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
 
     def update_tag(self, key: str, value: str) -> None:
         """
-        Update the value of an existing tag on the Thing.
+        Update the value of an existing tag on the thing.
 
         :param key: The key of the tag to update.
         :param value: The new value for the tag.
@@ -196,7 +222,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
 
     def delete_tag(self, key: str) -> None:
         """
-        Delete a tag from the Thing.
+        Delete a tag from the thing.
 
         :param key: The key of the tag to delete.
         """
@@ -207,7 +233,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
 
     def add_photo(self, photo: IO) -> None:
         """
-        Add a photo to the Thing.
+        Add a photo to the thing.
 
         :param photo: The photo file to upload.
         :type photo: IO
@@ -218,7 +244,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
 
     def delete_photo(self, link: str) -> None:
         """
-        Delete a photo from the Thing.
+        Delete a photo from the thing.
 
         :param link: The link to the photo to delete.
         """
@@ -230,28 +256,52 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
 
 class Archive(HydroServerBaseModel):
     """
-    A model representing an archive associated with a Thing.
+    A model representing an archive associated with a thing.
     """
 
-    link: Optional[Annotated[str, StrCon(strip_whitespace=True, max_length=255)]] = None
-    frequency: Optional[Literal['daily', 'weekly', 'monthly']]
-    path: Annotated[str, StrCon(strip_whitespace=True, max_length=255)]
-    datastream_ids: List[UUID]
+    link: Optional[str] = Field(
+        None, strip_whitespace=True, max_length=255,
+        description='A link to the HydroShare resource containing the archived site/thing.'
+    )
+    frequency: Optional[Literal['daily', 'weekly', 'monthly']] = Field(
+        ...,
+        description='The frequency at which the site/thing should be archived.',
+    )
+    path: str = Field(
+        ..., strip_whitespace=True, max_length=255,
+        description='The path within the HydroShare resource containing the archived data.'
+    )
+    datastream_ids: List[UUID] = Field(
+        ...,
+        description='The list of datastreams that are included in the archived data.',
+    )
 
 
 class Tag(HydroServerBaseModel):
     """
-    A model representing a tag associated with a Thing.
+    A model representing a tag associated with a thing.
     """
 
-    key: Annotated[str, StrCon(strip_whitespace=True, max_length=255)]
-    value: Annotated[str, StrCon(strip_whitespace=True, max_length=255)]
+    key: str = Field(
+        ..., strip_whitespace=True, max_length=255,
+        description='The key of the tag.'
+    )
+    value: str = Field(
+        ..., strip_whitespace=True, max_length=255,
+        description='The value of the tag.'
+    )
 
 
 class Photo(HydroServerBaseModel):
     """
-    A model representing a photo associated with a Thing.
+    A model representing a photo associated with a thing.
     """
 
-    file_path: Annotated[str, StrCon(strip_whitespace=True)]
-    link: Annotated[str, StrCon(strip_whitespace=True)]
+    file_path: str = Field(
+        ..., strip_whitespace=True,
+        description='The file path of the photo.'
+    )
+    link: str = Field(
+        ..., strip_whitespace=True,
+        description='The link to the photo.'
+    )

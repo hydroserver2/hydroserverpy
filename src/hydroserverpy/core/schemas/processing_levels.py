@@ -1,17 +1,26 @@
-from pydantic import BaseModel, StringConstraints as StrCon
-from typing import Optional, Annotated
-from .base import HydroServerCoreModel
+from pydantic import BaseModel, Field
+from typing import Optional
+from hydroserverpy.core.schemas.base import HydroServerCoreModel
 
 
 class ProcessingLevelFields(BaseModel):
-    code: Annotated[str, StrCon(strip_whitespace=True, max_length=255)]
-    definition: Optional[Annotated[str, StrCon(strip_whitespace=True)]] = None
-    explanation: Optional[Annotated[str, StrCon(strip_whitespace=True)]] = None
+    code: str = Field(
+        ..., strip_whitespace=True, max_length=255,
+        description='A code representing the processing level.'
+    )
+    definition: Optional[str] = Field(
+        None, strip_whitespace=True,
+        description='The definition of the processing level.'
+    )
+    explanation: Optional[str] = Field(
+        None, strip_whitespace=True,
+        description='The explanation of the processing level.'
+    )
 
 
 class ProcessingLevel(HydroServerCoreModel, ProcessingLevelFields):
     """
-    A model representing an ProcessingLevel, extending the core functionality of HydroServerCoreModel with additional
+    A model representing a processing level, extending the core functionality of HydroServerCoreModel with additional
     fields defined in ProcessingLevelFields.
     """
 

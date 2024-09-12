@@ -1,16 +1,22 @@
-from pydantic import BaseModel, StringConstraints as StrCon
-from typing import Optional, Annotated
-from .base import HydroServerCoreModel
+from pydantic import BaseModel, Field
+from typing import Optional
+from hydroserverpy.core.schemas.base import HydroServerCoreModel
 
 
 class ResultQualifierFields(BaseModel):
-    code: Optional[Annotated[str, StrCon(strip_whitespace=True, max_length=255)]]
-    description: Optional[Annotated[str, StrCon(strip_whitespace=True)]]
+    code: str = Field(
+        ..., strip_whitespace=True, max_length=255,
+        description='A code representing the result qualifier.'
+    )
+    description: Optional[str] = Field(
+        None, strip_whitespace=True,
+        description='A description of the result qualifier.'
+    )
 
 
 class ResultQualifier(HydroServerCoreModel, ResultQualifierFields):
     """
-    A model representing an ResultQualifier, extending the core functionality of HydroServerCoreModel with additional
+    A model representing an result qualifier, extending the core functionality of HydroServerCoreModel with additional
     fields defined in ResultQualifierFields.
     """
 

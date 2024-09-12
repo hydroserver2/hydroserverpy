@@ -1,16 +1,17 @@
 import json
 from typing import Union, List, IO, TYPE_CHECKING
 from uuid import UUID
-from .base import HydroServerEndpoint
-from ..schemas import Thing, Datastream, Tag, Photo, Archive
+from hydroserverpy.core.endpoints.base import HydroServerEndpoint, expand_docstring
+from hydroserverpy.core.endpoints.datastreams import DatastreamEndpoint
+from hydroserverpy.core.schemas import Thing, Datastream, Tag, Photo, Archive
 
 if TYPE_CHECKING:
-    from ..service import HydroServer
+    from hydroserverpy.core.service import HydroServer
 
 
 class ThingEndpoint(HydroServerEndpoint):
     """
-    An endpoint for interacting with Thing entities in the HydroServer service.
+    An endpoint for interacting with thing entities in the HydroServer service.
 
     :ivar _model: The model class associated with this endpoint, set to `Thing`.
     :ivar _api_route: The base route of the API, derived from the service.
@@ -30,13 +31,52 @@ class ThingEndpoint(HydroServerEndpoint):
         self._api_route = self._service.api_route
         self._endpoint_route = 'things'
 
+    def list(self) -> List[Thing]:
+        """
+        Retrieve a collection of things owned by the logged-in user.
+        """
+
+        return super()._get()
+
+    @expand_docstring(include_uid=True)
+    def get(self, uid: Union[UUID, str]) -> Thing:
+        """
+        Retrieve a thing owned by the logged-in user.
+        """
+
+        return super()._get(uid)
+
+    @expand_docstring(model=Thing)
+    def create(self, **kwargs) -> Thing:
+        """
+        Create a new thing in HydroServer.
+        """
+
+        return super()._post(**kwargs)
+
+    @expand_docstring(model=Thing, include_uid=True)
+    def update(self, uid: Union[UUID, str], **kwargs) -> Thing:
+        """
+        Update an existing thing in HydroServer.
+        """
+
+        return super()._patch(uid=uid, **kwargs)
+
+    @expand_docstring(include_uid=True)
+    def delete(self, uid: Union[UUID, str]) -> None:
+        """
+        Delete an existing thing in HydroServer.
+        """
+
+        super()._delete(uid=uid)
+
     def list_datastreams(self, uid: Union[UUID, str]) -> List[Datastream]:
         """
-        List all Datastreams associated with a specific Thing.
+        List all datastreams associated with a specific thing.
 
-        :param uid: The unique identifier of the Thing.
+        :param uid: The unique identifier of the thing.
         :type uid: UUID or str
-        :returns: A list of Datastream instances.
+        :returns: A list of datastream instances.
         :rtype: List[Datastream]
         """
 
@@ -44,18 +84,20 @@ class ThingEndpoint(HydroServerEndpoint):
             'get', f'{self._api_route}/data/{self._endpoint_route}/{str(uid)}/datastreams'
         )
 
+        endpoint = DatastreamEndpoint(self._service)
+
         return [
-            Datastream(_endpoint=self, _uid=entity.pop('id'), **entity)
+            Datastream(_endpoint=endpoint, _uid=entity.pop('id'), **entity)
             for entity in json.loads(response.content)
         ]
 
     def list_tags(self, uid: Union[UUID, str]) -> List[Tag]:
         """
-        List all Tags associated with a specific Thing.
+        List all tags associated with a specific thing.
 
-        :param uid: The unique identifier of the Thing.
+        :param uid: The unique identifier of the thing.
         :type uid: UUID or str
-        :returns: A list of Tag instances.
+        :returns: A list of tag instances.
         :rtype: List[Tag]
         """
 
@@ -67,15 +109,15 @@ class ThingEndpoint(HydroServerEndpoint):
 
     def create_tag(self, uid: Union[UUID, str], key: str, value: str) -> Tag:
         """
-        Create a new Tag for a specific Thing.
+        Create a new tag for a specific thing.
 
-        :param uid: The unique identifier of the Thing.
+        :param uid: The unique identifier of the thing.
         :type uid: UUID or str
-        :param key: The key of the Tag.
+        :param key: The key of the tag.
         :type key: str
-        :param value: The value of the Tag.
+        :param value: The value of the tag.
         :type value: str
-        :returns: The created Tag instance.
+        :returns: The created tag instance.
         :rtype: Tag
         """
 
@@ -90,15 +132,15 @@ class ThingEndpoint(HydroServerEndpoint):
 
     def update_tag(self, uid: Union[UUID, str], tag_uid: Union[UUID, str], value: str) -> Tag:
         """
-        Update an existing Tag for a specific Thing.
+        Update an existing tag for a specific thing.
 
-        :param uid: The unique identifier of the Thing.
+        :param uid: The unique identifier of the thing.
         :type uid: UUID or str
-        :param tag_uid: The unique identifier of the Tag.
+        :param tag_uid: The unique identifier of the tag.
         :type tag_uid: UUID or str
-        :param value: The new value for the Tag.
+        :param value: The new value for the tag.
         :type value: str
-        :returns: The updated Tag instance.
+        :returns: The updated tag instance.
         :rtype: Tag
         """
 
@@ -113,11 +155,11 @@ class ThingEndpoint(HydroServerEndpoint):
 
     def delete_tag(self, uid: Union[UUID, str], tag_uid: Union[UUID, str]) -> None:
         """
-        Delete a Tag from a specific Thing.
+        Delete a tag from a specific thing.
 
-        :param uid: The unique identifier of the Thing.
+        :param uid: The unique identifier of the thing.
         :type uid: UUID or str
-        :param tag_uid: The unique identifier of the Tag.
+        :param tag_uid: The unique identifier of the tag.
         :type tag_uid: UUID or str
         """
 
@@ -127,11 +169,11 @@ class ThingEndpoint(HydroServerEndpoint):
 
     def list_photos(self, uid: Union[UUID, str]) -> List[Photo]:
         """
-        List all Photos associated with a specific Thing.
+        List all photos associated with a specific thing.
 
-        :param uid: The unique identifier of the Thing.
+        :param uid: The unique identifier of the thing.
         :type uid: UUID or str
-        :returns: A list of Photo instances.
+        :returns: A list of photo instances.
         :rtype: List[Photo]
         """
 
@@ -143,13 +185,13 @@ class ThingEndpoint(HydroServerEndpoint):
 
     def upload_photo(self, uid: Union[UUID, str], file: IO) -> List[Photo]:
         """
-        Upload a new Photo to a specific Thing.
+        Upload a new photo to a specific thing.
 
-        :param uid: The unique identifier of the Thing.
+        :param uid: The unique identifier of the thing.
         :type uid: UUID or str
         :param file: The file-like object representing the photo to upload.
         :type file: IO
-        :returns: A list of Photo instances created by the upload.
+        :returns: A list of photo instances created by the upload.
         :rtype: List[Photo]
         """
 
@@ -162,11 +204,11 @@ class ThingEndpoint(HydroServerEndpoint):
 
     def delete_photo(self, uid: Union[UUID, str], photo_uid: Union[UUID, str]) -> None:
         """
-        Delete a Photo from a specific Thing.
+        Delete a photo from a specific thing.
 
-        :param uid: The unique identifier of the Thing.
+        :param uid: The unique identifier of the thing.
         :type uid: UUID or str
-        :param photo_uid: The unique identifier of the Photo.
+        :param photo_uid: The unique identifier of the photo.
         :type photo_uid: UUID or str
         """
 
@@ -176,11 +218,11 @@ class ThingEndpoint(HydroServerEndpoint):
 
     def get_archive(self, uid: Union[UUID, str]) -> Archive:
         """
-        Retrieve the Archive associated with a specific Thing.
+        Retrieve the archive associated with a specific thing.
 
-        :param uid: The unique identifier of the Thing.
+        :param uid: The unique identifier of the thing.
         :type uid: UUID or str
-        :returns: The Archive instance associated with the Thing.
+        :returns: The archive instance associated with the thing.
         :rtype: Archive
         """
 

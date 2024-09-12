@@ -1,18 +1,18 @@
 import json
 import pandas as pd
-from typing import Union, TYPE_CHECKING
+from typing import List, Union, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
-from .base import HydroServerEndpoint
-from ..schemas import Datastream
+from hydroserverpy.core.endpoints.base import HydroServerEndpoint, expand_docstring
+from hydroserverpy.core.schemas import Datastream
 
 if TYPE_CHECKING:
-    from ..service import HydroServer
+    from hydroserverpy.core.service import HydroServer
 
 
 class DatastreamEndpoint(HydroServerEndpoint):
     """
-    An endpoint for interacting with Datastream entities in the HydroServer service.
+    An endpoint for interacting with datastream entities in the HydroServer service.
 
     :ivar _model: The model class associated with this endpoint, set to `Datastream`.
     :ivar _api_route: The base route of the API, derived from the service.
@@ -32,6 +32,45 @@ class DatastreamEndpoint(HydroServerEndpoint):
         self._api_route = self._service.api_route
         self._endpoint_route = 'datastreams'
 
+    def list(self) -> List[Datastream]:
+        """
+        Retrieve a collection of datastreams owned by the logged-in user.
+        """
+
+        return super()._get()
+
+    @expand_docstring(include_uid=True)
+    def get(self, uid: Union[UUID, str]) -> Datastream:
+        """
+        Retrieve a datastream owned by the logged-in user.
+        """
+
+        return super()._get(uid)
+
+    @expand_docstring(model=Datastream)
+    def create(self, **kwargs) -> Datastream:
+        """
+        Create a new datastream in HydroServer.
+        """
+
+        return super()._post(**kwargs)
+
+    @expand_docstring(model=Datastream, include_uid=True)
+    def update(self, uid: Union[UUID, str], **kwargs) -> Datastream:
+        """
+        Update an existing datastream in HydroServer.
+        """
+
+        return super()._patch(uid=uid, **kwargs)
+
+    @expand_docstring(include_uid=True)
+    def delete(self, uid: Union[UUID, str]) -> None:
+        """
+        Delete an existing datastream in HydroServer.
+        """
+
+        super()._delete(uid=uid)
+
     def get_observations(
             self,
             uid: Union[UUID, str],
@@ -43,9 +82,9 @@ class DatastreamEndpoint(HydroServerEndpoint):
             fetch_all: bool = False
     ) -> pd.DataFrame:
         """
-        Retrieve observations from a specific Datastream.
+        Retrieve observations from a specific datastream.
 
-        :param uid: The unique identifier of the Datastream.
+        :param uid: The unique identifier of the datastream.
         :type uid: Union[UUID, str]
         :param start_time: The start time for filtering observations.
         :type start_time: datetime, optional
@@ -106,15 +145,15 @@ class DatastreamEndpoint(HydroServerEndpoint):
 
         return data_frame
 
-    def upload_observations(
+    def load_observations(
             self,
             uid: Union[UUID, str],
             observations: pd.DataFrame,
     ) -> None:
         """
-        Upload observations to a specific Datastream.
+        Load observations to a specific datastream.
 
-        :param uid: The unique identifier of the Datastream.
+        :param uid: The unique identifier of the datastream.
         :type uid: Union[UUID, str]
         :param observations: A DataFrame containing the observations to upload.
         :type observations: pd.DataFrame

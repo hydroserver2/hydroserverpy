@@ -1,14 +1,15 @@
-from typing import TYPE_CHECKING
-from .base import HydroServerEndpoint
-from ..schemas import ProcessingLevel
+from typing import List, Union, TYPE_CHECKING
+from uuid import UUID
+from hydroserverpy.core.endpoints.base import HydroServerEndpoint, expand_docstring
+from hydroserverpy.core.schemas import ProcessingLevel
 
 if TYPE_CHECKING:
-    from ..service import HydroServer
+    from hydroserverpy.core.service import HydroServer
 
 
 class ProcessingLevelEndpoint(HydroServerEndpoint):
     """
-    An endpoint for interacting with ProcessingLevel entities in the HydroServer service.
+    An endpoint for interacting with processing level entities in the HydroServer service.
 
     :ivar _model: The model class associated with this endpoint, set to `ProcessingLevel`.
     :ivar _api_route: The base route of the API, derived from the service.
@@ -27,3 +28,42 @@ class ProcessingLevelEndpoint(HydroServerEndpoint):
         self._model = ProcessingLevel
         self._api_route = self._service.api_route
         self._endpoint_route = 'processing-levels'
+
+    def list(self) -> List[ProcessingLevel]:
+        """
+        Retrieve a collection of processing levels owned by the logged-in user.
+        """
+
+        return super()._get()
+
+    @expand_docstring(include_uid=True)
+    def get(self, uid: Union[UUID, str]) -> ProcessingLevel:
+        """
+        Retrieve a processing level owned by the logged-in user.
+        """
+
+        return super()._get(uid)
+
+    @expand_docstring(model=ProcessingLevel)
+    def create(self, **kwargs) -> ProcessingLevel:
+        """
+        Create a new processing level in HydroServer.
+        """
+
+        return super()._post(**kwargs)
+
+    @expand_docstring(model=ProcessingLevel, include_uid=True)
+    def update(self, uid: Union[UUID, str], **kwargs) -> ProcessingLevel:
+        """
+        Update an existing processing level in HydroServer.
+        """
+
+        return super()._patch(uid=uid, **kwargs)
+
+    @expand_docstring(include_uid=True)
+    def delete(self, uid: Union[UUID, str]) -> None:
+        """
+        Delete an existing processing level in HydroServer.
+        """
+
+        super()._delete(uid=uid)

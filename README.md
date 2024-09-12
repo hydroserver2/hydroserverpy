@@ -123,7 +123,7 @@ new_observations = pd.DataFrame(
     columns=['timestamp', 'value']
 )
 new_observations['timestamp'] = pd.to_datetime(new_observations['timestamp'])
-datastream.upload_observations(new_observations)
+datastream.load_observations(new_observations)
 ```
 
 
