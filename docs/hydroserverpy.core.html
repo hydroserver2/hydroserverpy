@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data Management Package &mdash; hydroserverpy  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css?v=a0a71c94" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=5929fcd5"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="hydroserverpy.core.endpoints package" href="hydroserverpy.core.endpoints.html" />
+    <link rel="prev" title="hydroserverpy" href="hydroserverpy.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            hydroserverpy
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="hydroserverpy.html">hydroserverpy</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.html#getting-started">Getting Started</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="hydroserverpy.html#subpackages">Subpackages</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Data Management Package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserver-data-management-guide">HydroServer Data Management Guide</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-hydroserverpy.core.service">HydroServer Service Connection Object</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html">Data Loader Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html">Quality Control Package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.html#module-hydroserverpy">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">hydroserverpy</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="hydroserverpy.html">hydroserverpy</a></li>
+      <li class="breadcrumb-item active">Data Management Package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hydroserverpy.core.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="data-management-package">
+<h1>Data Management Package<a class="headerlink" href="#data-management-package" title="Link to this heading"></a></h1>
+<section id="hydroserver-data-management-guide">
+<h2>HydroServer Data Management Guide<a class="headerlink" href="#hydroserver-data-management-guide" title="Link to this heading"></a></h2>
+<section id="hydroserver-python-client-data-management">
+<h3>HydroServer Python Client - Data Management<a class="headerlink" href="#hydroserver-python-client-data-management" title="Link to this heading"></a></h3>
+<p>The hydroserverpy Python package allows HydroServer users to retrieve, create, update, and delete their HydroServer data and metadata. This guide will provide examples on how to manage various types of HydroServer data.</p>
+<section id="data-management-guide-with-examples">
+<h4>Data Management Guide with Examples<a class="headerlink" href="#data-management-guide-with-examples" title="Link to this heading"></a></h4>
+<p>To perform data management operations, you must connect to HydroServer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hydroserverpy</span> <span class="kn">import</span> <span class="n">HydroServer</span>
+
+<span class="c1"># Initialize HydroServer connection with credentials.</span>
+<span class="n">hs_api</span> <span class="o">=</span> <span class="n">HydroServer</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;https://playground.hydroserver.org&#39;</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;user@example.com&#39;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s1">&#39;******&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>The hydroserverpy connection instance exposes the following types of core data and metadata you can retrieve or create, either as a list or by ID using the <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">get</span></code>, or <code class="docutils literal notranslate"><span class="pre">create</span></code> methods of the associated property:</p>
+<ul class="simple">
+<li><p>things</p></li>
+<li><p>datastreams</p></li>
+<li><p>sensors</p></li>
+<li><p>units</p></li>
+<li><p>processinglevels</p></li>
+<li><p>observedproperties</p></li>
+<li><p>resultqualifiers</p></li>
+</ul>
+<section id="things">
+<h5>Things<a class="headerlink" href="#things" title="Link to this heading"></a></h5>
+<p>Things (or sites) are one of the core data elements managed in HydroServer. Things represent a location or site at which one or more datastreams of observations are collected. All datastreams in HydroServer must be associated with a thing/site. The examples below demonstrate the actions you can take to manage things in HydroServer.</p>
+<section id="example-get-things">
+<h6>Example: Get Things<a class="headerlink" href="#example-get-things" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all Things</span>
+<span class="n">things</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="c1"># Get owned Things</span>
+<span class="n">owned_things</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">owned_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get primary owned Things</span>
+<span class="n">primary_owned_things</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">primary_owned_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get Thing with a given ID</span>
+<span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-create-thing">
+<h6>Example: Create Thing<a class="headerlink" href="#example-create-thing" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new Thing on HydroServer</span>
+<span class="n">new_thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Site&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;This is a site that records environmental observations.&#39;</span><span class="p">,</span>
+    <span class="n">sampling_feature_type</span><span class="o">=</span><span class="s1">&#39;Site&#39;</span><span class="p">,</span>
+    <span class="n">sampling_feature_code</span><span class="o">=</span><span class="s1">&#39;OBSERVATION_SITE&#39;</span><span class="p">,</span>
+    <span class="n">site_type</span><span class="o">=</span><span class="s1">&#39;Atmosphere&#39;</span><span class="p">,</span>
+    <span class="n">latitude</span><span class="o">=</span><span class="s1">&#39;41.7390&#39;</span><span class="p">,</span>
+    <span class="n">longitude</span><span class="o">=</span><span class="s1">&#39;-111.7957&#39;</span><span class="p">,</span>
+    <span class="n">elevation_m</span><span class="o">=</span><span class="s1">&#39;1414.0&#39;</span><span class="p">,</span>
+    <span class="n">elevation_datum</span><span class="o">=</span><span class="s1">&#39;EGM96&#39;</span><span class="p">,</span>
+    <span class="n">state</span><span class="o">=</span><span class="s1">&#39;UT&#39;</span><span class="p">,</span>
+    <span class="n">county</span><span class="o">=</span><span class="s1">&#39;Cache&#39;</span><span class="p">,</span>
+    <span class="n">country</span><span class="o">=</span><span class="s1">&#39;US&#39;</span><span class="p">,</span>
+    <span class="n">data_disclaimer</span><span class="o">=</span><span class="s1">&#39;WARNING: These data may be provisional and subject to revision.&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Each of the methods above will return one or more Thing objects. The examples below show the main properties and methods available to a Thing object.</p>
+</section>
+<section id="example-modify-a-thing">
+<h6>Example: Modify a Thing<a class="headerlink" href="#example-modify-a-thing" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Thing</span>
+<span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update one or more properties of the Thing.</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Updated Site Name&#39;</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;This site metadata has been modified.&#39;</span>
+
+<span class="c1"># Save the changes back to HydroServer.</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-manage-thing-tags">
+<h6>Example: Manage Thing Tags<a class="headerlink" href="#example-manage-thing-tags" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Thing</span>
+<span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get Thing Tags</span>
+<span class="n">tags</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">tags</span>
+
+<span class="c1"># Add a Tag to a Thing</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">add_tag</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;Region&#39;</span><span class="p">,</span>
+    <span class="n">value</span><span class="o">=</span><span class="s1">&#39;A&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Modify a Thing Tag</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">update_tag</span><span class="p">(</span>
+    <span class="n">key</span><span class="o">=</span><span class="s1">&#39;Region&#39;</span><span class="p">,</span>
+    <span class="n">value</span><span class="o">=</span><span class="s1">&#39;B&#39;</span>
+<span class="p">)</span>
+
+<span class="c1"># Delete a Thing Tag</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">delete_tag</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s1">&#39;Region&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-manage-thing-photos">
+<h6>Example: Manage Thing Photos<a class="headerlink" href="#example-manage-thing-photos" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Thing</span>
+<span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get Thing Photos</span>
+<span class="n">photos</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">photos</span>
+
+<span class="c1"># Add a Photo to a Thing</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;/path/to/my/photo.png&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">photo_file</span><span class="p">:</span>
+    <span class="n">thing</span><span class="o">.</span><span class="n">add_photo</span><span class="p">(</span><span class="n">photo</span><span class="o">=</span><span class="n">photo_file</span><span class="p">)</span>
+
+<span class="c1"># Delete a Thing Photo</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">delete_photo</span><span class="p">(</span><span class="n">link</span><span class="o">=</span><span class="s1">&#39;https://link/to/my/photo.png&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-get-datastreams-of-a-thing">
+<h6>Example: Get Datastreams of a Thing<a class="headerlink" href="#example-get-datastreams-of-a-thing" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Thing</span>
+<span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Fetch Datastreams of the Thing</span>
+<span class="n">datastreams</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">datastreams</span>
+</pre></div>
+</div>
+</section>
+<section id="example-get-thing-archive">
+<h6>Example: Get Thing Archive<a class="headerlink" href="#example-get-thing-archive" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Thing</span>
+<span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Fetch Archive information of a Thing</span>
+<span class="n">archive</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">archive</span>
+</pre></div>
+</div>
+</section>
+<section id="example-refresh-thing-data-from-hydroserver">
+<h6>Example: Refresh Thing data from HydroServer<a class="headerlink" href="#example-refresh-thing-data-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Thing</span>
+<span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Refresh Thing data from HydroServer</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-delete-thing-from-hydroserver">
+<h6>Example: Delete Thing from HydroServer<a class="headerlink" href="#example-delete-thing-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Thing</span>
+<span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Delete the Thing from HydroServer</span>
+<span class="n">thing</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="observed-properties">
+<h5>Observed Properties<a class="headerlink" href="#observed-properties" title="Link to this heading"></a></h5>
+<p>Observed properties are used in HydroServer to represent the physical property being observed and stored in a datastream. The examples below demonstrate the actions you can take to manage observed properties in HydroServer.</p>
+<section id="example-get-observed-properties">
+<h6>Example: Get Observed Properties<a class="headerlink" href="#example-get-observed-properties" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all Observed Properties</span>
+<span class="n">observed_properties</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">observedproperties</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="c1"># Get all Observed Properties excluding templates</span>
+<span class="n">owned_and_unowned_observed_properties</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">observedproperties</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_templates</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get owned Observed Properties including templates</span>
+<span class="n">owned_and_template_observed_properties</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">observedproperties</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_unowned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get owned Observed Properties</span>
+<span class="n">owned_observed_properties</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">observedproperties</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_templates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_unowned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get Observed Property templates</span>
+<span class="n">template_observed_properties</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">observedproperties</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_owned</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_templates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get Observed Property with a given ID</span>
+<span class="n">observed_property</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">observedproperty</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-create-observed-property">
+<h6>Example: Create Observed Property<a class="headerlink" href="#example-create-observed-property" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new Observed Property in HydroServer</span>
+<span class="n">new_observed_property</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">observedproperties</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Temperature&#39;</span><span class="p">,</span>
+    <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Air Temperature&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Air temperature&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Climate&#39;</span><span class="p">,</span>
+    <span class="n">code</span><span class="o">=</span><span class="s1">&#39;AirTemp&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Each of the methods above will return one or more ObservedProperty objects. The examples below show the main properties and methods available to an ObservedProperty object.</p>
+</section>
+<section id="example-modify-an-observed-property">
+<h6>Example: Modify an Observed Property<a class="headerlink" href="#example-modify-an-observed-property" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get an Observed Property</span>
+<span class="n">observed_property</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">observedproperties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update one or more properties of the Observed Property.</span>
+<span class="n">observed_property</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Updated Observed Property Name&#39;</span>
+
+<span class="c1"># Save the changes back to HydroServer.</span>
+<span class="n">observed_property</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-refresh-observed-property-data-from-hydroserver">
+<h6>Example: Refresh Observed Property data from HydroServer<a class="headerlink" href="#example-refresh-observed-property-data-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get an Observed Property</span>
+<span class="n">observed_property</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">observedproperties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Refresh Observed Property data from HydroServer</span>
+<span class="n">observed_property</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-delete-observed-property-from-hydroserver">
+<h6>Example: Delete Observed Property from HydroServer<a class="headerlink" href="#example-delete-observed-property-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get an Observed Property</span>
+<span class="n">observed_property</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">observedproperties</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Delete the Observed Property from HydroServer</span>
+<span class="n">observed_property</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="units">
+<h5>Units<a class="headerlink" href="#units" title="Link to this heading"></a></h5>
+<p>Units are used in HydroServer to describe the physical quantity represented by the result of an observation in a datastream. The examples below demonstrate the actions you can take to manage units in HydroServer.</p>
+<section id="example-get-units">
+<h6>Example: Get Units<a class="headerlink" href="#example-get-units" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all Units</span>
+<span class="n">units</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="c1"># Get all Units excluding templates</span>
+<span class="n">owned_and_unowned_units</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_templates</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get owned Units including templates</span>
+<span class="n">owned_and_template_units</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_unowned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get owned Units</span>
+<span class="n">owned_units</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_templates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_unowned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get Units templates</span>
+<span class="n">template_units</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_owned</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_templates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get Unit with a given ID</span>
+<span class="n">unit</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-create-unit">
+<h6>Example: Create Unit<a class="headerlink" href="#example-create-unit" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new Unit on HydroServer</span>
+<span class="n">new_unit</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Degree Celsius&#39;</span><span class="p">,</span>
+    <span class="n">symbol</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">,</span>
+    <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Degree Celsius&#39;</span><span class="p">,</span>
+    <span class="nb">type</span><span class="o">=</span><span class="s1">&#39;Temperature&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Each of the methods above will return one or more Unit objects. The examples below show the main properties and methods available to a Unit object.</p>
+</section>
+<section id="example-modify-a-unit">
+<h6>Example: Modify a Unit<a class="headerlink" href="#example-modify-a-unit" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Unit</span>
+<span class="n">unit</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update one or more properties of the Unit.</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Updated Unit Name&#39;</span>
+
+<span class="c1"># Save the changes back to HydroServer.</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-refresh-unit-data-from-hydroserver">
+<h6>Example: Refresh Unit data from HydroServer<a class="headerlink" href="#example-refresh-unit-data-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Unit</span>
+<span class="n">unit</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Refresh Unit data from HydroServer</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-delete-unit-from-hydroserver">
+<h6>Example: Delete Unit from HydroServer<a class="headerlink" href="#example-delete-unit-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Unit</span>
+<span class="n">unit</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Delete the Unit from HydroServer</span>
+<span class="n">unit</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="sensors">
+<h5>Sensors<a class="headerlink" href="#sensors" title="Link to this heading"></a></h5>
+<p>Sensors are used in HydroServer to describe the sensor/method used to make an environmental observation. The examples below demonstrate the actions you can take to manage sensors in HydroServer.</p>
+<section id="example-get-sensors">
+<h6>Example: Get Sensors<a class="headerlink" href="#example-get-sensors" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all Sensors</span>
+<span class="n">sensors</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">sensors</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="c1"># Get all Sensors excluding templates</span>
+<span class="n">owned_and_unowned_sensors</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">sensors</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_templates</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get owned Sensors including templates</span>
+<span class="n">owned_and_template_sensors</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">sensors</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_unowned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get owned Sensors</span>
+<span class="n">owned_sensors</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">sensors</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_templates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_unowned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get Sensors templates</span>
+<span class="n">template_sensors</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">sensors</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_owned</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_templates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get Sensor with a given ID</span>
+<span class="n">sensor</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">sensors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-create-sensor">
+<h6>Example: Create Sensor<a class="headerlink" href="#example-create-sensor" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new Sensor on HydroServer</span>
+<span class="n">new_sensor</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">sensors</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Environmental Sensor&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;An environmental sensor.&#39;</span><span class="p">,</span>
+    <span class="n">encoding_type</span><span class="o">=</span><span class="s1">&#39;json&#39;</span><span class="p">,</span>
+    <span class="n">manufacturer</span><span class="o">=</span><span class="s1">&#39;Campbell Scientific&#39;</span><span class="p">,</span>
+    <span class="n">model</span><span class="o">=</span><span class="s1">&#39;A&#39;</span><span class="p">,</span>
+    <span class="n">model_link</span><span class="o">=</span><span class="s1">&#39;https://link/to/sensor/model/info&#39;</span><span class="p">,</span>
+    <span class="n">method_type</span><span class="o">=</span><span class="s1">&#39;Sensor&#39;</span><span class="p">,</span>
+    <span class="n">method_link</span><span class="o">=</span><span class="s1">&#39;https://link/to/method/info&#39;</span><span class="p">,</span>
+    <span class="n">method_code</span><span class="o">=</span><span class="s1">&#39;SENSOR_A&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Each of the methods above will return one or more Sensor objects. The examples below show the main properties and methods available to a Sensor object.</p>
+</section>
+<section id="example-modify-a-sensor">
+<h6>Example: Modify a Sensor<a class="headerlink" href="#example-modify-a-sensor" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Sensor</span>
+<span class="n">sensor</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">sensors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update one or more properties of the Sensor.</span>
+<span class="n">sensor</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Updated Sensor Name&#39;</span>
+
+<span class="c1"># Save the changes back to HydroServer.</span>
+<span class="n">sensor</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-refresh-sensor-data-from-hydroserver">
+<h6>Example: Refresh Sensor data from HydroServer<a class="headerlink" href="#example-refresh-sensor-data-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Sensor</span>
+<span class="n">sensor</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">sensors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Refresh Sensor data from HydroServer</span>
+<span class="n">sensor</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-delete-sensor-from-hydroserver">
+<h6>Example: Delete Sensor from HydroServer<a class="headerlink" href="#example-delete-sensor-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Sensor</span>
+<span class="n">sensor</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">sensors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Delete the Sensor from HydroServer</span>
+<span class="n">sensor</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="processing-levels">
+<h5>Processing Levels<a class="headerlink" href="#processing-levels" title="Link to this heading"></a></h5>
+<p>Processing levels are used in HydroServer to describe the level of processing observations of a datastream have been subject to. The examples below demonstrate the actions you can take to manage processing levels in HydroServer.</p>
+<section id="example-get-processing-levels">
+<h6>Example: Get Processing Levels<a class="headerlink" href="#example-get-processing-levels" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all Processing Levels</span>
+<span class="n">processing_levels</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">processinglevels</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="c1"># Get all Processing Levels excluding templates</span>
+<span class="n">owned_and_unowned_processing_levels</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">processinglevels</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_templates</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get owned Processing Levels including templates</span>
+<span class="n">owned_and_template_processing_levels</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">processinglevels</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_unowned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get owned Processing Levels</span>
+<span class="n">owned_processing_levels</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">processinglevels</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_templates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_unowned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get Processing Levels templates</span>
+<span class="n">template_processing_levels</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">processinglevels</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_owned</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_templates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get Processing Level with a given ID</span>
+<span class="n">processing_level</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">processinglevels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-create-processing-level">
+<h6>Example: Create Processing Level<a class="headerlink" href="#example-create-processing-level" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new Processing Level on HydroServer</span>
+<span class="n">new_processing_level</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">processinglevels</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">code</span><span class="o">=</span><span class="s1">&#39;0&#39;</span><span class="p">,</span>
+    <span class="n">definition</span><span class="o">=</span><span class="s1">&#39;Raw&#39;</span><span class="p">,</span>
+    <span class="n">explanation</span><span class="o">=</span><span class="s1">&#39;Data have not been processed or quality controlled.&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Each of the methods above will return one or more ProcessingLevel objects. The examples below show the main properties and methods available to a ProcessingLevel object.</p>
+</section>
+<section id="example-modify-a-processing-level">
+<h6>Example: Modify a Processing Level<a class="headerlink" href="#example-modify-a-processing-level" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Processing Level</span>
+<span class="n">processing_level</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">processinglevels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update one or more properties of the Processing Level.</span>
+<span class="n">processing_level</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="s1">&#39;Updated Processing Level Code&#39;</span>
+
+<span class="c1"># Save the changes back to HydroServer.</span>
+<span class="n">processing_level</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-refresh-processing-level-data-from-hydroserver">
+<h6>Example: Refresh Processing Level data from HydroServer<a class="headerlink" href="#example-refresh-processing-level-data-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Processing Level</span>
+<span class="n">processing_level</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">processinglevels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Refresh Processing Level data from HydroServer</span>
+<span class="n">processing_level</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-delete-processing-level-from-hydroserver">
+<h6>Example: Delete Processing Level from HydroServer<a class="headerlink" href="#example-delete-processing-level-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Processing Level</span>
+<span class="n">processing_level</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">processinglevels</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Delete the Processing Level from HydroServer</span>
+<span class="n">processing_level</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="result-qualifiers">
+<h5>Result Qualifiers<a class="headerlink" href="#result-qualifiers" title="Link to this heading"></a></h5>
+<p>Result qualifiers are used in HydroServer to annotate observations during quality control or other processing steps. The examples below demonstrate the actions you can take to manage result qualifiers in HydroServer.</p>
+<section id="example-get-result-qualifiers">
+<h6>Example: Get Result Qualifiers<a class="headerlink" href="#example-get-result-qualifiers" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all Result Qualifiers</span>
+<span class="n">result_qualifiers</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">resultqualifiers</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="c1"># Get all Result Qualifiers excluding templates</span>
+<span class="n">owned_and_unowned_result_qualifiers</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">resultqualifiers</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_templates</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get owned Result Qualifiers including templates</span>
+<span class="n">owned_and_template_result_qualifiers</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">resultqualifiers</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_unowned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get owned Result Qualifiers</span>
+<span class="n">owned_result_qualifiers</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">resultqualifiers</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_templates</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_unowned</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="c1"># Get Result Qualifiers templates</span>
+<span class="n">template_result_qualifiers</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">resultqualifiers</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">include_owned</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">include_templates</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get Result Qualifier with a given ID</span>
+<span class="n">result_qualifier</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">resultqualifiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-create-result-qualifier">
+<h6>Example: Create Result Qualifier<a class="headerlink" href="#example-create-result-qualifier" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new Result Qualifier on HydroServer</span>
+<span class="n">new_result_qualifier</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">resultqualifiers</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">code</span><span class="o">=</span><span class="s1">&#39;PF&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;Power Failure&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Each of the methods above will return one or more ResultQualifier objects. The examples below show the main properties and methods available to a ResultQualifier object.</p>
+</section>
+<section id="example-modify-a-result-qualifier">
+<h6>Example: Modify a Result Qualifier<a class="headerlink" href="#example-modify-a-result-qualifier" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Result Qualifier</span>
+<span class="n">result_qualifier</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">resultqualifiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update one or more properties of the Result Qualifier.</span>
+<span class="n">result_qualifier</span><span class="o">.</span><span class="n">code</span> <span class="o">=</span> <span class="s1">&#39;Updated Result Qualifier Code&#39;</span>
+
+<span class="c1"># Save the changes back to HydroServer.</span>
+<span class="n">result_qualifier</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-refresh-result-qualifier-data-from-hydroserver">
+<h6>Example: Refresh Result Qualifier data from HydroServer<a class="headerlink" href="#example-refresh-result-qualifier-data-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Result Qualifier</span>
+<span class="n">result_qualifier</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">resultqualifiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Refresh Result Qualifier data from HydroServer</span>
+<span class="n">result_qualifier</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-delete-result-qualifier-from-hydroserver">
+<h6>Example: Delete Result Qualifier from HydroServer<a class="headerlink" href="#example-delete-result-qualifier-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Result Qualifier</span>
+<span class="n">result_qualifier</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">resultqualifiers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Delete the Processing Level from HydroServer</span>
+<span class="n">result_qualifier</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="datastreams">
+<h5>Datastreams<a class="headerlink" href="#datastreams" title="Link to this heading"></a></h5>
+<p>Datastreams are used in HydroServer to represent a group of environmental observations of an observed property made by a sensor at a location and having a specific processing level. The examples below demonstrate the actions you can take to manage datastreams in HydroServer.</p>
+<section id="example-get-datastreams">
+<h6>Example: Get Datastreams<a class="headerlink" href="#example-get-datastreams" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all Datastreams</span>
+<span class="n">datastreams</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="c1"># Get owned Datastreams</span>
+<span class="n">owned_datastreams</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">owned_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get primary owned Datastreams</span>
+<span class="n">primary_owned_datastreams</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">primary_owned_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Get Datastream with a given ID</span>
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get Datastreams of a Thing</span>
+<span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+<span class="n">thing_datastreams</span> <span class="o">=</span> <span class="n">thing</span><span class="o">.</span><span class="n">datastreams</span>
+</pre></div>
+</div>
+</section>
+<section id="example-create-datastream">
+<h6>Example: Create Datastream<a class="headerlink" href="#example-create-datastream" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="o">...</span>
+
+<span class="c1"># Create a new Datastream on HydroServer</span>
+<span class="n">new_datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Datastream A&#39;</span><span class="p">,</span>
+    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;A datastream containing environmental observations.&#39;</span><span class="p">,</span>
+    <span class="n">observation_type</span><span class="o">=</span><span class="s1">&#39;Field Observation&#39;</span><span class="p">,</span>
+    <span class="n">sampled_medium</span><span class="o">=</span><span class="s1">&#39;Air&#39;</span><span class="p">,</span>
+    <span class="n">no_data_value</span><span class="o">=-</span><span class="mi">9999</span><span class="p">,</span>
+    <span class="n">aggregation_statistic</span><span class="o">=</span><span class="s1">&#39;Continuous&#39;</span><span class="p">,</span>
+    <span class="n">time_aggregation_interval</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">status</span><span class="o">=</span><span class="s1">&#39;Ongoing&#39;</span><span class="p">,</span>
+    <span class="n">result_type</span><span class="o">=</span><span class="s1">&#39;Timeseries&#39;</span><span class="p">,</span>
+    <span class="n">value_count</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+    <span class="n">phenomenon_begin_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2024</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">phenomenon_end_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">result_begin_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2024</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">result_end_time</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">is_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">is_data_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">thing_id</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">,</span>
+    <span class="n">sensor_id</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">,</span>
+    <span class="n">observed_property_id</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">,</span>
+    <span class="n">processing_level_id</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">,</span>
+    <span class="n">unit_id</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">,</span>
+    <span class="n">time_aggregation_interval_units</span><span class="o">=</span><span class="s1">&#39;hours&#39;</span><span class="p">,</span>
+    <span class="n">intended_time_spacing</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">intended_time_spacing_units</span><span class="o">=</span><span class="s1">&#39;hours&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Each of the methods above will return one or more Datastream objects. The examples below show the main properties and methods available to a Datastream object.</p>
+</section>
+<section id="example-modify-a-datastream">
+<h6>Example: Modify a Datastream<a class="headerlink" href="#example-modify-a-datastream" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Datastream</span>
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update one or more properties of the Datastream.</span>
+<span class="n">datastream</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Updated Datastream Name&#39;</span>
+
+<span class="c1"># Save the changes back to HydroServer.</span>
+<span class="n">datastream</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-get-related-properties-of-a-datastream">
+<h6>Example: Get related properties of a Datastream<a class="headerlink" href="#example-get-related-properties-of-a-datastream" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Datastream</span>
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get the Datastream&#39;s Thing/Site</span>
+<span class="n">thing</span> <span class="o">=</span> <span class="n">datastream</span><span class="o">.</span><span class="n">thing</span>
+
+<span class="c1"># Get the Datastream&#39;s Sensor</span>
+<span class="n">sensor</span> <span class="o">=</span> <span class="n">datastream</span><span class="o">.</span><span class="n">sensor</span>
+
+<span class="c1"># Get the Datastream&#39;s Observed Property</span>
+<span class="n">observed_property</span> <span class="o">=</span> <span class="n">datastream</span><span class="o">.</span><span class="n">observed_property</span>
+
+<span class="c1"># Get the Datastream&#39;s Unit</span>
+<span class="n">unit</span> <span class="o">=</span> <span class="n">datastream</span><span class="o">.</span><span class="n">unit</span>
+
+<span class="c1"># Get the Datastream&#39;s Processing Level</span>
+<span class="n">processing_level</span> <span class="o">=</span> <span class="n">datastream</span><span class="o">.</span><span class="n">processing_level</span>
+</pre></div>
+</div>
+</section>
+<section id="example-get-observations-of-a-datastream">
+<h6>Example: Get Observations of a Datastream<a class="headerlink" href="#example-get-observations-of-a-datastream" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="o">...</span>
+
+<span class="c1"># Get a Datastream</span>
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get Observations of a Datastream between two timestamps</span>
+<span class="n">observations_df</span> <span class="o">=</span> <span class="n">datastream</span><span class="o">.</span><span class="n">get_observations</span><span class="p">(</span>
+    <span class="n">start_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">end_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">31</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-upload-observations-to-a-datastream">
+<h6>Example: Upload Observations to a Datastream<a class="headerlink" href="#example-upload-observations-to-a-datastream" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="o">...</span>
+
+<span class="c1"># Get a Datastream</span>
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create a DataFrame of Observations</span>
+<span class="n">new_observations</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;2023-01-26 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;2023-01-27 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">41.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;2023-01-28 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">42.0</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">new_observations</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">new_observations</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
+
+<span class="c1"># Upload the Observations to HydroServer</span>
+<span class="n">datastream</span><span class="o">.</span><span class="n">load_observations</span><span class="p">(</span><span class="n">new_observations</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-refresh-datastream-data-from-hydroserver">
+<h6>Example: Refresh Datastream data from HydroServer<a class="headerlink" href="#example-refresh-datastream-data-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Datastream</span>
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Refresh Datastream data from HydroServer</span>
+<span class="n">datastream</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-delete-datastream-from-hydroserver">
+<h6>Example: Delete Datastream from HydroServer<a class="headerlink" href="#example-delete-datastream-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Datastream</span>
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Delete the Datastream from HydroServer</span>
+<span class="n">datastream</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+</section>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.core.endpoints.html">hydroserverpy.core.endpoints package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.base">hydroserverpy.core.endpoints.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.data_loaders">hydroserverpy.core.endpoints.data_loaders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.data_sources">hydroserverpy.core.endpoints.data_sources module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.datastreams">hydroserverpy.core.endpoints.datastreams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.observed_properties">hydroserverpy.core.endpoints.observed_properties module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.processing_levels">hydroserverpy.core.endpoints.processing_levels module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.result_qualifiers">hydroserverpy.core.endpoints.result_qualifiers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.sensors">hydroserverpy.core.endpoints.sensors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.things">hydroserverpy.core.endpoints.things module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.units">hydroserverpy.core.endpoints.units module</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.core.schemas.html">hydroserverpy.core.schemas package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.base">hydroserverpy.core.schemas.base module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.data_loaders">hydroserverpy.core.schemas.data_loaders module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.data_sources">hydroserverpy.core.schemas.data_sources module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.datastreams">hydroserverpy.core.schemas.datastreams module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.observed_properties">hydroserverpy.core.schemas.observed_properties module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.processing_levels">hydroserverpy.core.schemas.processing_levels module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.result_qualifiers">hydroserverpy.core.schemas.result_qualifiers module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.sensors">hydroserverpy.core.schemas.sensors module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.things">hydroserverpy.core.schemas.things module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.units">hydroserverpy.core.schemas.units module</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="module-hydroserverpy.core.service">
+<span id="hydroserver-service-connection-object"></span><h2>HydroServer Service Connection Object<a class="headerlink" href="#module-hydroserverpy.core.service" title="Link to this heading"></a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.core.service.</span></span><span class="sig-name descname"><span class="pre">HydroServer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">host</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">username</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">password</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">apikey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">api_route</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'api'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/service.html#HydroServer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.service.HydroServer" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Connects to a HydroServer instance and used to interact with HydroServer’s Data Management API endpoints.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>host</strong> (<em>str</em>) – The base URL or host of the HydroServer API.</p></li>
+<li><p><strong>username</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The username for basic authentication, if required.</p></li>
+<li><p><strong>password</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The password for basic authentication, if required.</p></li>
+<li><p><strong>apikey</strong> (<em>Optional</em><em>[</em><em>str</em><em>]</em>) – The API key for authentication, if using API key authentication.</p></li>
+<li><p><strong>api_route</strong> (<em>str</em>) – The API route to use, default is ‘api’.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServer.dataloaders">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">dataloaders</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServer.dataloaders" title="Link to this definition"></a></dt>
+<dd><p>Data Loader Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of DataLoaderEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint" title="hydroserverpy.core.endpoints.data_loaders.DataLoaderEndpoint">DataLoaderEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServer.datasources">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datasources</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServer.datasources" title="Link to this definition"></a></dt>
+<dd><p>Data Source Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of DataSourceEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint" title="hydroserverpy.core.endpoints.data_sources.DataSourceEndpoint">DataSourceEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServer.datastreams">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">datastreams</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServer.datastreams" title="Link to this definition"></a></dt>
+<dd><p>Datastream Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of DatastreamEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint" title="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint">DatastreamEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServer.observedproperties">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">observedproperties</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServer.observedproperties" title="Link to this definition"></a></dt>
+<dd><p>Observed Property Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ObservedPropertyEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint" title="hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint">ObservedPropertyEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServer.processinglevels">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">processinglevels</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServer.processinglevels" title="Link to this definition"></a></dt>
+<dd><p>Processing Level Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ProcessingLevelEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint" title="hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint">ProcessingLevelEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServer.resultqualifiers">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">resultqualifiers</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServer.resultqualifiers" title="Link to this definition"></a></dt>
+<dd><p>Result Qualifier Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ResultQualifierEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint" title="hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint">ResultQualifierEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServer.sensors">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">sensors</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServer.sensors" title="Link to this definition"></a></dt>
+<dd><p>Sensor Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of SensorEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.sensors.SensorEndpoint" title="hydroserverpy.core.endpoints.sensors.SensorEndpoint">SensorEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServer.things">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">things</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServer.things" title="Link to this definition"></a></dt>
+<dd><p>Thing Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of ThingEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.things.ThingEndpoint" title="hydroserverpy.core.endpoints.things.ThingEndpoint">ThingEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="hydroserverpy.core.service.HydroServer.units">
+<em class="property"><span class="pre">property</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">units</span></span><a class="headerlink" href="#hydroserverpy.core.service.HydroServer.units" title="Link to this definition"></a></dt>
+<dd><p>Unit Endpoint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>An instance of UnitEndpoint.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.units.UnitEndpoint" title="hydroserverpy.core.endpoints.units.UnitEndpoint">UnitEndpoint</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="hydroserverpy.html" class="btn btn-neutral float-left" title="hydroserverpy" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hydroserverpy.core.endpoints.html" class="btn btn-neutral float-right" title="hydroserverpy.core.endpoints package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Utah State University.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
