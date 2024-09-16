@@ -49,7 +49,7 @@ class HydroServerEndpoint:
 
         self._service = service
 
-    def _get(self, uid: Optional[Union[UUID, str]] = None) -> Union[
+    def _get(self, uid: Optional[Union[UUID, str]] = None, params: dict = None) -> Union[
         List['HydroServerModelType'], 'HydroServerModelType'
     ]:
         """
@@ -61,15 +61,18 @@ class HydroServerEndpoint:
         :rtype: HydroServerCoreModel
         """
 
+        if params is None:
+            params = {}
+
         path = f'{self._api_route}/data/{self._endpoint_route}{"/" + str(uid) if uid else ""}'
-        response = getattr(self._service, '_request')('get', path)
+        response = getattr(self._service, '_request')('get', path, params=params)
 
         if uid:
             entity = json.loads(response.content)
-            result = self._model(_endpoint=self, _uid=entity.pop('id'), **entity)
+            result = self._model(_endpoint=self, _uid=UUID(str(entity.pop('id'))), **entity)
         else:
             result = [
-                self._model(_endpoint=self, _uid=entity.pop('id'), **entity)
+                self._model(_endpoint=self, _uid=UUID(str(entity.pop('id'))), **entity)
                 for entity in json.loads(response.content)
             ]
 
@@ -91,7 +94,7 @@ class HydroServerEndpoint:
         )
         entity = json.loads(response.content)
 
-        return self._model(_endpoint=self, _uid=entity.pop('id'), **entity)
+        return self._model(_endpoint=self, _uid=UUID(str(entity.pop('id'))), **entity)
 
     def _patch(self, uid: Union[UUID, str], **kwargs) -> 'HydroServerModelType':
         """
@@ -110,11 +113,11 @@ class HydroServerEndpoint:
             data=json.dumps({
                 self._model.model_fields[key].serialization_alias: value
                 for key, value in kwargs.items()
-            })
+            }, default=str)
         )
         entity = json.loads(response.content)
 
-        return self._model(_endpoint=self, _uid=entity.pop('id'), **entity)
+        return self._model(_endpoint=self, _uid=UUID(str(entity.pop('id'))), **entity)
 
     def _delete(self, uid: Union[UUID, str]) -> None:
         """

@@ -83,11 +83,3 @@ hydroserverpy.core.endpoints.units module
    :members:
    :undoc-members:
    :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: hydroserverpy.core.endpoints
-   :members:
-   :undoc-members:
-   :show-inheritance:

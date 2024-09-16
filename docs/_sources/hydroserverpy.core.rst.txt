@@ -1,30 +1,25 @@
-hydroserverpy.core package
+Data Management Package
 ==========================
+
+HydroServer Data Management Guide
+---------------------------------
+
+.. include:: ../../src/hydroserverpy/core/README.md
+   :parser: myst_parser.sphinx_
 
 Subpackages
 -----------
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 2
 
    hydroserverpy.core.endpoints
    hydroserverpy.core.schemas
 
-Submodules
-----------
-
-hydroserverpy.core.service module
----------------------------------
+HydroServer Service Connection Object
+-------------------------------------
 
 .. automodule:: hydroserverpy.core.service
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-Module contents
----------------
-
-.. automodule:: hydroserverpy.core
    :members:
    :undoc-members:
    :show-inheritance:

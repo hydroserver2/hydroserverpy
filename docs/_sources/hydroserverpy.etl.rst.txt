@@ -1,16 +1,14 @@
-hydroserverpy.etl package
+Data Loader Package
 =========================
+
+HydroServer Data Loader Guide
+-----------------------------
+
+.. include:: ../../src/hydroserverpy/etl/README.md
+   :parser: myst_parser.sphinx_
 
 Submodules
 ----------
-
-hydroserverpy.etl.exceptions module
------------------------------------
-
-.. automodule:: hydroserverpy.etl.exceptions
-   :members:
-   :undoc-members:
-   :show-inheritance:
 
 hydroserverpy.etl.service module
 --------------------------------
@@ -20,10 +18,10 @@ hydroserverpy.etl.service module
    :undoc-members:
    :show-inheritance:
 
-Module contents
----------------
+hydroserverpy.etl.exceptions module
+-----------------------------------
 
-.. automodule:: hydroserverpy.etl
+.. automodule:: hydroserverpy.etl.exceptions
    :members:
    :undoc-members:
    :show-inheritance:

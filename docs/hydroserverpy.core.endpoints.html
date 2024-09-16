@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="hydroserverpy.core.schemas package" href="hydroserverpy.core.schemas.html" />
-    <link rel="prev" title="hydroserverpy.core package" href="hydroserverpy.core.html" /> 
+    <link rel="prev" title="Data Management Package" href="hydroserverpy.core.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -47,18 +47,17 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="hydroserverpy.html">hydroserverpy package</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="hydroserverpy.html">hydroserverpy</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="hydroserverpy.html#getting-started">Getting Started</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="hydroserverpy.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3 current"><a class="reference internal" href="hydroserverpy.core.html">hydroserverpy.core package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="hydroserverpy.core.html">Data Management Package</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserver-data-management-guide">HydroServer Data Management Guide</a></li>
 <li class="toctree-l4 current"><a class="reference internal" href="hydroserverpy.core.html#subpackages">Subpackages</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#module-hydroserverpy.core.service">hydroserverpy.core.service module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#module-hydroserverpy.core">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#module-hydroserverpy.core.service">HydroServer Service Connection Object</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html">hydroserverpy.etl package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html">hydroserverpy.quality package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html">Data Loader Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html">Quality Control Package</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="hydroserverpy.html#module-hydroserverpy">Module contents</a></li>
@@ -80,8 +79,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="hydroserverpy.html">hydroserverpy package</a></li>
-          <li class="breadcrumb-item"><a href="hydroserverpy.core.html">hydroserverpy.core package</a></li>
+          <li class="breadcrumb-item"><a href="hydroserverpy.html">hydroserverpy</a></li>
+          <li class="breadcrumb-item"><a href="hydroserverpy.core.html">Data Management Package</a></li>
       <li class="breadcrumb-item active">hydroserverpy.core.endpoints package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/hydroserverpy.core.endpoints.rst.txt" rel="nofollow"> View page source</a>
@@ -511,11 +510,17 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.list" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owned_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_owned_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/datastreams.html#DatastreamEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.datastreams.DatastreamEndpoint.list" title="Link to this definition"></a></dt>
 <dd><p>Retrieve a collection of datastreams owned by the logged-in user.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datastream</span></code></a>]</span></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>owned_only</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Only list datastreams owned by the logged-in user.</p></li>
+<li><p><strong>primary_owned_only</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Only list datastreams primary owned by the logged-in user.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.datastreams.Datastream" title="hydroserverpy.core.schemas.datastreams.Datastream"><code class="xref py py-class docutils literal notranslate"><span class="pre">Datastream</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -659,11 +664,18 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/observed_properties.html#ObservedPropertyEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.list" title="Link to this definition"></a></dt>
-<dd><p>Retrieve a collection of observed properties owned by the logged-in user.</p>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_owned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_unowned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_templates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/observed_properties.html#ObservedPropertyEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of observed properties.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty" title="hydroserverpy.core.schemas.observed_properties.ObservedProperty"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedProperty</span></code></a>]</span></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_owned</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include owned observed properties.</p></li>
+<li><p><strong>include_unowned</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include unowned observed properties.</p></li>
+<li><p><strong>include_templates</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include template observed properties.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.observed_properties.ObservedProperty" title="hydroserverpy.core.schemas.observed_properties.ObservedProperty"><code class="xref py py-class docutils literal notranslate"><span class="pre">ObservedProperty</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -764,11 +776,18 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/processing_levels.html#ProcessingLevelEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.list" title="Link to this definition"></a></dt>
-<dd><p>Retrieve a collection of processing levels owned by the logged-in user.</p>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_owned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_unowned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_templates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/processing_levels.html#ProcessingLevelEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.processing_levels.ProcessingLevelEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of processing levels.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel" title="hydroserverpy.core.schemas.processing_levels.ProcessingLevel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessingLevel</span></code></a>]</span></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_owned</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include owned observed properties.</p></li>
+<li><p><strong>include_unowned</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include unowned observed properties.</p></li>
+<li><p><strong>include_templates</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include template observed properties.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.processing_levels.ProcessingLevel" title="hydroserverpy.core.schemas.processing_levels.ProcessingLevel"><code class="xref py py-class docutils literal notranslate"><span class="pre">ProcessingLevel</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -866,11 +885,18 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/result_qualifiers.html#ResultQualifierEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.list" title="Link to this definition"></a></dt>
-<dd><p>Retrieve a collection of result qualifiers owned by the logged-in user.</p>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_owned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_unowned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_templates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/result_qualifiers.html#ResultQualifierEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.result_qualifiers.ResultQualifierEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of result qualifiers.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier" title="hydroserverpy.core.schemas.result_qualifiers.ResultQualifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultQualifier</span></code></a>]</span></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_owned</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include owned observed properties.</p></li>
+<li><p><strong>include_unowned</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include unowned observed properties.</p></li>
+<li><p><strong>include_templates</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include template observed properties.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.result_qualifiers.ResultQualifier" title="hydroserverpy.core.schemas.result_qualifiers.ResultQualifier"><code class="xref py py-class docutils literal notranslate"><span class="pre">ResultQualifier</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -974,11 +1000,18 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.sensors.SensorEndpoint.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/sensors.html#SensorEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.sensors.SensorEndpoint.list" title="Link to this definition"></a></dt>
-<dd><p>Retrieve a collection of sensors owned by the logged-in user.</p>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_owned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_unowned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_templates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/sensors.html#SensorEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.sensors.SensorEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of sensors.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor" title="hydroserverpy.core.schemas.sensors.Sensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sensor</span></code></a>]</span></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_owned</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include owned observed properties.</p></li>
+<li><p><strong>include_unowned</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include unowned observed properties.</p></li>
+<li><p><strong>include_templates</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include template observed properties.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.sensors.Sensor" title="hydroserverpy.core.schemas.sensors.Sensor"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sensor</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1165,11 +1198,17 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.things.ThingEndpoint.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.list" title="Link to this definition"></a></dt>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">owned_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">primary_owned_only</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/things.html#ThingEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.things.ThingEndpoint.list" title="Link to this definition"></a></dt>
 <dd><p>Retrieve a collection of things owned by the logged-in user.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing" title="hydroserverpy.core.schemas.things.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a>]</span></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>owned_only</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Only list things owned by the logged-in user.</p></li>
+<li><p><strong>primary_owned_only</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Only list things primary owned by the logged-in user.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.things.Thing" title="hydroserverpy.core.schemas.things.Thing"><code class="xref py py-class docutils literal notranslate"><span class="pre">Thing</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1371,11 +1410,18 @@
 
 <dl class="py method">
 <dt class="sig sig-object py" id="hydroserverpy.core.endpoints.units.UnitEndpoint.list">
-<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/units.html#UnitEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.units.UnitEndpoint.list" title="Link to this definition"></a></dt>
-<dd><p>Retrieve a collection of units owned by the logged-in user.</p>
+<span class="sig-name descname"><span class="pre">list</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">include_owned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_unowned</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">include_templates</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/hydroserverpy/core/endpoints/units.html#UnitEndpoint.list"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.core.endpoints.units.UnitEndpoint.list" title="Link to this definition"></a></dt>
+<dd><p>Retrieve a collection of units.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit" title="hydroserverpy.core.schemas.units.Unit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unit</span></code></a>]</span></p>
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>include_owned</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include owned observed properties.</p></li>
+<li><p><strong>include_unowned</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include unowned observed properties.</p></li>
+<li><p><strong>include_templates</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></span>) – Whether to include template observed properties.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="hydroserverpy.core.schemas.html#hydroserverpy.core.schemas.units.Unit" title="hydroserverpy.core.schemas.units.Unit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Unit</span></code></a>]</span></p>
 </dd>
 </dl>
 </dd></dl>
@@ -1405,16 +1451,13 @@
 </dd></dl>
 
 </section>
-<section id="module-hydroserverpy.core.endpoints">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hydroserverpy.core.endpoints" title="Link to this heading"></a></h2>
-</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="hydroserverpy.core.html" class="btn btn-neutral float-left" title="hydroserverpy.core package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hydroserverpy.core.html" class="btn btn-neutral float-left" title="Data Management Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="hydroserverpy.core.schemas.html" class="btn btn-neutral float-right" title="hydroserverpy.core.schemas package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 

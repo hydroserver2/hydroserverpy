@@ -107,12 +107,36 @@
 
 <div class="viewcode-block" id="ObservedPropertyEndpoint.list">
 <a class="viewcode-back" href="../../../../hydroserverpy.core.endpoints.html#hydroserverpy.core.endpoints.observed_properties.ObservedPropertyEndpoint.list">[docs]</a>
-    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ObservedProperty</span><span class="p">]:</span>
+    <span class="k">def</span> <span class="nf">list</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="n">include_owned</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="n">include_unowned</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="n">include_templates</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">ObservedProperty</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Retrieve a collection of observed properties owned by the logged-in user.</span>
+<span class="sd">        Retrieve a collection of observed properties.</span>
+
+<span class="sd">        :param include_owned: Whether to include owned observed properties.</span>
+<span class="sd">        :param include_unowned: Whether to include unowned observed properties.</span>
+<span class="sd">        :param include_templates: Whether to include template observed properties.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
 
-        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get</span><span class="p">()</span></div>
+        <span class="k">if</span> <span class="n">include_owned</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">include_unowned</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">include_templates</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">owner</span> <span class="o">=</span> <span class="s1">&#39;anyUserOrNoUser&#39;</span>
+        <span class="k">elif</span> <span class="n">include_owned</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">include_unowned</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">include_templates</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">owner</span> <span class="o">=</span> <span class="s1">&#39;anyUser&#39;</span>
+        <span class="k">elif</span> <span class="n">include_owned</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">include_unowned</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">include_templates</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">owner</span> <span class="o">=</span> <span class="s1">&#39;currentUserOrNoUser&#39;</span>
+        <span class="k">elif</span> <span class="n">include_owned</span> <span class="ow">is</span> <span class="kc">True</span> <span class="ow">and</span> <span class="n">include_unowned</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">include_templates</span> <span class="ow">is</span> <span class="kc">False</span><span class="p">:</span>
+            <span class="n">owner</span> <span class="o">=</span> <span class="s1">&#39;currentUser&#39;</span>
+        <span class="k">elif</span> <span class="n">include_owned</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">include_unowned</span> <span class="ow">is</span> <span class="kc">False</span> <span class="ow">and</span> <span class="n">include_templates</span> <span class="ow">is</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">owner</span> <span class="o">=</span> <span class="s1">&#39;noUser&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_get</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="p">{</span>
+            <span class="s1">&#39;owner&#39;</span><span class="p">:</span> <span class="n">owner</span>
+        <span class="p">})</span></div>
 
 
 <div class="viewcode-block" id="ObservedPropertyEndpoint.get">

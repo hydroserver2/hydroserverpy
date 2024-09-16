@@ -69,7 +69,7 @@ class HydroServerCoreModel(HydroServerBaseModel):
 
         super().__init__(_uid=_uid, **data)
         self._endpoint = _endpoint
-        self._original_data = data.copy()
+        self._original_data = self.dict(by_alias=False).copy()
 
     @property
     def _patch_data(self) -> dict:
@@ -91,8 +91,8 @@ class HydroServerCoreModel(HydroServerBaseModel):
         """
 
         entity = self._endpoint.get(uid=self.uid).model_dump(exclude=['uid'])
-        self._original_data = entity
-        self.__dict__.update(entity)
+        self._original_data = entity.dict(by_alias=False, exclude=['uid'])
+        self.__dict__.update(self._original_data)
 
     def save(self) -> None:
         """
@@ -101,8 +101,8 @@ class HydroServerCoreModel(HydroServerBaseModel):
 
         if self._patch_data:
             entity = self._endpoint.update(uid=self.uid, **self._patch_data)
-            self._original_data = entity
-            self.__dict__.update(entity)
+            self._original_data = entity.dict(by_alias=False, exclude=['uid'])
+            self.__dict__.update(self._original_data)
 
     def delete(self) -> None:
         """

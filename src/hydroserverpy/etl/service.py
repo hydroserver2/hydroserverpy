@@ -227,7 +227,7 @@ class HydroServerETL:
                 try:
                     self._service.datastreams.load_observations(
                         uid=datastream_id,
-                        observations_df=observations_df,
+                        observations=observations_df,
                     )
                 except HTTPError:
                     failed_datastreams.append(datastream_id)

@@ -31,12 +31,18 @@ class ThingEndpoint(HydroServerEndpoint):
         self._api_route = self._service.api_route
         self._endpoint_route = 'things'
 
-    def list(self) -> List[Thing]:
+    def list(self, owned_only: bool = False, primary_owned_only: bool = False) -> List[Thing]:
         """
         Retrieve a collection of things owned by the logged-in user.
+
+        :param owned_only: Only list things owned by the logged-in user.
+        :param primary_owned_only: Only list things primary owned by the logged-in user.
         """
 
-        return super()._get()
+        return super()._get(params={
+            'owned_only': owned_only,
+            'primary_owned_only': primary_owned_only,
+        })
 
     @expand_docstring(include_uid=True)
     def get(self, uid: Union[UUID, str]) -> Thing:
@@ -87,7 +93,7 @@ class ThingEndpoint(HydroServerEndpoint):
         endpoint = DatastreamEndpoint(self._service)
 
         return [
-            Datastream(_endpoint=endpoint, _uid=entity.pop('id'), **entity)
+            Datastream(_endpoint=endpoint, _uid=UUID(str(entity.pop('id'))), **entity)
             for entity in json.loads(response.content)
         ]
 
@@ -105,7 +111,7 @@ class ThingEndpoint(HydroServerEndpoint):
             'get', f'{self._api_route}/data/{self._endpoint_route}/{str(uid)}/tags'
         )
 
-        return [Tag(_uid=entity.pop('id'), **entity) for entity in json.loads(response.content)]
+        return [Tag(_uid=UUID(str(entity.pop('id'))), **entity) for entity in json.loads(response.content)]
 
     def create_tag(self, uid: Union[UUID, str], key: str, value: str) -> Tag:
         """
@@ -128,7 +134,7 @@ class ThingEndpoint(HydroServerEndpoint):
         )
         entity = json.loads(response.content)
 
-        return Tag(_uid=entity.pop('id'), **entity)
+        return Tag(_uid=UUID(str(entity.pop('id'))), **entity)
 
     def update_tag(self, uid: Union[UUID, str], tag_uid: Union[UUID, str], value: str) -> Tag:
         """
@@ -151,7 +157,7 @@ class ThingEndpoint(HydroServerEndpoint):
         )
         entity = json.loads(response.content)
 
-        return Tag(_uid=entity.pop('id'), **entity)
+        return Tag(_uid=UUID(str(entity.pop('id'))), **entity)
 
     def delete_tag(self, uid: Union[UUID, str], tag_uid: Union[UUID, str]) -> None:
         """
@@ -181,7 +187,7 @@ class ThingEndpoint(HydroServerEndpoint):
             'get', f'{self._api_route}/data/{self._endpoint_route}/{str(uid)}/photos'
         )
 
-        return [Photo(_uid=entity.pop('id'), **entity) for entity in json.loads(response.content)]
+        return [Photo(_uid=UUID(str(entity.pop('id'))), **entity) for entity in json.loads(response.content)]
 
     def upload_photo(self, uid: Union[UUID, str], file: IO) -> List[Photo]:
         """
@@ -200,7 +206,7 @@ class ThingEndpoint(HydroServerEndpoint):
             files={'files': file}
         )
 
-        return [Photo(_uid=entity.pop('id'), **entity) for entity in json.loads(response.content)]
+        return [Photo(_uid=UUID(str(entity.pop('id'))), **entity) for entity in json.loads(response.content)]
 
     def delete_photo(self, uid: Union[UUID, str], photo_uid: Union[UUID, str]) -> None:
         """
@@ -231,4 +237,4 @@ class ThingEndpoint(HydroServerEndpoint):
         )
         entity = json.loads(response.content)
 
-        return Archive(**entity)
+        return Archive(_uid=UUID(str(entity.pop('id'))), **entity)

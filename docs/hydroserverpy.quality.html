@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>hydroserverpy.quality package &mdash; hydroserverpy  documentation</title>
+  <title>Quality Control Package &mdash; hydroserverpy  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css?v=a0a71c94" />
@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="hydroserverpy.etl package" href="hydroserverpy.etl.html" /> 
+    <link rel="prev" title="Data Loader Package" href="hydroserverpy.etl.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -46,15 +46,15 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="hydroserverpy.html">hydroserverpy package</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="hydroserverpy.html">hydroserverpy</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="hydroserverpy.html#getting-started">Getting Started</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="hydroserverpy.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.html">hydroserverpy.core package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html">hydroserverpy.etl package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">hydroserverpy.quality package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.html">Data Management Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html">Data Loader Package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Quality Control Package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserver-quality-control-guide">HydroServer Quality Control Guide</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-hydroserverpy.quality.service">hydroserverpy.quality.service module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-hydroserverpy.quality">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -78,8 +78,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="hydroserverpy.html">hydroserverpy package</a></li>
-      <li class="breadcrumb-item active">hydroserverpy.quality package</li>
+          <li class="breadcrumb-item"><a href="hydroserverpy.html">hydroserverpy</a></li>
+      <li class="breadcrumb-item active">Quality Control Package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/hydroserverpy.quality.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -89,8 +89,72 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="hydroserverpy-quality-package">
-<h1>hydroserverpy.quality package<a class="headerlink" href="#hydroserverpy-quality-package" title="Link to this heading"></a></h1>
+  <section id="quality-control-package">
+<h1>Quality Control Package<a class="headerlink" href="#quality-control-package" title="Link to this heading"></a></h1>
+<section id="hydroserver-quality-control-guide">
+<h2>HydroServer Quality Control Guide<a class="headerlink" href="#hydroserver-quality-control-guide" title="Link to this heading"></a></h2>
+<section id="hydroserver-python-client-quality-control">
+<h3>HydroServer Python Client - Quality Control<a class="headerlink" href="#hydroserver-python-client-quality-control" title="Link to this heading"></a></h3>
+<p>The hydroserverpy quality control package provides several methods for performing quality control operations on observations datasets. This guide will provide examples explaining how to retrieve data for quality control and run quality control operations. Quality controlled data can be uploaded back to HydroServer as a new datastream with an appropriate processing level.</p>
+<section id="quality-control-guide-with-examples">
+<h4>Quality Control Guide with Examples<a class="headerlink" href="#quality-control-guide-with-examples" title="Link to this heading"></a></h4>
+<p>To perform quality control operations, you must connect to HydroServer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hydroserverpy</span> <span class="kn">import</span> <span class="n">HydroServer</span>
+
+<span class="c1"># Initialize HydroServer connection with credentials.</span>
+<span class="n">hs_api</span> <span class="o">=</span> <span class="n">HydroServer</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;https://playground.hydroserver.org&#39;</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;user@example.com&#39;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s1">&#39;******&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Select a datastream you want to perform quality control on and fetch its observations. You can optionally include result qualifier information with the fetched observations.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
+
+<span class="o">...</span>
+
+<span class="c1"># Get a Datastream</span>
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get Observations of a Datastream between two timestamps</span>
+<span class="n">observations_df</span> <span class="o">=</span> <span class="n">datastream</span><span class="o">.</span><span class="n">get_observations</span><span class="p">(</span>
+    <span class="n">include_quality</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">start_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
+    <span class="n">end_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">31</span><span class="p">)</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Once you have a DataFrame of observations, you will need to initialize a quality control session.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hydroserverpy</span> <span class="kn">import</span> <span class="n">HydroServerQualityControl</span>
+
+<span class="o">...</span>
+
+<span class="c1"># Initialize quality control session.</span>
+<span class="n">hs_quality_control</span> <span class="o">=</span> <span class="n">HydroServerQualityControl</span><span class="p">(</span>
+    <span class="n">datastream_id</span><span class="o">=</span><span class="n">datastream</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span>
+    <span class="n">observations</span><span class="o">=</span><span class="n">observations_df</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>You are now ready to begin performing quality control operations on the dataset. You can access the modified observations using the <code class="docutils literal notranslate"><span class="pre">observations</span></code> property. Your work will not be saved back to HydroServer until you upload the quality controlled observations to a new datastream.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get quality controlled observations DataFrame.</span>
+<span class="n">quality_controlled_observations</span> <span class="o">=</span> <span class="n">hs_quality_control</span><span class="o">.</span><span class="n">observations</span>
+</pre></div>
+</div>
+<section id="example-find-gaps">
+<h5>Example: Find Gaps<a class="headerlink" href="#example-find-gaps" title="Link to this heading"></a></h5>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Find gaps in observations given an expected 15 minute interval.</span>
+<span class="n">hs_quality_control</span><span class="o">.</span><span class="n">find_gaps</span><span class="p">(</span>
+    <span class="n">time_value</span><span class="o">=</span><span class="mi">15</span><span class="p">,</span>
+    <span class="n">time_unit</span><span class="o">=</span><span class="s1">&#39;m&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
 </section>
@@ -394,16 +458,13 @@
 </dd></dl>
 
 </section>
-<section id="module-hydroserverpy.quality">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hydroserverpy.quality" title="Link to this heading"></a></h2>
-</section>
 </section>
 
 
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="hydroserverpy.etl.html" class="btn btn-neutral float-left" title="hydroserverpy.etl package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="hydroserverpy.etl.html" class="btn btn-neutral float-left" title="Data Loader Package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
     </div>
 
   <hr/>

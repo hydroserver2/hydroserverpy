@@ -32,12 +32,18 @@ class DatastreamEndpoint(HydroServerEndpoint):
         self._api_route = self._service.api_route
         self._endpoint_route = 'datastreams'
 
-    def list(self) -> List[Datastream]:
+    def list(self, owned_only: bool = False, primary_owned_only: bool = False) -> List[Datastream]:
         """
         Retrieve a collection of datastreams owned by the logged-in user.
+
+        :param owned_only: Only list datastreams owned by the logged-in user.
+        :param primary_owned_only: Only list datastreams primary owned by the logged-in user.
         """
 
-        return super()._get()
+        return super()._get(params={
+            'owned_only': owned_only,
+            'primary_owned_only': primary_owned_only,
+        })
 
     @expand_docstring(include_uid=True)
     def get(self, uid: Union[UUID, str]) -> Datastream:

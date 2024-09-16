@@ -205,8 +205,9 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
         :param value: The value of the new tag.
         """
 
-        new_tag = self._endpoint.create_tag(uid=self.uid, key=key, value=value)
-        self._tags.append(new_tag)
+        if self.tags is not None:
+            new_tag = self._endpoint.create_tag(uid=self.uid, key=key, value=value)
+            self._tags.append(new_tag)
 
     def update_tag(self, key: str, value: str) -> None:
         """
@@ -239,8 +240,9 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
         :type photo: IO
         """
 
-        photos = self._endpoint.upload_photo(uid=self.uid, file=photo)
-        self._photos.extend(photos)
+        if self.photos is not None:
+            photos = self._endpoint.upload_photo(uid=self.uid, file=photo)
+            self._photos.extend(photos)
 
     def delete_photo(self, link: str) -> None:
         """

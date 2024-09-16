@@ -1,4 +1,5 @@
 import tempfile
+import io
 from pydantic import BaseModel, Field
 from typing import Optional, Literal, Union, List, TYPE_CHECKING
 from datetime import datetime
@@ -66,7 +67,7 @@ class DataSourceFields(BaseModel):
         description='Whether loading the data source should be paused or not.'
     )
     timestamp_column: Union[int, str] = Field(
-        ..., strip_whitespace=True, max_length=255, gt=0, lt=9999,
+        ..., strip_whitespace=True, max_length=255,
         description='The column of the data source file containing the timestamps.'
     )
     timestamp_format: Optional[str] = Field(
@@ -176,15 +177,16 @@ class DataSource(HydroServerCoreModel, DataSourceFields):
         """
 
         if self.path:
-            with open(self.path) as data_file:
-                hs_etl = HydroServerETL(
-                    service=self._service,
-                    data_file=data_file,
-                    data_source=self,
-                )
-                hs_etl.run()
+            with open(self.path, 'rb') as f:
+                with io.TextIOWrapper(f, encoding='utf-8') as data_file:
+                    hs_etl = HydroServerETL(
+                        service=getattr(self._endpoint, '_service'),
+                        data_file=data_file,
+                        data_source=self,
+                    )
+                    hs_etl.run()
         elif self.link:
-            with tempfile.NamedTemporaryFile(mode='w') as temp_file:
+            with tempfile.NamedTemporaryFile(mode='w+b') as temp_file:
                 with urlopen(self.link) as response:
                     chunk_size = 1024 * 1024 * 10  # Use a 10mb chunk size.
                     while True:
@@ -193,11 +195,12 @@ class DataSource(HydroServerCoreModel, DataSourceFields):
                             break
                         temp_file.write(chunk)
                 temp_file.seek(0)
-                hs_etl = HydroServerETL(
-                    service=self._service,
-                    data_file=temp_file,
-                    data_source=self,
-                )
-                hs_etl.run()
+                with io.TextIOWrapper(temp_file, encoding='utf-8') as data_file:
+                    hs_etl = HydroServerETL(
+                        service=getattr(self._endpoint, '_service'),
+                        data_file=data_file,
+                        data_source=self,
+                    )
+                    hs_etl.run()
         else:
             return None

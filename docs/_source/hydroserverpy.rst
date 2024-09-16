@@ -1,5 +1,5 @@
-hydroserverpy package
-=====================
+hydroserverpy
+=============
 
 Getting Started
 ---------------

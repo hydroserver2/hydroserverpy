@@ -87,6 +87,6 @@ class DataLoaderEndpoint(HydroServerEndpoint):
         endpoint = DataSourceEndpoint(self._service)
 
         return [
-            DataSource(_endpoint=endpoint, _uid=entity.pop('id'), **entity)
+            DataSource(_endpoint=endpoint, _uid=UUID(str(entity.pop('id'))), **entity)
             for entity in json.loads(response.content)
         ]

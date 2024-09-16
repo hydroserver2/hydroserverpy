@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>hydroserverpy package &mdash; hydroserverpy  documentation</title>
+  <title>hydroserverpy &mdash; hydroserverpy  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css?v=a0a71c94" />
@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="hydroserverpy.core package" href="hydroserverpy.core.html" />
+    <link rel="next" title="Data Management Package" href="hydroserverpy.core.html" />
     <link rel="prev" title="hydroserverpy documentation" href="index.html" /> 
 </head>
 
@@ -47,20 +47,20 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">hydroserverpy package</a><ul>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">hydroserverpy</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#getting-started">Getting Started</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="#hydroserverpy">hydroserverpy</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#hydroserver-python-client">HydroServer Python Client</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="#installation">Installation</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#getting-started">Getting Started</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#connecting-to-hydroserver">Connecting to HydroServer</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#funding-and-acknowledgements">Funding and Acknowledgements</a></li>
 </ul>
 </li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.html">hydroserverpy.core package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html">hydroserverpy.etl package</a></li>
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html">hydroserverpy.quality package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.html">Data Management Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html">Data Loader Package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html">Quality Control Package</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="#module-hydroserverpy">Module contents</a><ul>
@@ -114,7 +114,7 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-      <li class="breadcrumb-item active">hydroserverpy package</li>
+      <li class="breadcrumb-item active">hydroserverpy</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/hydroserverpy.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -124,13 +124,13 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="hydroserverpy-package">
-<h1>hydroserverpy package<a class="headerlink" href="#hydroserverpy-package" title="Link to this heading"></a></h1>
+  <section id="hydroserverpy">
+<h1>hydroserverpy<a class="headerlink" href="#hydroserverpy" title="Link to this heading"></a></h1>
 <section id="getting-started">
 <h2>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h2>
-<section id="hydroserverpy">
-<h3>hydroserverpy<a class="headerlink" href="#hydroserverpy" title="Link to this heading"></a></h3>
-<p>The hydroserverpy Python package provides an interface for interacting with HydroServer’s Data Management API. This guide will go over how to install the package and connect to a HydroServer instance to retrieve, upload, and modify data.</p>
+<section id="hydroserver-python-client">
+<h3>HydroServer Python Client<a class="headerlink" href="#hydroserver-python-client" title="Link to this heading"></a></h3>
+<p>The hydroserverpy Python package provides an interface for managing HydroServer data and metadata, loading observations, and performing data quality control. This guide will go over how to install the package and connect to a HydroServer instance.</p>
 <section id="installation">
 <h4>Installation<a class="headerlink" href="#installation" title="Link to this heading"></a></h4>
 <p>You can install the package via pip:</p>
@@ -138,13 +138,11 @@
 </pre></div>
 </div>
 </section>
-<section id="getting-started">
-<h4>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h4>
 <section id="connecting-to-hydroserver">
-<h5>Connecting to HydroServer<a class="headerlink" href="#connecting-to-hydroserver" title="Link to this heading"></a></h5>
+<h4>Connecting to HydroServer<a class="headerlink" href="#connecting-to-hydroserver" title="Link to this heading"></a></h4>
 <p>To connect to HydroServer, you need to initialize the client with the instance of HydroServer you’re using and your user credentials if you want to access and modify your own data. If you don’t provide authentication credentials you can read public data, but you will not be able to create or modify any data.</p>
 <section id="example-anonymous-user">
-<h6>Example: Anonymous User<a class="headerlink" href="#example-anonymous-user" title="Link to this heading"></a></h6>
+<h5>Example: Anonymous User<a class="headerlink" href="#example-anonymous-user" title="Link to this heading"></a></h5>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hydroserverpy</span> <span class="kn">import</span> <span class="n">HydroServer</span>
 
 <span class="c1"># Initialize HydroServer connection.</span>
@@ -155,7 +153,7 @@
 </div>
 </section>
 <section id="example-basic-authentication">
-<h6>Example: Basic Authentication<a class="headerlink" href="#example-basic-authentication" title="Link to this heading"></a></h6>
+<h5>Example: Basic Authentication<a class="headerlink" href="#example-basic-authentication" title="Link to this heading"></a></h5>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hydroserverpy</span> <span class="kn">import</span> <span class="n">HydroServer</span>
 
 <span class="c1"># Initialize HydroServer connection with credentials.</span>
@@ -168,96 +166,6 @@
 </div>
 </section>
 </section>
-<section id="retrieving-data">
-<h5>Retrieving Data<a class="headerlink" href="#retrieving-data" title="Link to this heading"></a></h5>
-<p>The hydroserverpy connection exposes the following types of data and metadata you can retireve, either as a list or by ID using the <code class="docutils literal notranslate"><span class="pre">list</span></code> or <code class="docutils literal notranslate"><span class="pre">get</span></code> methods of the associated property:</p>
-<ul class="simple">
-<li><p>things</p></li>
-<li><p>datastreams</p></li>
-<li><p>dataloaders</p></li>
-<li><p>datasources</p></li>
-<li><p>sensors</p></li>
-<li><p>units</p></li>
-<li><p>processinglevels</p></li>
-<li><p>observedproperties</p></li>
-<li><p>resultqualifiers</p></li>
-</ul>
-<p>Dataframes of Observations can be queried using the <code class="docutils literal notranslate"><span class="pre">get_observations</span></code> method of a datastream object.</p>
-<section id="example-get-things">
-<h6>Example: Get Things<a class="headerlink" href="#example-get-things" title="Link to this heading"></a></h6>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">things</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="example-get-thing-by-id">
-<h6>Example: Get Thing by ID<a class="headerlink" href="#example-get-thing-by-id" title="Link to this heading"></a></h6>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="example-get-observations-of-a-datastream">
-<h6>Example: Get Observations of a Datastream<a class="headerlink" href="#example-get-observations-of-a-datastream" title="Link to this heading"></a></h6>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">datetime</span>
-
-<span class="o">...</span>
-
-<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
-<span class="n">observations_df</span> <span class="o">=</span> <span class="n">datastream</span><span class="o">.</span><span class="n">get_observations</span><span class="p">(</span>
-    <span class="n">start_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">1</span><span class="p">),</span>
-    <span class="n">end_time</span><span class="o">=</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="o">=</span><span class="mi">2023</span><span class="p">,</span> <span class="n">month</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">day</span><span class="o">=</span><span class="mi">31</span><span class="p">)</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="creating-and-modifying-data">
-<h5>Creating and Modifying Data<a class="headerlink" href="#creating-and-modifying-data" title="Link to this heading"></a></h5>
-<p>HydroServer things, datastreams, and other metadata can be created using the <code class="docutils literal notranslate"><span class="pre">create</span></code> method of the respective property of the connection object. To modify HydroServer metadata, you can update one or more properties of a fetched metadata object and then use the <code class="docutils literal notranslate"><span class="pre">save</span></code> method to save those changes back to HydroServer. Observations can be uploaded from a DataFrame using the <code class="docutils literal notranslate"><span class="pre">upload_observations</span></code> method of <code class="docutils literal notranslate"><span class="pre">datastreams</span></code>.</p>
-<section id="example-create-a-thing">
-<h6>Example: Create a Thing<a class="headerlink" href="#example-create-a-thing" title="Link to this heading"></a></h6>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">new_thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
-    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Observation Site&#39;</span><span class="p">,</span>
-    <span class="n">description</span><span class="o">=</span><span class="s1">&#39;This is a site that records environmental observations.&#39;</span>
-    <span class="n">sampling_feature_type</span><span class="o">=</span><span class="s1">&#39;Site&#39;</span><span class="p">,</span>
-    <span class="n">sampling_feature_code</span><span class="o">=</span><span class="s1">&#39;OBSERVATION_SITE&#39;</span><span class="p">,</span>
-    <span class="n">site_type</span><span class="o">=</span><span class="s1">&#39;Atmosphere&#39;</span><span class="p">,</span>
-    <span class="n">latitude</span><span class="o">=</span><span class="s1">&#39;41.739&#39;</span><span class="p">,</span>
-    <span class="n">longitude</span><span class="o">=</span><span class="s1">&#39;-111.794&#39;</span>
-<span class="p">)</span>
-</pre></div>
-</div>
-</section>
-<section id="example-modify-a-thing">
-<h6>Example: Modify a Thing<a class="headerlink" href="#example-modify-a-thing" title="Link to this heading"></a></h6>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">thing</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">things</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
-<span class="n">thing</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Updated Site Name&#39;</span>
-<span class="n">thing</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="s1">&#39;Updated Site Description.&#39;</span>
-<span class="n">thing</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
-</pre></div>
-</div>
-</section>
-<section id="example-upload-observations">
-<h6>Example: Upload Observations<a class="headerlink" href="#example-upload-observations" title="Link to this heading"></a></h6>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
-
-<span class="o">...</span>
-
-<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
-<span class="n">new_observations</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
-    <span class="p">[</span>
-        <span class="p">[</span><span class="s1">&#39;2023-01-26 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">],</span>
-        <span class="p">[</span><span class="s1">&#39;2023-01-27 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">41.0</span><span class="p">],</span>
-        <span class="p">[</span><span class="s1">&#39;2023-01-28 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">42.0</span><span class="p">],</span>
-    <span class="p">],</span>
-    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]</span>
-<span class="p">)</span>
-<span class="n">new_observations</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">new_observations</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
-<span class="n">datastream</span><span class="o">.</span><span class="n">load_observations</span><span class="p">(</span><span class="n">new_observations</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
-</section>
 <section id="funding-and-acknowledgements">
 <h4>Funding and Acknowledgements<a class="headerlink" href="#funding-and-acknowledgements" title="Link to this heading"></a></h4>
 <p>Funding for this project was provided by the National Oceanic &amp; Atmospheric Administration (NOAA), awarded to the Cooperative Institute for Research to Operations in Hydrology (CIROH) through the NOAA Cooperative Agreement with The University of Alabama (NA22NWS4320003).</p>
@@ -268,7 +176,14 @@
 <h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.core.html">hydroserverpy.core package</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.core.html">Data Management Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.html#hydroserver-data-management-guide">HydroServer Data Management Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.html#hydroserver-python-client-data-management">HydroServer Python Client - Data Management</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#data-management-guide-with-examples">Data Management Guide with Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.html#subpackages">Subpackages</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.endpoints.html">hydroserverpy.core.endpoints package</a><ul>
 <li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#submodules">Submodules</a></li>
@@ -282,7 +197,6 @@
 <li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.sensors">hydroserverpy.core.endpoints.sensors module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.things">hydroserverpy.core.endpoints.things module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints.units">hydroserverpy.core.endpoints.units module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.endpoints.html#module-hydroserverpy.core.endpoints">Module contents</a></li>
 </ul>
 </li>
 <li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.schemas.html">hydroserverpy.core.schemas package</a><ul>
@@ -297,13 +211,11 @@
 <li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.sensors">hydroserverpy.core.schemas.sensors module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.things">hydroserverpy.core.schemas.things module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas.units">hydroserverpy.core.schemas.units module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.schemas.html#module-hydroserverpy.core.schemas">Module contents</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.html#module-hydroserverpy.core.service">hydroserverpy.core.service module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.html#module-hydroserverpy.core.service">HydroServer Service Connection Object</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServer"><code class="docutils literal notranslate"><span class="pre">HydroServer</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServer.dataloaders"><code class="docutils literal notranslate"><span class="pre">HydroServer.dataloaders</span></code></a></li>
 <li class="toctree-l4"><a class="reference internal" href="hydroserverpy.core.html#hydroserverpy.core.service.HydroServer.datasources"><code class="docutils literal notranslate"><span class="pre">HydroServer.datasources</span></code></a></li>
@@ -318,16 +230,17 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.core.html#module-hydroserverpy.core">Module contents</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.etl.html">hydroserverpy.etl package</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.etl.html">Data Loader Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.etl.html#hydroserver-data-loader-guide">HydroServer Data Loader Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html#hydroserver-python-client-data-loader">HydroServer Python Client - Data Loader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.etl.html#data-loader-guide-with-examples">Data Loader Guide with Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="hydroserverpy.etl.html#submodules">Submodules</a></li>
-<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.etl.html#module-hydroserverpy.etl.exceptions">hydroserverpy.etl.exceptions module</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html#hydroserverpy.etl.exceptions.HeaderParsingError"><code class="docutils literal notranslate"><span class="pre">HeaderParsingError</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html#hydroserverpy.etl.exceptions.TimestampParsingError"><code class="docutils literal notranslate"><span class="pre">TimestampParsingError</span></code></a></li>
-</ul>
-</li>
 <li class="toctree-l2"><a class="reference internal" href="hydroserverpy.etl.html#module-hydroserverpy.etl.service">hydroserverpy.etl.service module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html#hydroserverpy.etl.service.HydroServerETL"><code class="docutils literal notranslate"><span class="pre">HydroServerETL</span></code></a><ul>
 <li class="toctree-l4"><a class="reference internal" href="hydroserverpy.etl.html#hydroserverpy.etl.service.HydroServerETL.run"><code class="docutils literal notranslate"><span class="pre">HydroServerETL.run()</span></code></a></li>
@@ -335,10 +248,21 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.etl.html#module-hydroserverpy.etl">Module contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.etl.html#module-hydroserverpy.etl.exceptions">hydroserverpy.etl.exceptions module</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html#hydroserverpy.etl.exceptions.HeaderParsingError"><code class="docutils literal notranslate"><span class="pre">HeaderParsingError</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.etl.html#hydroserverpy.etl.exceptions.TimestampParsingError"><code class="docutils literal notranslate"><span class="pre">TimestampParsingError</span></code></a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.quality.html">hydroserverpy.quality package</a><ul>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="hydroserverpy.quality.html">Quality Control Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.quality.html#hydroserver-quality-control-guide">HydroServer Quality Control Guide</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html#hydroserver-python-client-quality-control">HydroServer Python Client - Quality Control</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="hydroserverpy.quality.html#quality-control-guide-with-examples">Quality Control Guide with Examples</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li class="toctree-l2"><a class="reference internal" href="hydroserverpy.quality.html#submodules">Submodules</a></li>
 <li class="toctree-l2"><a class="reference internal" href="hydroserverpy.quality.html#module-hydroserverpy.quality.service">hydroserverpy.quality.service module</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html#hydroserverpy.quality.service.FilterOperation"><code class="docutils literal notranslate"><span class="pre">FilterOperation</span></code></a><ul>
@@ -383,7 +307,6 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="hydroserverpy.quality.html#module-hydroserverpy.quality">Module contents</a></li>
 </ul>
 </li>
 </ul>
@@ -750,7 +673,7 @@ the sync process.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="hydroserverpy documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="hydroserverpy.core.html" class="btn btn-neutral float-right" title="hydroserverpy.core package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="hydroserverpy.core.html" class="btn btn-neutral float-right" title="Data Management Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

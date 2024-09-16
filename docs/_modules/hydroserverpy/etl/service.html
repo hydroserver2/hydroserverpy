@@ -6,6 +6,7 @@
   <title>hydroserverpy.etl.service &mdash; hydroserverpy  documentation</title>
       <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/autodoc_pydantic.css?v=a0a71c94" />
 
   
   <!--[if lt IE 9]>
@@ -43,7 +44,7 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../../hydroserverpy.html">hydroserverpy package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../hydroserverpy.html">hydroserverpy</a></li>
 </ul>
 
         </div>
@@ -305,7 +306,7 @@
                 <span class="k">try</span><span class="p">:</span>
                     <span class="bp">self</span><span class="o">.</span><span class="n">_service</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">load_observations</span><span class="p">(</span>
                         <span class="n">uid</span><span class="o">=</span><span class="n">datastream_id</span><span class="p">,</span>
-                        <span class="n">observations_df</span><span class="o">=</span><span class="n">observations_df</span><span class="p">,</span>
+                        <span class="n">observations</span><span class="o">=</span><span class="n">observations_df</span><span class="p">,</span>
                     <span class="p">)</span>
                 <span class="k">except</span> <span class="n">HTTPError</span><span class="p">:</span>
                     <span class="n">failed_datastreams</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">datastream_id</span><span class="p">)</span>

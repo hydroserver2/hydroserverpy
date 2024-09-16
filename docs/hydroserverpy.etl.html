@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>hydroserverpy.etl package &mdash; hydroserverpy  documentation</title>
+  <title>Data Loader Package &mdash; hydroserverpy  documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
       <link rel="stylesheet" type="text/css" href="_static/autodoc_pydantic.css?v=a0a71c94" />
@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="hydroserverpy.quality package" href="hydroserverpy.quality.html" />
+    <link rel="next" title="Quality Control Package" href="hydroserverpy.quality.html" />
     <link rel="prev" title="hydroserverpy.core.schemas package" href="hydroserverpy.core.schemas.html" /> 
 </head>
 
@@ -47,18 +47,18 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="reference internal" href="hydroserverpy.html">hydroserverpy package</a><ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="hydroserverpy.html">hydroserverpy</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="hydroserverpy.html#getting-started">Getting Started</a></li>
 <li class="toctree-l2 current"><a class="reference internal" href="hydroserverpy.html#subpackages">Subpackages</a><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.html">hydroserverpy.core package</a></li>
-<li class="toctree-l3 current"><a class="current reference internal" href="#">hydroserverpy.etl package</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.core.html">Data Management Package</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">Data Loader Package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#hydroserver-data-loader-guide">HydroServer Data Loader Guide</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#submodules">Submodules</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-hydroserverpy.etl.exceptions">hydroserverpy.etl.exceptions module</a></li>
 <li class="toctree-l4"><a class="reference internal" href="#module-hydroserverpy.etl.service">hydroserverpy.etl.service module</a></li>
-<li class="toctree-l4"><a class="reference internal" href="#module-hydroserverpy.etl">Module contents</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-hydroserverpy.etl.exceptions">hydroserverpy.etl.exceptions module</a></li>
 </ul>
 </li>
-<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html">hydroserverpy.quality package</a></li>
+<li class="toctree-l3"><a class="reference internal" href="hydroserverpy.quality.html">Quality Control Package</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="hydroserverpy.html#module-hydroserverpy">Module contents</a></li>
@@ -80,8 +80,8 @@
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
       <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
-          <li class="breadcrumb-item"><a href="hydroserverpy.html">hydroserverpy package</a></li>
-      <li class="breadcrumb-item active">hydroserverpy.etl package</li>
+          <li class="breadcrumb-item"><a href="hydroserverpy.html">hydroserverpy</a></li>
+      <li class="breadcrumb-item active">Data Loader Package</li>
       <li class="wy-breadcrumbs-aside">
             <a href="_sources/hydroserverpy.etl.rst.txt" rel="nofollow"> View page source</a>
       </li>
@@ -91,27 +91,252 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="hydroserverpy-etl-package">
-<h1>hydroserverpy.etl package<a class="headerlink" href="#hydroserverpy-etl-package" title="Link to this heading"></a></h1>
+  <section id="data-loader-package">
+<h1>Data Loader Package<a class="headerlink" href="#data-loader-package" title="Link to this heading"></a></h1>
+<section id="hydroserver-data-loader-guide">
+<h2>HydroServer Data Loader Guide<a class="headerlink" href="#hydroserver-data-loader-guide" title="Link to this heading"></a></h2>
+<section id="hydroserver-python-client-data-loader">
+<h3>HydroServer Python Client - Data Loader<a class="headerlink" href="#hydroserver-python-client-data-loader" title="Link to this heading"></a></h3>
+<p>They hydroserverpy package supports several methods for loading data into HydroServer. This guide will provide examples on how to prepare and load data into HydroServer using each of these methods.</p>
+<section id="data-loader-guide-with-examples">
+<h4>Data Loader Guide with Examples<a class="headerlink" href="#data-loader-guide-with-examples" title="Link to this heading"></a></h4>
+<p>To perform data loading operations, you must connect to HydroServer.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">hydroserverpy</span> <span class="kn">import</span> <span class="n">HydroServer</span>
+
+<span class="c1"># Initialize HydroServer connection with credentials.</span>
+<span class="n">hs_api</span> <span class="o">=</span> <span class="n">HydroServer</span><span class="p">(</span>
+    <span class="n">host</span><span class="o">=</span><span class="s1">&#39;https://playground.hydroserver.org&#39;</span><span class="p">,</span>
+    <span class="n">username</span><span class="o">=</span><span class="s1">&#39;user@example.com&#39;</span><span class="p">,</span>
+    <span class="n">password</span><span class="o">=</span><span class="s1">&#39;******&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>After setting up all necessary metadata associated with the datastreams you want to load data into, the following properties of the HydroServer connection object will be used to set up data loading:</p>
+<ul class="simple">
+<li><p>dataloaders</p></li>
+<li><p>datasources</p></li>
+<li><p>datastreams</p></li>
+</ul>
+<section id="data-loaders">
+<h5>Data Loaders<a class="headerlink" href="#data-loaders" title="Link to this heading"></a></h5>
+<p>HydroServer data loaders are generally used in conjunction with the Streaming Data Loader, and will be automatically registered after installing an instance of the Streaming Data Loader application. If you are not using the Streaming Data Loader, this endpoint should be used to register the name of the script or process you’re using to load data. The examples below demonstrate the actions you can take to manage data loaders in HydroServer.</p>
+<section id="example-get-data-loaders">
+<h6>Example: Get Data Loaders<a class="headerlink" href="#example-get-data-loaders" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all owned Data Loaders</span>
+<span class="n">data_loaders</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">dataloaders</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="c1"># Get Data Loader with a given ID</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">dataloaders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-create-data-loader">
+<h6>Example: Create Data Loader<a class="headerlink" href="#example-create-data-loader" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new Data Loader in HydroServer</span>
+<span class="n">new_data_loader</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">dataloaders</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Data Loader&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-modify-a-data-loader">
+<h6>Example: Modify a Data Loader<a class="headerlink" href="#example-modify-a-data-loader" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Loader</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">dataloaders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update one or more properties of the Data Loader.</span>
+<span class="n">data_loader</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Updated Data Loader Name&#39;</span>
+
+<span class="c1"># Save the changes back to HydroServer.</span>
+<span class="n">data_loader</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-get-data-sources-of-a-data-loader">
+<h6>Example: Get Data Sources of a Data Loader<a class="headerlink" href="#example-get-data-sources-of-a-data-loader" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Loaders</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">dataloaders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Fetch Data Sources of the Data Loader</span>
+<span class="n">data_sources</span> <span class="o">=</span> <span class="n">data_loader</span><span class="o">.</span><span class="n">data_sources</span>
+</pre></div>
+</div>
+</section>
+<section id="example-refresh-data-loader-details-from-hydroserver">
+<h6>Example: Refresh Data Loader details from HydroServer<a class="headerlink" href="#example-refresh-data-loader-details-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Loader</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">dataloaders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Refresh Data Loader data from HydroServer</span>
+<span class="n">data_loader</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-delete-data-loader-from-hydroserver">
+<h6>Example: Delete Data Loader from HydroServer<a class="headerlink" href="#example-delete-data-loader-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Loader</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">dataloaders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Delete the Data Loader from HydroServer</span>
+<span class="n">data_loader</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="data-sources">
+<h5>Data Sources<a class="headerlink" href="#data-sources" title="Link to this heading"></a></h5>
+<p>HydroServer data sources represent a data file where observations for one or more datastreams are stored before being loaded into HydroServer. The examples below demonstrate the actions you can take to manage data sources in HydroServer.</p>
+<section id="example-get-data-sources">
+<h6>Example: Get Data Sources<a class="headerlink" href="#example-get-data-sources" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all owned Data Sources</span>
+<span class="n">data_sources</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datasources</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="c1"># Get Data Source with a given ID</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datasources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-create-data-source">
+<h6>Example: Create Data Source<a class="headerlink" href="#example-create-data-source" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a new Data Source in HydroServer</span>
+<span class="n">new_data_source</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datasources</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s1">&#39;My Data Source&#39;</span><span class="p">,</span>
+    <span class="n">path</span><span class="o">=</span><span class="s1">&#39;/path/to/my/local/data/file.csv&#39;</span><span class="p">,</span>
+    <span class="n">header_row</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">data_start_row</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+    <span class="n">delimiter</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span>
+    <span class="n">quote_char</span><span class="o">=</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,</span>
+    <span class="n">interval</span><span class="o">=</span><span class="s1">&#39;1&#39;</span><span class="p">,</span>
+    <span class="n">interval_units</span><span class="o">=</span><span class="s1">&#39;days&#39;</span><span class="p">,</span>
+    <span class="n">timestamp_column</span><span class="o">=</span><span class="s1">&#39;timestampColumnName&#39;</span><span class="p">,</span>
+    <span class="n">timestamp_format</span><span class="o">=</span><span class="s1">&#39;%Y-%m-</span><span class="si">%d</span><span class="s1">T%H:%M:%S%Z&#39;</span><span class="p">,</span>
+    <span class="n">timestamp_offset</span><span class="o">=</span><span class="s1">&#39;+0000&#39;</span><span class="p">,</span>
+    <span class="n">paused</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">data_loader_id</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-modify-a-data-source">
+<h6>Example: Modify a Data Source<a class="headerlink" href="#example-modify-a-data-source" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Source</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datasources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update one or more properties of the Data Source.</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;Updated Data Source Name&#39;</span>
+
+<span class="c1"># Save the changes back to HydroServer.</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-get-datastreams-of-a-data-source">
+<h6>Example: Get Datastreams of a Data Source<a class="headerlink" href="#example-get-datastreams-of-a-data-source" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Source</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datasources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Fetch Datastreams of the Data Source</span>
+<span class="n">datastreams</span> <span class="o">=</span> <span class="n">data_source</span><span class="o">.</span><span class="n">datastreams</span>
+</pre></div>
+</div>
+</section>
+<section id="example-refresh-data-source-details-from-hydroserver">
+<h6>Example: Refresh Data Source details from HydroServer<a class="headerlink" href="#example-refresh-data-source-details-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Source</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datasources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Refresh Data Source data from HydroServer</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">refresh</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-delete-data-source-from-hydroserver">
+<h6>Example: Delete Data Source from HydroServer<a class="headerlink" href="#example-delete-data-source-from-hydroserver" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Source</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datasources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Delete the Data Source from HydroServer</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="datastreams">
+<h5>Datastreams<a class="headerlink" href="#datastreams" title="Link to this heading"></a></h5>
+<p>In order to load data, data sources must be linked to one or more datastreams. The examples below demonstrate how to link existing datastreams to a data source.</p>
+<section id="example-link-datastream-to-a-data-source">
+<h6>Example: Link Datastream to a Data Source<a class="headerlink" href="#example-link-datastream-to-a-data-source" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Source</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datasources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Get a Datastream</span>
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Update the data_source_id and data_source_column properties of the Datastream</span>
+<span class="c1"># The data_source_column value should match the appropriate column name/index of the column in your data source file</span>
+<span class="n">datastream</span><span class="o">.</span><span class="n">data_source_id</span> <span class="o">=</span> <span class="n">data_source</span><span class="o">.</span><span class="n">uid</span>
+<span class="n">datastream</span><span class="o">.</span><span class="n">data_source_column</span> <span class="o">=</span> <span class="s1">&#39;dataColumnName&#39;</span>
+
+<span class="c1"># Save the changes back to HydroServer.</span>
+<span class="n">datastream</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+<section id="loading-data">
+<h5>Loading Data<a class="headerlink" href="#loading-data" title="Link to this heading"></a></h5>
+<p>Once you have datastreams and data sources set up in HydroServer, you can begin loading observations data into them. The examples below demonstrate several methods you can use to load data into HydroServer.</p>
+<section id="example-load-data-from-a-dataframe">
+<h6>Example: Load Data from a DataFrame<a class="headerlink" href="#example-load-data-from-a-dataframe" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+
+<span class="o">...</span>
+
+<span class="c1"># Get a Datastream</span>
+<span class="n">datastream</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datastreams</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Create a DataFrame of Observations</span>
+<span class="n">new_observations</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span>
+    <span class="p">[</span>
+        <span class="p">[</span><span class="s1">&#39;2023-01-26 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;2023-01-27 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">41.0</span><span class="p">],</span>
+        <span class="p">[</span><span class="s1">&#39;2023-01-28 00:00:00+00:00&#39;</span><span class="p">,</span> <span class="mf">42.0</span><span class="p">],</span>
+    <span class="p">],</span>
+    <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">,</span> <span class="s1">&#39;value&#39;</span><span class="p">]</span>
+<span class="p">)</span>
+<span class="n">new_observations</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">to_datetime</span><span class="p">(</span><span class="n">new_observations</span><span class="p">[</span><span class="s1">&#39;timestamp&#39;</span><span class="p">])</span>
+
+<span class="c1"># Upload the Observations to HydroServer</span>
+<span class="n">datastream</span><span class="o">.</span><span class="n">load_observations</span><span class="p">(</span><span class="n">new_observations</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="example-load-data-from-a-data-source-file">
+<h6>Example: Load Data from a Data Source File<a class="headerlink" href="#example-load-data-from-a-data-source-file" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Source</span>
+<span class="n">data_source</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">datasources</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Load new Observations from the Data Source file to HydroServer</span>
+<span class="n">data_source</span><span class="o">.</span><span class="n">load_observations</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="example-load-data-from-data-sources-of-a-data-loader">
+<h6>Example: Load Data from Data Sources of a Data Loader<a class="headerlink" href="#example-load-data-from-data-sources-of-a-data-loader" title="Link to this heading"></a></h6>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get a Data Loader</span>
+<span class="n">data_loader</span> <span class="o">=</span> <span class="n">hs_api</span><span class="o">.</span><span class="n">dataloaders</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="s1">&#39;00000000-0000-0000-0000-000000000000&#39;</span><span class="p">)</span>
+
+<span class="c1"># Load new Observations from all Data Sources associated with the Data Loader to HydroServer</span>
+<span class="n">data_loader</span><span class="o">.</span><span class="n">load_observations</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+</section>
+</section>
 <section id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
-</section>
-<section id="module-hydroserverpy.etl.exceptions">
-<span id="hydroserverpy-etl-exceptions-module"></span><h2>hydroserverpy.etl.exceptions module<a class="headerlink" href="#module-hydroserverpy.etl.exceptions" title="Link to this heading"></a></h2>
-<dl class="py exception">
-<dt class="sig sig-object py" id="hydroserverpy.etl.exceptions.HeaderParsingError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.etl.exceptions.</span></span><span class="sig-name descname"><span class="pre">HeaderParsingError</span></span><a class="reference internal" href="_modules/hydroserverpy/etl/exceptions.html#HeaderParsingError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.etl.exceptions.HeaderParsingError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Raised when the header of a CSV file cannot be parsed due to incorrect field names or out of range index values.</p>
-</dd></dl>
-
-<dl class="py exception">
-<dt class="sig sig-object py" id="hydroserverpy.etl.exceptions.TimestampParsingError">
-<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.etl.exceptions.</span></span><span class="sig-name descname"><span class="pre">TimestampParsingError</span></span><a class="reference internal" href="_modules/hydroserverpy/etl/exceptions.html#TimestampParsingError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.etl.exceptions.TimestampParsingError" title="Link to this definition"></a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
-<p>Raised when the timestamp of a CSV file row cannot be parsed.</p>
-</dd></dl>
-
 </section>
 <section id="module-hydroserverpy.etl.service">
 <span id="hydroserverpy-etl-service-module"></span><h2>hydroserverpy.etl.service module<a class="headerlink" href="#module-hydroserverpy.etl.service" title="Link to this heading"></a></h2>
@@ -132,8 +357,22 @@ the sync process.</p>
 </dd></dl>
 
 </section>
-<section id="module-hydroserverpy.etl">
-<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-hydroserverpy.etl" title="Link to this heading"></a></h2>
+<section id="module-hydroserverpy.etl.exceptions">
+<span id="hydroserverpy-etl-exceptions-module"></span><h2>hydroserverpy.etl.exceptions module<a class="headerlink" href="#module-hydroserverpy.etl.exceptions" title="Link to this heading"></a></h2>
+<dl class="py exception">
+<dt class="sig sig-object py" id="hydroserverpy.etl.exceptions.HeaderParsingError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.etl.exceptions.</span></span><span class="sig-name descname"><span class="pre">HeaderParsingError</span></span><a class="reference internal" href="_modules/hydroserverpy/etl/exceptions.html#HeaderParsingError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.etl.exceptions.HeaderParsingError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when the header of a CSV file cannot be parsed due to incorrect field names or out of range index values.</p>
+</dd></dl>
+
+<dl class="py exception">
+<dt class="sig sig-object py" id="hydroserverpy.etl.exceptions.TimestampParsingError">
+<em class="property"><span class="pre">exception</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">hydroserverpy.etl.exceptions.</span></span><span class="sig-name descname"><span class="pre">TimestampParsingError</span></span><a class="reference internal" href="_modules/hydroserverpy/etl/exceptions.html#TimestampParsingError"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#hydroserverpy.etl.exceptions.TimestampParsingError" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Exception</span></code></p>
+<p>Raised when the timestamp of a CSV file row cannot be parsed.</p>
+</dd></dl>
+
 </section>
 </section>
 
@@ -142,7 +381,7 @@ the sync process.</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="hydroserverpy.core.schemas.html" class="btn btn-neutral float-left" title="hydroserverpy.core.schemas package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="hydroserverpy.quality.html" class="btn btn-neutral float-right" title="hydroserverpy.quality package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="hydroserverpy.quality.html" class="btn btn-neutral float-right" title="Quality Control Package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
