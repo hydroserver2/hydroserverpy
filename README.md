@@ -1,6 +1,6 @@
 # HydroServer Python Client
 
-The hydroserverpy Python package provides an interface for managing HydroServer data and metadata, loading observations, and performing data quality control. This guide will go over how to install the package and connect to a HydroServer instance.
+The hydroserverpy Python package provides an interface for managing HydroServer data and metadata, loading observations, and performing data quality control. This guide will go over how to install the package and connect to a HydroServer instance. Full hydroserverpy documentation can be found [here](https://hydroserver2.github.io/hydroserverpy).
 
 ## Installation
 
