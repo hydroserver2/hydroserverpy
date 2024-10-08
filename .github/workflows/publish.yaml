@@ -1,5 +1,5 @@
-name: HydroLoader PyPI Publish
-run-name: ${{ github.actor }} is running HydroLoader PyPI Publish on ${{ github.ref }}
+name: PyPI Publish hydroserverpy
+run-name: Publishing hydroserverpy to PyPI
 
 on:
   release:
@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Set up Python 3.8
+      - name: Set up Python 3.11
         uses: actions/setup-python@v3
         with:
-          python-version: '3.8'
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
