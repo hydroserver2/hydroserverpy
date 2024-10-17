@@ -39,7 +39,7 @@ class ByteStreamTransformer(Transformer):
             logging.error(f"Parse Error: {e}")
             return False
 
-    def parse_echo(response: str, sensor_command):
+    def parse_echo(self, response: str, sensor_command):
         """Check that the response is the same as the command."""
         pattern = rf"{re.escape(sensor_command)}"
         match = re.search(pattern, response)
@@ -48,7 +48,7 @@ class ByteStreamTransformer(Transformer):
             return False
         return None
 
-    def parse_token(response: str, address, token_format):
+    def parse_token(self, response: str, address, token_format):
         """Parses an SDI-12 response in the atttnn token format where:
         a = station name
         ttt = time in seconds until the sensor will have the measurement(s) ready
@@ -67,7 +67,7 @@ class ByteStreamTransformer(Transformer):
 
         return [int(match.group(1)), int(match.group(2))]
 
-    def parse_signed_numbers(response: str):
+    def parse_signed_numbers(self, response: str):
         """Extracts numbers that begin with a + or - and returns them as a number array."""
         pattern = rf"[+-][\d*\.*]+"
         matches = re.findall(pattern, response)
@@ -77,7 +77,7 @@ class ByteStreamTransformer(Transformer):
 
         return [float(num) for num in matches]
 
-    def parse_number(response: str, address):
+    def parse_number(self, response: str, address):
         """Extracts one number immediately after the sensor address."""
         pattern = rf"{re.escape(address)}([\d*\.*]+)"
         match = re.search(pattern, response)
@@ -87,7 +87,7 @@ class ByteStreamTransformer(Transformer):
 
         return [float(match.group(1))]
 
-    def parse_voltages_array(response: str, address):
+    def parse_voltages_array(self, response: str, address):
         """For a weeder station's single-ended command where we get all 8 input channels at once,
         we expect 8 integers between -4095 and +4095 (millivolts). Then the host (this script)
         is expected to convert those values based on sensor hardware. There are two values we care about:
@@ -106,7 +106,7 @@ class ByteStreamTransformer(Transformer):
         battery_voltage = int(match.group(8)) * 0.00432
         return [flow, battery_voltage]
 
-    # def parse_identification_token(response: str, address):
+    # def parse_identification_token(self, response: str, address):
     #     """Parses an SDI-12 response in the allccccccccmmmmmmvvvxx..xx token format where:
     #     a = station name
     #     l = 2 character SDI-12 version number (for example 12 is version 1.2)

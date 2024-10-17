@@ -20,7 +20,7 @@ class TCPExtractor(Extractor):
             logging.info(f"Established TCP connection with {self.host}")
         except Exception as e:
             logging.error(f"Error connecting to {self.host}: {e}")
-            self.disconnect()
+            await self.disconnect()
 
     async def extract(self, command, wait):
         await self.clear_buffer()

@@ -1,4 +1,5 @@
-# import logging
+import logging
+
 # import croniter
 import pandas as pd
 from typing import List, TYPE_CHECKING, Dict, TypedDict
@@ -32,7 +33,7 @@ ObservationsMap = Dict[str, List[Observation]]
 # }
 
 
-class HydroserverETL:
+class HydroServerETL:
     def __init__(self, service, data_source):
         self._service = service
         self.data_source = data_source
@@ -55,12 +56,13 @@ class HydroserverETL:
         # Step 2: Request data from host
         # Step 3: Transform response into native type
         observations_map: ObservationsMap = await self.data_source.get_data()
+        logging.info(f"observations_map: {observations_map}")
 
         # Step 4: Upload to HydroServer API
-        for datastream_id, observations in observations_map.items():
-            self._service.datastreams.load_observations(
-                uid=datastream_id, observations=observations
-            )
+        # for datastream_id, observations in observations_map.items():
+        #     self._service.datastreams.load_observations(
+        #         uid=datastream_id, observations=observations
+        #     )
 
     # def _post_observations(self) -> List[str]:
     #     """
