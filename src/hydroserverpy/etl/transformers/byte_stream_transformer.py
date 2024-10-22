@@ -1,12 +1,15 @@
 from .base import Transformer
 import logging
 import re
+import pandas as pd
+from datetime import datetime, timezone
+from typing import List
 
 
 # TODO: Update this to return a pandas dataframe that can be uploaded to HydroServer
 class ByteStreamTransformer(Transformer):
-    def __init__(self):
-        pass
+    def __init__(self, data_source):
+        self._datastream_ids = data_source.datastream_ids
 
     def transform(self, protocol, byte_response: bytes, address: str, command_str):
         """Decodes and parses a tcp byte response then transforms it into a pandas dataframe.
@@ -68,14 +71,15 @@ class ByteStreamTransformer(Transformer):
         return [int(match.group(1)), int(match.group(2))]
 
     def parse_signed_numbers(self, response: str):
-        """Extracts numbers that begin with a + or - and returns them as a number array."""
+        """Extracts numbers that begin with a + or - and returns them as a number array.
+        For now, assume we only want the first number in the array."""
         pattern = rf"[+-][\d*\.*]+"
         matches = re.findall(pattern, response)
         if not matches:
             logging.warning(f"No signed numbers found in the response.")
             return False
 
-        return [float(num) for num in matches]
+        return self.numbers_to_observations_map([matches[0]], self._datastream_ids)
 
     def parse_number(self, response: str, address):
         """Extracts one number immediately after the sensor address."""
@@ -85,7 +89,7 @@ class ByteStreamTransformer(Transformer):
             logging.warning(f"No number pattern found in the response.")
             return False
 
-        return [float(match.group(1))]
+        return self.numbers_to_observations_map([match.group(1)], self._datastream_ids)
 
     def parse_voltages_array(self, response: str, address):
         """For a weeder station's single-ended command where we get all 8 input channels at once,
@@ -104,7 +108,20 @@ class ByteStreamTransformer(Transformer):
 
         flow = int(match.group(1))
         battery_voltage = int(match.group(8)) * 0.00432
-        return [flow, battery_voltage]
+        return self.numbers_to_observations_map([flow, battery_voltage])
+
+    def numbers_to_observations_map(self, nums: List[float], datastream_ids: List[str]):
+        if len(nums) != len(datastream_ids):
+            raise ValueError("Length of numbers and datastream_ids must be the same.")
+
+        current_time = pd.Timestamp(datetime.now(timezone.utc))
+
+        observations_map = {}
+        for datastream_id, value in zip(datastream_ids, nums):
+            df = pd.DataFrame({"timestamp": current_time, "value": [float(value)]})
+            observations_map[datastream_id] = df
+
+        return observations_map
 
     # def parse_identification_token(self, response: str, address):
     #     """Parses an SDI-12 response in the allccccccccmmmmmmvvvxx..xx token format where:

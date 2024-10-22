@@ -34,9 +34,19 @@ ObservationsMap = Dict[str, List[Observation]]
 
 
 class HydroServerETL:
-    def __init__(self, service, data_source):
-        self._service = service
-        self.data_source = data_source
+    """
+    TODO: Validate input data_source file -
+            Validate each datastream_id has a live datastream.
+            Validate the number of datastream_ids match the number of measurement types.
+    TODO: An admin may delete a datastream, but still have it listed in the orchestrator.
+            This shouldn't bring down the entire system so we should skip ETL for missing
+            datastreams & report an error.
+    """
+
+    def __init__(self, extractor, transformer, loader):
+        self.extractor = extractor
+        self.transformer = transformer
+        self.loader = loader
 
     async def run(self):
         """
@@ -46,23 +56,21 @@ class HydroServerETL:
         :param self
         :return: None
         """
-        # TODO: Verify the data_source is valid -
-        #       TODO: Make sure each datastream related to datastream_id is available.
-        #       An admin may delete a datastream, but still have it listed in the orchestrator.
-        #       This shouldn't bring down the entire system so we should skip ETL for missing
-        #       datastreams & report an error.
 
         # Step 1: Establish a connection with the remote host if there is one
         # Step 2: Request data from host
+        data = await self.extractor.extract()
+
         # Step 3: Transform response into native type
-        observations_map: ObservationsMap = await self.data_source.get_data()
-        logging.info(f"observations_map: {observations_map}")
+        if self.transformer:
+            data: ObservationsMap = await self.transformer.transform(data)
+        logging.info(f"observations_map: {data}")
 
         # Step 4: Upload to HydroServer API
-        # for datastream_id, observations in observations_map.items():
-        #     self._service.datastreams.load_observations(
-        #         uid=datastream_id, observations=observations
-        #     )
+        for id, observations in data.items():
+            print(f"id: {id}")
+            print(f"observations: {observations}")
+            self.loader.datastreams.load_observations(uid=id, observations=observations)
 
     # def _post_observations(self) -> List[str]:
     #     """
