@@ -10,6 +10,7 @@ WEEDER_PROTOCOLS = {
         "command": "S",
         "wait": 3,
         "response_format": "array",
+        "returns": ["flow", "battery_voltage"],
     },
 }
 
@@ -21,11 +22,13 @@ SDI12_PROTOCOLS = {
         # Responds with "a+X.XX+NNNN<cr><lf>" where:
         # +X.XX = Current position (stage), in user programmable units
         # +NNNN = Current position (raw counts), in raw position counts
+        "returns": ["stage", "raw_counts"],
     },
     "send_data": {
         "command": "D0!",
         "wait": 5,
         "response_format": "signed_numbers",
+        "returns": ["measurement"],
     },
     "send_identification": {
         "command": "I!",

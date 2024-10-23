@@ -6,18 +6,29 @@ from hydroserverpy.etl.transformers.byte_stream_transformer import ByteStreamTra
 
 
 class TCPSensorExtractor(Extractor):
-    def __init__(self, data_source):
-        self.host = data_source.host
-        self.port = data_source.port
-        self.authentication = data_source.authentication
-        self.protocol_names = data_source.protocol_names
-        self.sensor_address = data_source.sensor_address
-        self.retries = data_source.retries
+    def __init__(
+        self,
+        host: str,
+        port: int,
+        authentication: dict,
+        sensor_address: str,
+        retries: int,
+        protocol_names: list,
+        datastream_ids: dict,
+    ):
+        self.host = host
+        self.port = port
+        self.authentication = authentication
+
+        self.sensor_address = sensor_address
+        self.retries = retries
+        self.protocol_names = protocol_names
+        self.datastream_ids = datastream_ids
 
         self.reader = None
         self.writer = None
 
-        self.transformer = ByteStreamTransformer(data_source)
+        self.transformer = ByteStreamTransformer(datastream_ids)
 
     async def connect(self):
         """Establish a TCP connection"""
