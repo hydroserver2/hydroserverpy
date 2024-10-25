@@ -111,7 +111,7 @@ class TCPSensorExtractor(Extractor):
         except asyncio.TimeoutError:
             pass  # If a timeout occurs, it means the buffer is now empty
         except Exception as e:
-            print("Error clearing buffer:", e)
+            logging.error("Error clearing buffer:", e)
 
     def convert_to_voltage_address(station_name):
         """Converts the last character of a given station name between '0' and '9'

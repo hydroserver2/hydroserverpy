@@ -1,43 +1,34 @@
-from .base import Extractor
 import logging
-import aioftp
+from ftplib import FTP
+from io import BytesIO
 
 
-class FTPExtractor(Extractor):
-    def __init__(self, host, port=21, authentication=None, delimiter=","):
+class FTPExtractor:
+    def __init__(self, host: str, username: str, password: str, filepath: str):
         self.host = host
-        self.port = port
-        self.authentication = authentication or {}
-        self.client = None
-        self.delimiter = delimiter
-
-    async def connect(self):
-        """Establish an FTP connection"""
-        self.client = aioftp.Client()
-        try:
-            username = self.authentication.get("username", "anonymous")
-            password = self.authentication.get("password", "")
-            await self.client.connect(self.host, self.port)
-            await self.client.login(username, password)
-            logging.info(f"Connected to FTP server {self.host}:{self.port}")
-        except Exception as e:
-            logging.error(
-                f"Failed to connect to FTP server {self.host}:{self.port} - {e}"
-            )
-            self.client = None
-            raise
+        self.username = username
+        self.password = password
+        self.filepath = filepath
 
     async def extract(self):
-        # TODO: extract data from host
-        data = None
+        """
+        Downloads the file from the FTP server and returns a file-like object.
+        """
+        try:
+            ftp = FTP(self.host)
+            ftp.login(self.username, self.password)
+            logging.info(f"Connected to FTP server: {self.host}")
 
-    async def disconnect(self):
-        """Close the FTP connection"""
-        if self.client:
-            try:
-                await self.client.quit()
-                logging.info("FTP connection closed.")
-            except Exception as e:
-                logging.error(f"Error while disconnecting from FTP server: {e}")
-            finally:
-                self.client = None
+            data = BytesIO()
+
+            ftp.retrbinary(f"RETR {self.filepath}", data.write)
+            ftp.quit()
+
+            data.seek(0)
+            logging.info(
+                f"Successfully downloaded file '{self.filepath}' from FTP server."
+            )
+            return data
+        except Exception as e:
+            logging.error(f"Error retrieving file from FTP server: {e}")
+            return None
