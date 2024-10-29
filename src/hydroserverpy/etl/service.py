@@ -2,7 +2,7 @@ import logging
 
 # import croniter
 import pandas as pd
-from typing import List, TYPE_CHECKING, Dict, TypedDict
+from typing import TYPE_CHECKING, Dict, Optional, TypedDict
 
 # from requests import HTTPError
 # from datetime import datetime, timezone, timedelta
@@ -20,7 +20,7 @@ class Observation(TypedDict):
 
 
 # Map a list of observations to the related datastream ID
-ObservationsMap = Dict[str, List[Observation]]
+ObservationsMap = Dict[str, Optional[pd.DataFrame]]
 # data = {
 #     "datastream_1": [
 #         {"timestamp": pd.Timestamp("2024-10-02 11:00:00+00:00"), "value": 41.0},
@@ -50,7 +50,7 @@ class HydroServerETL:
 
     async def run(self):
         """
-        This extracts and transforms data as defined by the data source and
+        Extracts and transforms data as defined by the class parameters and
         loads them into a HydroServer database instance.
 
         :param self
@@ -63,7 +63,21 @@ class HydroServerETL:
 
         # Step 3: Transform response into native type
         if self.transformer:
-            data: ObservationsMap = self.transformer.transform(data)
+            if self.transformer.needs_datastreams:
+                datastreams = self.loader.datastreams.list(owned_only=True)
+                if not datastreams:
+                    logging.error("No datastreams fetched. ETL process aborted.")
+                    return
+
+                datastream_ids = set(self.transformer.datastream_ids.values())
+                filtered_datastreams = [
+                    ds for ds in datastreams if str(ds.uid) in datastream_ids
+                ]
+
+                datastreams = {str(ds.uid): ds for ds in filtered_datastreams}
+                data: ObservationsMap = self.transformer.transform(data, datastreams)
+            else:
+                data: ObservationsMap = self.transformer.transform(data)
 
         # Step 4: Upload to HydroServer API
         for id, observations in data.items():
