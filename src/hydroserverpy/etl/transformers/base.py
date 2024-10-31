@@ -7,6 +7,5 @@ class Transformer(ABC):
         pass
 
     @property
-    @abstractmethod
     def needs_datastreams(self) -> bool:
         False

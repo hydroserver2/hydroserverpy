@@ -48,7 +48,7 @@ class HydroServerETL:
         self.transformer = transformer
         self.loader = loader
 
-    async def run(self):
+    def run(self):
         """
         Extracts and transforms data as defined by the class parameters and
         loads them into a HydroServer database instance.
@@ -59,7 +59,13 @@ class HydroServerETL:
 
         # Step 1: Establish a connection with the remote host if there is one
         # Step 2: Request data from host
-        data = await self.extractor.extract()
+        data = self.extractor.extract()
+
+        if not data:
+            logging.error(f"No data was returned from the extractor.")
+            return
+        else:
+            logging.info(f"Successfully extracted data.")
 
         # Step 3: Transform response into native type
         if self.transformer:
@@ -78,6 +84,12 @@ class HydroServerETL:
                 data: ObservationsMap = self.transformer.transform(data, datastreams)
             else:
                 data: ObservationsMap = self.transformer.transform(data)
+
+            if not data:
+                logging.warning(f"No data was returned from the transformer.")
+                return
+            else:
+                logging.info(f"Successfully transformed data.")
 
         # Step 4: Upload to HydroServer API
         for id, observations in data.items():

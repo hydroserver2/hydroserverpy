@@ -1,6 +1,7 @@
 from .base import Extractor
 import logging
-import asyncio
+import socket
+import time
 from ..protocols.tcp_protocols import TCP_PROTOCOLS
 from hydroserverpy.etl.transformers.byte_stream_transformer import ByteStreamTransformer
 
@@ -25,25 +26,24 @@ class TCPSensorExtractor(Extractor):
         self.protocol_names = protocol_names
         self.datastream_ids = datastream_ids
 
-        self.reader = None
-        self.writer = None
+        self.sock = None
 
         self.transformer = ByteStreamTransformer(datastream_ids)
 
-    async def connect(self):
+    def connect(self):
         """Establish a TCP connection"""
         try:
-            self.reader, self.writer = await asyncio.open_connection(
-                self.host, self.port
-            )
+            self.sock = socket.create_connection((self.host, self.port), timeout=10)
             logging.info(f"Established TCP connection with {self.host}")
-        except Exception as e:
+        except socket.error as e:
             logging.error(f"Error connecting to {self.host}: {e}")
-            await self.disconnect()
+            self.disconnect()
 
-    async def extract(self):
+    def extract(self):
         for _ in range(self.retries):
-            await self.connect()
+            self.connect()
+            if not self.sock:
+                continue
 
             try:
                 # TODO: We'll need a way for the user to add their own protocols
@@ -60,15 +60,13 @@ class TCPSensorExtractor(Extractor):
                     )
 
                     # Extract
-                    await self.clear_buffer()
+                    self.clear_buffer()
                     command = f"{address}{protocol['command']}\r"
                     logging.info(f"sending TCP command: {command}")
-                    self.writer.write(command.encode("ascii"))
+                    self.sock.sendall(command.encode("ascii"))
 
-                    wait = protocol.get("wait", 5)
-                    await self.writer.drain()
-                    await asyncio.sleep(wait)
-                    response = await self.reader.read(4096)
+                    time.sleep(protocol.get("wait", 5))
+                    response = self.sock.recv(4096)
 
                     # Transform
                     parsed_response = self.transformer.transform(
@@ -91,27 +89,39 @@ class TCPSensorExtractor(Extractor):
                         logging.info(
                             f"Waiting {seconds_until_ready} seconds for sensor {self.sensor_address} to prepare a measurement..."
                         )
-                        await asyncio.sleep(seconds_until_ready)
+                        time.sleep(seconds_until_ready)
                         continue
 
-                    await self.disconnect()
                     logging.info(f"{protocol_name} parsed response: {parsed_response}")
+                    self.disconnect()
                     return parsed_response
             except Exception as e:
                 logging.error(e)
 
-    async def disconnect(self):
-        self.writer.close()
-        await self.writer.wait_closed()
+    def disconnect(self):
+        if self.sock:
+            try:
+                self.sock.close()
+                logging.info(f"Closed TCP connection with {self.host}:{self.port}")
+            except socket.error as e:
+                logging.error(f"Error closing socket: {e}")
+            finally:
+                self.sock = None
 
-    async def clear_buffer(self):
+    def clear_buffer(self):
         """Clear all remaining data in the buffer."""
         try:
-            await asyncio.wait_for(self.reader.read(4096), timeout=0.1)
-        except asyncio.TimeoutError:
-            pass  # If a timeout occurs, it means the buffer is now empty
-        except Exception as e:
-            logging.error("Error clearing buffer:", e)
+            # Set socket to non-blocking to clear the buffer
+            self.sock.setblocking(False)
+            while True:
+                try:
+                    data = self.sock.recv(4096)
+                    if not data:
+                        break
+                except BlockingIOError:
+                    break
+        except socket.error as e:
+            logging.error(f"Error clearing buffer: {e}")
 
     def convert_to_voltage_address(station_name):
         """Converts the last character of a given station name between '0' and '9'

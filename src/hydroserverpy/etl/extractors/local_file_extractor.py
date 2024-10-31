@@ -5,7 +5,7 @@ class LocalFileExtractor:
     def __init__(self, filepath: str):
         self.filepath = filepath
 
-    async def extract(self):
+    def extract(self):
         """
         Opens the file and returns a file-like object.
         """
