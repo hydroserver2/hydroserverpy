@@ -57,9 +57,26 @@ class HydroServerETL:
         :return: None
         """
 
+        if self.extractor.needs_datastreams or self.transformer.needs_datastreams:
+            # TODO: instead of fetching all the datastreams and filtering, just get the ones we need.
+            datastreams = self.loader.datastreams.list(owned_only=True)
+            if not datastreams:
+                logging.error("No datastreams fetched. ETL process aborted.")
+                return
+
+            datastream_ids = set(self.transformer.datastream_ids.values())
+            filtered_datastreams = [
+                ds for ds in datastreams if str(ds.uid) in datastream_ids
+            ]
+
+            datastreams = {str(ds.uid): ds for ds in filtered_datastreams}
+
         # Step 1: Establish a connection with the remote host if there is one
         # Step 2: Request data from host
-        data = self.extractor.extract()
+        if self.extractor.needs_datastreams:
+            data = self.extractor.extract(datastreams=datastreams)
+        else:
+            data = self.extractor.extract()
 
         if not data:
             logging.error(f"No data was returned from the extractor.")
@@ -70,17 +87,6 @@ class HydroServerETL:
         # Step 3: Transform response into native type
         if self.transformer:
             if self.transformer.needs_datastreams:
-                datastreams = self.loader.datastreams.list(owned_only=True)
-                if not datastreams:
-                    logging.error("No datastreams fetched. ETL process aborted.")
-                    return
-
-                datastream_ids = set(self.transformer.datastream_ids.values())
-                filtered_datastreams = [
-                    ds for ds in datastreams if str(ds.uid) in datastream_ids
-                ]
-
-                datastreams = {str(ds.uid): ds for ds in filtered_datastreams}
                 data: ObservationsMap = self.transformer.transform(data, datastreams)
             else:
                 data: ObservationsMap = self.transformer.transform(data)

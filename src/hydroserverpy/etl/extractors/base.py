@@ -13,3 +13,7 @@ class Extractor(ABC):
     @abstractmethod
     def disconnect(self):
         pass
+
+    @property
+    def needs_datastreams(self) -> bool:
+        False
