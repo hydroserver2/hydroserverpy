@@ -38,8 +38,6 @@ class HTTPExtractor:
                 logging.error("Datastreams are required but not provided.")
                 raise "Datastreams are required but not provided."
             self.update_since_param(datastreams)
-
-            self.params["since"] = "2023-01-01T00:00:00"
             logging.info(f"updated params: {self.params}")
 
         response = requests.get(

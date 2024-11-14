@@ -1,6 +1,5 @@
-from datetime import datetime
-import pandas as pd
 import logging
+import pandas as pd
 from typing import Dict, Optional, Union
 from .base import Transformer
 
@@ -52,9 +51,7 @@ class CSVTransformer(Transformer):
             return None
 
         df = self.rename_column_headers(df)
-
-        self.datastreams = datastreams
-        return self.build_observations_map(df)
+        return self.build_observations_map(df, self.datastream_ids, datastreams)
 
     def rename_column_headers(self, df):
         # Assign default column names if there's no header row
@@ -97,42 +94,6 @@ class CSVTransformer(Transformer):
                 # Do not skip the header row
                 skiprows.remove(self.header_row)
         return skiprows
-
-    def build_observations_map(self, df):
-        observations_map = {}
-        for column_name, datastream_id in self.datastream_ids.items():
-            if column_name not in df.columns:
-                logging.error(f"Datastream column '{column_name}' not found in file.")
-                continue
-
-            observations = df[["timestamp", column_name]].dropna()
-            if observations.empty:
-                logging.warning(f"No data found for input column {column_name}")
-                continue
-
-            observations = observations.rename(columns={column_name: "value"})
-            observations = self.filter_out_old_data(datastream_id, observations)
-            if observations is None or observations.empty:
-                logging.info(f"No new observations to add for '{datastream_id}'.")
-                continue
-            observations_map[datastream_id] = observations
-        return observations_map
-
-    def filter_out_old_data(self, datastream_id, observations):
-        datastream = self.datastreams.get(datastream_id)
-        phenomenon_end_time = datastream.phenomenon_end_time
-        if not phenomenon_end_time:
-            return observations
-
-        if not isinstance(phenomenon_end_time, pd.Timestamp):
-            try:
-                phenomenon_end_time = pd.to_datetime(phenomenon_end_time)
-            except Exception as e:
-                logging.error(
-                    f"Invalid 'phenomenon_end_time' for datastream '{datastream_id}': {e}"
-                )
-                return None
-        return observations[observations["timestamp"] > phenomenon_end_time]
 
     def convert_to_zero_based(self, index: Union[str, int]) -> Union[str, int]:
         if isinstance(index, int):

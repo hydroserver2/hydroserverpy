@@ -62,7 +62,7 @@ class HydroServerETL:
             datastreams = self.loader.datastreams.list(owned_only=True)
             if not datastreams:
                 logging.error("No datastreams fetched. ETL process aborted.")
-                return
+                raise "No datastreams fetched. ETL process aborted."
 
             datastream_ids = set(self.transformer.datastream_ids.values())
             filtered_datastreams = [
@@ -79,7 +79,7 @@ class HydroServerETL:
             data = self.extractor.extract()
 
         if not data:
-            logging.error(f"No data was returned from the extractor.")
+            logging.warning(f"No data was returned from the extractor.")
             return
         else:
             logging.info(f"Successfully extracted data.")
