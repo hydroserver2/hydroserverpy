@@ -12,13 +12,11 @@ class HTTPExtractor:
         params: dict = None,
         headers: dict = None,
         auth: tuple = None,
-        since_param: Optional[Union[bool, str]] = False,
     ):
         self.url = url
         self.params = params
         self.headers = headers
         self.auth = auth
-        self.since_param = since_param
 
     @property
     def needs_datastreams(self) -> bool:
@@ -27,17 +25,15 @@ class HTTPExtractor:
         for their most recent observations and set 'since' to the oldest of
         those timestamps.
         """
-        return bool(self.since_param)
+
+        return "since" in self.params
 
     def extract(self, datastreams: Dict[str, Any] = None):
         """
         Downloads the file from the HTTP/HTTPS server and returns a file-like object.
         """
         if self.needs_datastreams:
-            if not datastreams:
-                logging.error("Datastreams are required but not provided.")
-                raise "Datastreams are required but not provided."
-            self.update_since_param(datastreams)
+            self.set_start_date(datastreams)
             logging.info(f"updated params: {self.params}")
 
         response = requests.get(
@@ -57,14 +53,13 @@ class HTTPExtractor:
         data.seek(0)
         return data
 
-    def update_since_param(self, datastreams: Dict[str, Any]):
+    def set_start_date(self, datastreams: Dict[str, Any]):
         """
         Updates self.params based on the datastreams provided.
 
         Parameters:
             datastreams (dict): Dictionary of datastreams keyed by datastream ID.
         """
-        since_param_name = "since" if self.since_param is True else self.since_param
 
         # Extract the earliest phenomenon_end_time among the datastreams
         since_times = [
@@ -77,4 +72,5 @@ class HTTPExtractor:
             min(since_times) if since_times else pd.Timestamp("1970-01-01T00:00:00Z")
         )
 
-        self.params[since_param_name] = earliest_since_time.isoformat()
+        self.params["since"] = earliest_since_time.isoformat()
+        self.params["since"] = "2023-01-01T00:00:00"
