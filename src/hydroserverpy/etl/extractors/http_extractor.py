@@ -73,4 +73,3 @@ class HTTPExtractor:
         )
 
         self.params["since"] = earliest_since_time.isoformat()
-        self.params["since"] = "2023-01-01T00:00:00"
