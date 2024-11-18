@@ -21,12 +21,12 @@ class HTTPExtractor:
     @property
     def needs_datastreams(self) -> bool:
         """
-        Some apis have a 'since' query param. If so, we'll check the datastreams
-        for their most recent observations and set 'since' to the oldest of
+        Some apis have a 'start_date_key' query param. If so, we'll check the datastreams
+        for their most recent observations and set 'start_date_key' to the oldest of
         those timestamps.
         """
 
-        return "since" in self.params
+        return "start_date_key" in self.params
 
     def extract(self, datastreams: Dict[str, Any] = None):
         """
@@ -62,14 +62,14 @@ class HTTPExtractor:
         """
 
         # Extract the earliest phenomenon_end_time among the datastreams
-        since_times = [
+        start_dates = [
             pd.to_datetime(ds.phenomenon_end_time)
             for ds in datastreams.values()
             if ds.phenomenon_end_time
         ]
 
-        earliest_since_time = (
-            min(since_times) if since_times else pd.Timestamp("1970-01-01T00:00:00Z")
+        earliest_start_date = (
+            min(start_dates) if start_dates else pd.Timestamp("1970-01-01T00:00:00Z")
         )
 
-        self.params["since"] = earliest_since_time.isoformat()
+        self.params["start_date_key"] = earliest_start_date.isoformat()
