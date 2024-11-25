@@ -6,7 +6,8 @@ from datetime import datetime
 from uuid import UUID
 from urllib.request import urlopen
 from hydroserverpy.core.schemas.base import HydroServerCoreModel
-from hydroserverpy import HydroServerETL
+
+# from hydroserverpy import HydroServerETL
 
 if TYPE_CHECKING:
     from hydroserverpy.core.schemas.data_loaders import DataLoader
@@ -188,36 +189,36 @@ class DataSource(HydroServerCoreModel, DataSourceFields):
                 uid=self.data_loader_id
             )  # noqa
 
-    def load_observations(self) -> None:
-        """
-        Load observations data from a local file or a remote URL into HydroServer using this data source configuration.
-        """
+    # def load_observations(self) -> None:
+    #     """
+    #     Load observations data from a local file or a remote URL into HydroServer using this data source configuration.
+    #     """
 
-        if self.path:
-            with open(self.path, "rb") as f:
-                with io.TextIOWrapper(f, encoding="utf-8") as data_file:
-                    hs_etl = HydroServerETL(
-                        service=getattr(self._endpoint, "_service"),
-                        data_file=data_file,
-                        data_source=self,
-                    )
-                    hs_etl.run()
-        elif self.link:
-            with tempfile.NamedTemporaryFile(mode="w+b") as temp_file:
-                with urlopen(self.link) as response:
-                    chunk_size = 1024 * 1024 * 10  # Use a 10mb chunk size.
-                    while True:
-                        chunk = response.read(chunk_size)
-                        if not chunk:
-                            break
-                        temp_file.write(chunk)
-                temp_file.seek(0)
-                with io.TextIOWrapper(temp_file, encoding="utf-8") as data_file:
-                    hs_etl = HydroServerETL(
-                        service=getattr(self._endpoint, "_service"),
-                        data_file=data_file,
-                        data_source=self,
-                    )
-                    hs_etl.run()
-        else:
-            return None
+    #     if self.path:
+    #         with open(self.path, "rb") as f:
+    #             with io.TextIOWrapper(f, encoding="utf-8") as data_file:
+    #                 hs_etl = HydroServerETL(
+    #                     service=getattr(self._endpoint, "_service"),
+    #                     data_file=data_file,
+    #                     data_source=self,
+    #                 )
+    #                 hs_etl.run()
+    #     elif self.link:
+    #         with tempfile.NamedTemporaryFile(mode="w+b") as temp_file:
+    #             with urlopen(self.link) as response:
+    #                 chunk_size = 1024 * 1024 * 10  # Use a 10mb chunk size.
+    #                 while True:
+    #                     chunk = response.read(chunk_size)
+    #                     if not chunk:
+    #                         break
+    #                     temp_file.write(chunk)
+    #             temp_file.seek(0)
+    #             with io.TextIOWrapper(temp_file, encoding="utf-8") as data_file:
+    #                 hs_etl = HydroServerETL(
+    #                     service=getattr(self._endpoint, "_service"),
+    #                     data_file=data_file,
+    #                     data_source=self,
+    #                 )
+    #                 hs_etl.run()
+    #     else:
+    #         return None

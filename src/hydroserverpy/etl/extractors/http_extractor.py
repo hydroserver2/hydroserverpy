@@ -1,7 +1,7 @@
 import logging
 import requests
 from io import BytesIO
-from typing import Dict, Any, Optional, Union
+from typing import Dict, Any
 import pandas as pd
 
 
@@ -9,11 +9,12 @@ class HTTPExtractor:
     def __init__(
         self,
         url: str,
+        url_variables: dict = None,
         params: dict = None,
         headers: dict = None,
         auth: tuple = None,
     ):
-        self.url = url
+        self.url = self.format_url(url, url_variables or {})
         self.params = params
         self.headers = headers
         self.auth = auth
@@ -73,3 +74,12 @@ class HTTPExtractor:
         )
 
         self.params["start_date_key"] = earliest_start_date.isoformat()
+
+    def format_url(self, url_template, url_variables):
+        try:
+            url = url_template.format(**url_variables)
+        except KeyError as e:
+            missing_key = e.args[0]
+            raise KeyError(f"Missing configuration url_variable: {missing_key}")
+
+        return url

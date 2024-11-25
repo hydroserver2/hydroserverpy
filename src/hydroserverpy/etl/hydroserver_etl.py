@@ -1,17 +1,6 @@
 import logging
-
-# import croniter
 import pandas as pd
-from typing import TYPE_CHECKING, Dict, Optional, TypedDict
-
-# from requests import HTTPError
-# from datetime import datetime, timezone, timedelta
-
-# if TYPE_CHECKING:
-# from .parsers.base import DataParser
-
-# logger = logging.getLogger("hydroserver_etl")
-# logger.addHandler(logging.NullHandler())
+from typing import Dict, Optional, TypedDict
 
 
 class Observation(TypedDict):
@@ -32,17 +21,17 @@ ObservationsMap = Dict[str, Optional[pd.DataFrame]]
 #     ],
 # }
 
+"""
+TODO: Validate input data_source file -
+        Validate each datastream_id has a live datastream.
+        Validate the number of datastream_ids match the number of measurement types.
+TODO: An admin may delete a datastream, but still have it listed in the orchestrator.
+        This shouldn't bring down the entire system so we should skip ETL for missing
+        datastreams & report an error.
+"""
+
 
 class HydroServerETL:
-    """
-    TODO: Validate input data_source file -
-            Validate each datastream_id has a live datastream.
-            Validate the number of datastream_ids match the number of measurement types.
-    TODO: An admin may delete a datastream, but still have it listed in the orchestrator.
-            This shouldn't bring down the entire system so we should skip ETL for missing
-            datastreams & report an error.
-    """
-
     def __init__(self, extractor, transformer, loader):
         self.extractor = extractor
         self.transformer = transformer
