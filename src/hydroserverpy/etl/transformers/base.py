@@ -12,40 +12,40 @@ class Transformer(ABC):
     def needs_datastreams(self) -> bool:
         False
 
-    def build_observations_map(self, df, datastream_ids, datastreams=None):
-        observations_map = {}
-        for column_name, datastream_id in datastream_ids.items():
-            if column_name not in df.columns:
-                logging.error(f"Datastream column '{column_name}' not found in file.")
-                continue
+    def standardize_dataframe(
+        self,
+        df,
+        datastream_ids,
+        timestamp_column: str = "timestamp",
+        timestamp_format: str = "ISO8601",
+    ):
+        df.rename(
+            columns={timestamp_column: "timestamp", **datastream_ids},
+            inplace=True,
+        )
 
-            observations = df[["timestamp", column_name]].dropna()
-            if observations.empty:
-                logging.warning(f"No data found for input column {column_name}")
-                continue
-            observations = observations.rename(columns={column_name: "value"})
+        # Verify timestamp column is present in the DataFrame
+        if "timestamp" not in df.columns:
+            message = f"Timestamp column '{timestamp_column}' not found in data."
+            logging.error(message)
+            raise ValueError(message)
 
-            if datastreams:
-                datastream = datastreams.get(datastream_id)
-                observations = self.filter_out_old_data(datastream, observations)
+        # Verify that all datastream_ids are present in the DataFrame
+        expected_columns = set(datastream_ids.values())
+        actual_columns = set(df.columns)
+        missing_datastream_ids = expected_columns - actual_columns
 
-            if observations is None or observations.empty:
-                logging.info(f"No new observations to add for '{datastream_id}'.")
-                continue
-            observations_map[datastream_id] = observations
-        return observations_map
+        if missing_datastream_ids:
+            raise ValueError(
+                f"The following datastream IDs are specified in the config file but their related keys could not be found in the source system's extracted data: {missing_datastream_ids}"
+            )
 
-    def filter_out_old_data(self, datastream, observations):
-        phenomenon_end_time = datastream.phenomenon_end_time
-        if not phenomenon_end_time:
-            return observations
+        # Keep only 'timestamp' and datastream_id columns
+        columns_to_keep = ["timestamp"] + list(expected_columns)
+        df = df[columns_to_keep]
 
-        if not isinstance(phenomenon_end_time, pd.Timestamp):
-            try:
-                phenomenon_end_time = pd.to_datetime(phenomenon_end_time)
-            except Exception as e:
-                logging.error(
-                    f"Invalid phenomenon_end_time for datastream {datastream.id}: {e}"
-                )
-                return None
-        return observations[observations["timestamp"] > phenomenon_end_time]
+        # Convert timestamp column to datetime if not already
+        if not pd.api.types.is_datetime64_any_dtype(df["timestamp"]):
+            df["timestamp"] = pd.to_datetime(df["timestamp"], format=timestamp_format)
+
+        return df

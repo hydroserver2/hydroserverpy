@@ -22,13 +22,10 @@ class CSVTransformer(Transformer):
         self.timestamp_format = timestamp_format
         self.delimiter = delimiter
 
-    @property
-    def needs_datastreams(self) -> bool:
-        return True
-
-    def transform(self, data_file, datastreams) -> Optional[Dict[str, pd.DataFrame]]:
+    def transform(self, data_file) -> pd.DataFrame:
         """
-        Transforms a CSV file-like object into the observations_map format.
+        Transforms a CSV file-like object into a Pandas DataFrame where the column
+        names are replaced with their target datastream ids.
 
         Parameters:
             data_file: File-like object containing CSV data.
@@ -50,23 +47,12 @@ class CSVTransformer(Transformer):
             logging.error(f"Error reading CSV data: {e}")
             return None
 
-        df = self.rename_column_headers(df)
-        return self.build_observations_map(df, self.datastream_ids, datastreams)
-
-    def rename_column_headers(self, df):
-        # Assign default column names if there's no header row
         if self.header_row is None:
             df.columns = list(range(1, len(df.columns) + 1))
 
-        if self.timestamp_column not in df.columns:
-            logging.error(
-                f"Timestamp column '{self.timestamp_column}' not found in data."
-            )
-            return None
-
-        if self.timestamp_column != "timestamp":
-            df.rename(columns={self.timestamp_column: "timestamp"}, inplace=True)
-        return df
+        return self.standardize_dataframe(
+            df, self.datastream_ids, self.timestamp_column, self.timestamp_format
+        )
 
     def calculate_skiprows(self):
         """

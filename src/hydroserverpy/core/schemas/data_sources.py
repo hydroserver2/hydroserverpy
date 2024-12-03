@@ -6,8 +6,7 @@ from datetime import datetime
 from uuid import UUID
 from urllib.request import urlopen
 from hydroserverpy.core.schemas.base import HydroServerCoreModel
-
-from hydroserverpy import HydroServerETLCSV
+from hydroserverpy.etl_csv.hydroserver_etl_csv import HydroServerETLCSV
 
 if TYPE_CHECKING:
     from hydroserverpy.core.schemas.data_loaders import DataLoader
