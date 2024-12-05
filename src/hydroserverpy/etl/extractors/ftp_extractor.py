@@ -1,9 +1,10 @@
 import logging
 from ftplib import FTP
 from io import BytesIO
+from .base import Extractor
 
 
-class FTPExtractor:
+class FTPExtractor(Extractor):
     def __init__(
         self,
         host: str,

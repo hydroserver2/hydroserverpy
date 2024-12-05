@@ -1,11 +1,12 @@
 import logging
+from hydroserverpy.etl.extractors.base import TimeRange
 import requests
 from io import BytesIO
-from typing import Dict, Any
-import pandas as pd
+from typing import Dict
+from .base import Extractor
 
 
-class HTTPExtractor:
+class HTTPExtractor(Extractor):
     def __init__(
         self,
         url: str,
@@ -18,25 +19,28 @@ class HTTPExtractor:
         self.params = params
         self.headers = headers
         self.auth = auth
+        self.start_date = None
 
-    @property
-    def needs_datastreams(self) -> bool:
-        """
-        Some apis have a 'start_date_key' query param. If so, we'll check the datastreams
-        for their most recent observations and set 'start_date_key' to the oldest of
-        those timestamps.
-        """
+    def prepare_params(self, data_requirements: Dict[str, TimeRange]):
+        start_times = [
+            req["start_time"] for req in data_requirements.values() if req["start_time"]
+        ]
 
-        return "start_date_key" in self.params
+        if start_times:
+            oldest_start_time = min(start_times).isoformat()
+            start_date_key = self.params.pop("start_date_key", None)
+            if start_date_key:
+                self.params[start_date_key] = oldest_start_time
+                logging.info(
+                    f"Set start_time to {oldest_start_time} and removed 'start_date_key'"
+                )
+            else:
+                logging.warning("'start_date_key' not found in params.")
 
-    def extract(self, datastreams: Dict[str, Any] = None):
+    def extract(self):
         """
         Downloads the file from the HTTP/HTTPS server and returns a file-like object.
         """
-        if self.needs_datastreams:
-            self.set_start_date(datastreams)
-            logging.info(f"updated params: {self.params}")
-
         response = requests.get(
             url=self.url,
             params=self.params,
@@ -53,27 +57,6 @@ class HTTPExtractor:
                 data.write(chunk)
         data.seek(0)
         return data
-
-    def set_start_date(self, datastreams: Dict[str, Any]):
-        """
-        Updates self.params based on the datastreams provided.
-
-        Parameters:
-            datastreams (dict): Dictionary of datastreams keyed by datastream ID.
-        """
-
-        # Extract the earliest phenomenon_end_time among the datastreams
-        start_dates = [
-            pd.to_datetime(ds.phenomenon_end_time)
-            for ds in datastreams.values()
-            if ds.phenomenon_end_time
-        ]
-
-        earliest_start_date = (
-            min(start_dates) if start_dates else pd.Timestamp("1970-01-01T00:00:00Z")
-        )
-
-        self.params["start_date_key"] = earliest_start_date.isoformat()
 
     def format_url(self, url_template, url_variables):
         try:

@@ -1,7 +1,8 @@
 import logging
+from .base import Extractor
 
 
-class LocalFileExtractor:
+class LocalFileExtractor(Extractor):
     def __init__(self, filepath: str):
         self.filepath = filepath
 
