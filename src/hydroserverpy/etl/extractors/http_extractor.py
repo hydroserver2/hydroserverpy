@@ -28,14 +28,29 @@ class HTTPExtractor(Extractor):
 
         if start_times:
             oldest_start_time = min(start_times).isoformat()
-            start_date_key = self.params.pop("start_date_key", None)
-            if start_date_key:
-                self.params[start_date_key] = oldest_start_time
+            start_time_key = self.params.pop("start_time_key", None)
+            if start_time_key:
+                self.params[start_time_key] = oldest_start_time
                 logging.info(
-                    f"Set start_time to {oldest_start_time} and removed 'start_date_key'"
+                    f"Set start_time to {oldest_start_time} and removed 'start_time_key'"
                 )
             else:
-                logging.warning("'start_date_key' not found in params.")
+                logging.warning("'start_time_key' not found in params.")
+
+        end_times = [
+            req["end_time"] for req in data_requirements.values() if req["end_time"]
+        ]
+
+        if end_times:
+            newest_end_time = max(end_times).isoformat()
+            end_time_key = self.params.pop("end_time_key", None)
+            if end_time_key:
+                self.params[end_time_key] = newest_end_time
+                logging.info(
+                    f"Set end_time to {newest_end_time} and removed 'end_time_key'"
+                )
+            else:
+                logging.warning("'end_time_key' not found in params.")
 
     def extract(self):
         """
