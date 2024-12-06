@@ -2,16 +2,6 @@ import logging
 import pandas as pd
 
 
-"""
-TODO: Validate input data_source file -
-        Validate each datastream_id has a live datastream.
-        Validate the number of datastream_ids match the number of measurement types.
-TODO: An admin may delete a datastream, but still have it listed in the orchestrator.
-        This shouldn't bring down the entire system so we should skip ETL for missing
-        datastreams & report an error.
-"""
-
-
 class HydroServerETL:
     def __init__(self, extractor, transformer, loader, source_target_map):
         self.extractor = extractor
