@@ -29,7 +29,7 @@ class JSONTransformer(Transformer):
 
     def transform(self, data_file):
         """
-        Transforms a JSON file-like object into the observations_map format.
+        Transforms a JSON file-like object into the standard Pandas dataframe format.
         Since JMESPath can natively rename column names, the assumption is the timestamp column
         is always named 'timestamp' for JSON data or converted to 'timestamp' in the JMESPath query.
 
@@ -37,7 +37,7 @@ class JSONTransformer(Transformer):
             data_file: File-like object containing JSON data.
 
         Returns:
-            observations_map (dict): Dict mapping datastream IDs to pandas DataFrames.
+            pd.DataFrame: pandas DataFrames in the format pd.Timestamp, datastream_id_1, datastream_id_2, ...
         """
         json_data = json.load(data_file)
         data_points = self.extract_data_points(json_data)

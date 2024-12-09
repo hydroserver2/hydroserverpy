@@ -11,11 +11,7 @@ class HydroServerETL:
 
     def run(self):
         """
-        Extracts and transforms data as defined by the class parameters and
-        loads them into a HydroServer database instance.
-
-        :param self
-        :return: None
+        Extracts, transforms, and loads data as defined by the class parameters.
         """
 
         # Step 1: Get Target System data requirements from the Loader & prepare parameters for the Extractor
