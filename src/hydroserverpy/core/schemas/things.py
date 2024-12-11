@@ -10,73 +10,106 @@ if TYPE_CHECKING:
 
 class ThingFields(BaseModel):
     name: str = Field(
-        ..., strip_whitespace=True, max_length=200,
-        description='The name of the site/thing.'
+        ...,
+        strip_whitespace=True,
+        max_length=200,
+        description="The name of the site/thing.",
     )
     description: str = Field(
-        ..., strip_whitespace=True,
-        description='A description of the site/thing.'
+        ..., strip_whitespace=True, description="A description of the site/thing."
     )
     sampling_feature_type: str = Field(
-        ..., strip_whitespace=True, max_length=200,
-        description='The sampling feature type of the site/thing.'
+        ...,
+        strip_whitespace=True,
+        max_length=200,
+        description="The sampling feature type of the site/thing.",
     )
     sampling_feature_code: str = Field(
-        ..., strip_whitespace=True, max_length=200,
-        description='A code representing the sampling feature of the site/thing.'
+        ...,
+        strip_whitespace=True,
+        max_length=200,
+        description="A code representing the sampling feature of the site/thing.",
     )
     site_type: str = Field(
-        ..., strip_whitespace=True, max_length=200,
-        description='The type of the site/thing.'
+        ...,
+        strip_whitespace=True,
+        max_length=200,
+        description="The type of the site/thing.",
     )
     data_disclaimer: Optional[str] = Field(
-        None, strip_whitespace=True,
-        description='An optional data disclaimer to attach to observations collected at this site/thing.'
+        None,
+        strip_whitespace=True,
+        description="An optional data disclaimer to attach to observations collected at this site/thing.",
     )
 
 
 # Get a list of all ISO 3166-1 alpha-2 country codes
-valid_country_codes = [code for code, _ in countries_for_language('en')]
+valid_country_codes = [code for code, _ in countries_for_language("en")]
 
 
 class LocationFields(BaseModel):
     latitude: float = Field(
-        ..., ge=-90, le=90, serialization_alias='latitude',
-        validation_alias=AliasChoices('latitude', AliasPath('location', 'latitude')),
-        description='The WGS84 latitude of the location.'
+        ...,
+        ge=-90,
+        le=90,
+        serialization_alias="latitude",
+        validation_alias=AliasChoices("latitude", AliasPath("location", "latitude")),
+        description="The WGS84 latitude of the location.",
     )
     longitude: float = Field(
-        ..., ge=-180, le=180, serialization_alias='longitude',
-        validation_alias=AliasChoices('longitude', AliasPath('location', 'longitude')),
-        description='The WGS84 longitude of the location.'
+        ...,
+        ge=-180,
+        le=180,
+        serialization_alias="longitude",
+        validation_alias=AliasChoices("longitude", AliasPath("location", "longitude")),
+        description="The WGS84 longitude of the location.",
     )
     elevation_m: Optional[float] = Field(
-        None, ge=-99999, le=99999, serialization_alias='elevation_m',
-        validation_alias=AliasChoices('elevation_m', AliasPath('location', 'elevation_m')),
-        description='The elevation in meters of the location.'
+        None,
+        ge=-99999,
+        le=99999,
+        serialization_alias="elevation_m",
+        validation_alias=AliasChoices(
+            "elevation_m", AliasPath("location", "elevation_m")
+        ),
+        description="The elevation in meters of the location.",
     )
     elevation_datum: Optional[str] = Field(
-        None, strip_whitespace=True, max_length=255, serialization_alias='elevationDatum',
-        validation_alias=AliasChoices('elevationDatum', AliasPath('location', 'elevationDatum')),
-        description='The datum used to represent the elevation of the location.'
+        None,
+        strip_whitespace=True,
+        max_length=255,
+        serialization_alias="elevationDatum",
+        validation_alias=AliasChoices(
+            "elevationDatum", AliasPath("location", "elevationDatum")
+        ),
+        description="The datum used to represent the elevation of the location.",
     )
     state: Optional[str] = Field(
-        None, strip_whitespace=True, max_length=200, serialization_alias='state',
-        validation_alias=AliasChoices('state', AliasPath('location', 'state')),
-        description='The state/province of the location.'
+        None,
+        strip_whitespace=True,
+        max_length=200,
+        serialization_alias="state",
+        validation_alias=AliasChoices("state", AliasPath("location", "state")),
+        description="The state/province of the location.",
     )
     county: Optional[str] = Field(
-        None, strip_whitespace=True, max_length=200, serialization_alias='county',
-        validation_alias=AliasChoices('county', AliasPath('location', 'county')),
-        description='The county/district of the location.'
+        None,
+        strip_whitespace=True,
+        max_length=200,
+        serialization_alias="county",
+        validation_alias=AliasChoices("county", AliasPath("location", "county")),
+        description="The county/district of the location.",
     )
     country: Optional[str] = Field(
-        None, strip_whitespace=True, max_length=2, serialization_alias='country',
-        validation_alias=AliasChoices('country', AliasPath('location', 'country')),
-        description='The ISO 3166-1 alpha-2 country code of the location.'
+        None,
+        strip_whitespace=True,
+        max_length=2,
+        serialization_alias="country",
+        validation_alias=AliasChoices("country", AliasPath("location", "country")),
+        description="The ISO 3166-1 alpha-2 country code of the location.",
     )
 
-    @field_validator('country', mode='after')
+    @field_validator("country", mode="after")
     def check_country_code(cls, value: str) -> str:
         """
         Validate the country code to ensure it is an ISO 3166-1 alpha-2 country code.
@@ -89,7 +122,9 @@ class LocationFields(BaseModel):
         """
 
         if value and value.upper() not in valid_country_codes:
-            raise ValueError(f'Invalid country code: {value}. Must be an ISO 3166-1 alpha-2 country code.')
+            raise ValueError(
+                f"Invalid country code: {value}. Must be an ISO 3166-1 alpha-2 country code."
+            )
 
         return value
 
@@ -123,7 +158,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
         self._archive = None
 
     @property
-    def datastreams(self) -> List['Datastream']:
+    def datastreams(self) -> List["Datastream"]:
         """
         The datastreams associated with the thing. If not already cached, fetch the datastreams from the
         server.
@@ -138,7 +173,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
         return self._datastreams
 
     @property
-    def tags(self) -> List['Tag']:
+    def tags(self) -> List["Tag"]:
         """
         The tags associated with the thing. If not already cached, fetch the tags from the server.
 
@@ -152,7 +187,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
         return self._tags
 
     @property
-    def photos(self) -> List['Photo']:
+    def photos(self) -> List["Photo"]:
         """
         The photos associated with the thing. If not already cached, fetch the photos from the server.
 
@@ -166,7 +201,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
         return self._photos
 
     @property
-    def archive(self) -> 'Archive':
+    def archive(self) -> "Archive":
         """
         The archive associated with the thing. If not already cached, fetch the archive from the server.
 
@@ -185,7 +220,7 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
         if they were previously loaded.
         """
 
-        entity = self._endpoint.get(uid=self.uid).model_dump(exclude=['uid'])
+        entity = self._endpoint.get(uid=self.uid).model_dump(exclude=["uid"])
         self._original_data = entity
         self.__dict__.update(entity)
         if self._datastreams is not None:
@@ -218,7 +253,9 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
         """
 
         selected_tag = next((tag for tag in self._tags if tag.key == key))
-        updated_tag = self._endpoint.update_tag(uid=self.uid, tag_uid=selected_tag.uid, value=value)
+        updated_tag = self._endpoint.update_tag(
+            uid=self.uid, tag_uid=selected_tag.uid, value=value
+        )
         self._tags = [tag if tag.key != key else updated_tag for tag in self._tags]
 
     def delete_tag(self, key: str) -> None:
@@ -253,7 +290,9 @@ class Thing(HydroServerCoreModel, ThingFields, LocationFields):
 
         selected_photo = next((photo for photo in self._photos if photo.link == link))
         self._endpoint.delete_photo(uid=self.uid, photo_uid=selected_photo.uid)
-        self._photos = [photo for photo in self._photos if photo.link != selected_photo.link]
+        self._photos = [
+            photo for photo in self._photos if photo.link != selected_photo.link
+        ]
 
 
 class Archive(HydroServerBaseModel):
@@ -262,20 +301,24 @@ class Archive(HydroServerBaseModel):
     """
 
     link: Optional[str] = Field(
-        None, strip_whitespace=True, max_length=255,
-        description='A link to the HydroShare resource containing the archived site/thing.'
+        None,
+        strip_whitespace=True,
+        max_length=255,
+        description="A link to the HydroShare resource containing the archived site/thing.",
     )
-    frequency: Optional[Literal['daily', 'weekly', 'monthly']] = Field(
+    frequency: Optional[Literal["daily", "weekly", "monthly"]] = Field(
         ...,
-        description='The frequency at which the site/thing should be archived.',
+        description="The frequency at which the site/thing should be archived.",
     )
     path: str = Field(
-        ..., strip_whitespace=True, max_length=255,
-        description='The path within the HydroShare resource containing the archived data.'
+        ...,
+        strip_whitespace=True,
+        max_length=255,
+        description="The path within the HydroShare resource containing the archived data.",
     )
     datastream_ids: List[UUID] = Field(
         ...,
-        description='The list of datastreams that are included in the archived data.',
+        description="The list of datastreams that are included in the archived data.",
     )
 
 
@@ -285,12 +328,10 @@ class Tag(HydroServerBaseModel):
     """
 
     key: str = Field(
-        ..., strip_whitespace=True, max_length=255,
-        description='The key of the tag.'
+        ..., strip_whitespace=True, max_length=255, description="The key of the tag."
     )
     value: str = Field(
-        ..., strip_whitespace=True, max_length=255,
-        description='The value of the tag.'
+        ..., strip_whitespace=True, max_length=255, description="The value of the tag."
     )
 
 
@@ -300,10 +341,6 @@ class Photo(HydroServerBaseModel):
     """
 
     file_path: str = Field(
-        ..., strip_whitespace=True,
-        description='The file path of the photo.'
+        ..., strip_whitespace=True, description="The file path of the photo."
     )
-    link: str = Field(
-        ..., strip_whitespace=True,
-        description='The link to the photo.'
-    )
+    link: str = Field(..., strip_whitespace=True, description="The link to the photo.")

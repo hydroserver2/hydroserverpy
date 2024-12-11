@@ -30,9 +30,11 @@ class DatastreamEndpoint(HydroServerEndpoint):
         super().__init__(service)
         self._model = Datastream
         self._api_route = self._service.api_route
-        self._endpoint_route = 'datastreams'
+        self._endpoint_route = "datastreams"
 
-    def list(self, owned_only: bool = False, primary_owned_only: bool = False) -> List[Datastream]:
+    def list(
+        self, owned_only: bool = False, primary_owned_only: bool = False
+    ) -> List[Datastream]:
         """
         Retrieve a collection of datastreams owned by the logged-in user.
 
@@ -40,10 +42,12 @@ class DatastreamEndpoint(HydroServerEndpoint):
         :param primary_owned_only: Only list datastreams primary owned by the logged-in user.
         """
 
-        return super()._get(params={
-            'owned_only': owned_only,
-            'primary_owned_only': primary_owned_only,
-        })
+        return super()._get(
+            params={
+                "owned_only": owned_only,
+                "primary_owned_only": primary_owned_only,
+            }
+        )
 
     @expand_docstring(include_uid=True)
     def get(self, uid: Union[UUID, str]) -> Datastream:
@@ -78,14 +82,14 @@ class DatastreamEndpoint(HydroServerEndpoint):
         super()._delete(uid=uid)
 
     def get_observations(
-            self,
-            uid: Union[UUID, str],
-            start_time: datetime = None,
-            end_time: datetime = None,
-            page: int = 1,
-            page_size: int = 100000,
-            include_quality: bool = False,
-            fetch_all: bool = False
+        self,
+        uid: Union[UUID, str],
+        start_time: datetime = None,
+        end_time: datetime = None,
+        page: int = 1,
+        page_size: int = 100000,
+        include_quality: bool = False,
+        fetch_all: bool = False,
     ) -> pd.DataFrame:
         """
         Retrieve observations from a specific datastream.
@@ -110,9 +114,13 @@ class DatastreamEndpoint(HydroServerEndpoint):
 
         filters = []
         if start_time:
-            filters.append(f'phenomenonTime ge {start_time.strftime("%Y-%m-%dT%H:%M:%S%z")}')
+            filters.append(
+                f'phenomenonTime ge {start_time.strftime("%Y-%m-%dT%H:%M:%S%z")}'
+            )
         if end_time:
-            filters.append(f'phenomenonTime le {end_time.strftime("%Y-%m-%dT%H:%M:%S%z")}')
+            filters.append(
+                f'phenomenonTime le {end_time.strftime("%Y-%m-%dT%H:%M:%S%z")}'
+            )
 
         if fetch_all:
             page = 1
@@ -120,41 +128,60 @@ class DatastreamEndpoint(HydroServerEndpoint):
         observations = []
 
         while True:
-            response = getattr(self._service, '_request')(
-                'get', f'{self._api_route}/sensorthings/v1.1/Datastreams(\'{str(uid)}\')/Observations',
+            response = getattr(self._service, "_request")(
+                "get",
+                f"{self._api_route}/sensorthings/v1.1/Datastreams('{str(uid)}')/Observations",
                 params={
-                    '$resultFormat': 'dataArray',
-                    '$select': f'phenomenonTime,result{",resultQuality" if include_quality else ""}',
-                    '$count': True,
-                    '$top': page_size,
-                    '$skip': (page - 1) * page_size,
-                    '$filter': ' and '.join(filters) if filters else None
-                }
+                    "$resultFormat": "dataArray",
+                    "$select": f'phenomenonTime,result{",resultQuality" if include_quality else ""}',
+                    "$count": True,
+                    "$top": page_size,
+                    "$skip": (page - 1) * page_size,
+                    "$filter": " and ".join(filters) if filters else None,
+                },
             )
             response_content = json.loads(response.content)
-            data_array = response_content['value'][0]['dataArray'] if response_content['value'] else []
-            observations.extend([[
-                obs[0], obs[1],
-                obs[2]['qualityCode'] if obs[2]['qualityCode'] else None,
-                obs[2]['resultQualifiers'] if obs[2]['resultQualifiers'] else None
-            ] if include_quality else [obs[0], obs[1]] for obs in data_array])
+            data_array = (
+                response_content["value"][0]["dataArray"]
+                if response_content["value"]
+                else []
+            )
+            observations.extend(
+                [
+                    (
+                        [
+                            obs[0],
+                            obs[1],
+                            obs[2]["qualityCode"] if obs[2]["qualityCode"] else None,
+                            (
+                                obs[2]["resultQualifiers"]
+                                if obs[2]["resultQualifiers"]
+                                else None
+                            ),
+                        ]
+                        if include_quality
+                        else [obs[0], obs[1]]
+                    )
+                    for obs in data_array
+                ]
+            )
             if not fetch_all or len(data_array) < page_size:
                 break
             page += 1
 
-        columns = ['timestamp', 'value']
+        columns = ["timestamp", "value"]
         if include_quality:
-            columns.extend(['quality_code', 'result_quality'])
+            columns.extend(["quality_code", "result_quality"])
 
         data_frame = pd.DataFrame(observations, columns=columns)
-        data_frame['timestamp'] = pd.to_datetime(data_frame['timestamp'])
+        data_frame["timestamp"] = pd.to_datetime(data_frame["timestamp"])
 
         return data_frame
 
     def load_observations(
-            self,
-            uid: Union[UUID, str],
-            observations: pd.DataFrame,
+        self,
+        uid: Union[UUID, str],
+        observations: pd.DataFrame,
     ) -> None:
         """
         Load observations to a specific datastream.
@@ -168,21 +195,31 @@ class DatastreamEndpoint(HydroServerEndpoint):
 
         data_array = [
             [
-                row['timestamp'].strftime('%Y-%m-%dT%H:%M:%S%z'),
-                row['value'],
-                {
-                    'qualityCode': row.get('quality_code', None),
-                    'resultQualifiers': row.get('result_qualifiers', []),
-                } if 'quality_code' in row or 'result_qualifiers' in row else {}
-            ] for _, row in observations.iterrows()
+                row["timestamp"].strftime("%Y-%m-%dT%H:%M:%S%z"),
+                row["value"],
+                (
+                    {
+                        "qualityCode": row.get("quality_code", None),
+                        "resultQualifiers": row.get("result_qualifiers", []),
+                    }
+                    if "quality_code" in row or "result_qualifiers" in row
+                    else {}
+                ),
+            ]
+            for _, row in observations.iterrows()
         ]
 
-        getattr(self._service, '_request')(
-            'post', f'{self._api_route}/sensorthings/v1.1/CreateObservations',
-            headers={'Content-type': 'application/json'},
-            data=json.dumps([{
-                'Datastream': {'@iot.id': str(uid)},
-                'components': ['phenomenonTime', 'result', 'resultQuality'],
-                'dataArray': data_array
-            }]),
+        getattr(self._service, "_request")(
+            "post",
+            f"{self._api_route}/sensorthings/v1.1/CreateObservations",
+            headers={"Content-type": "application/json"},
+            data=json.dumps(
+                [
+                    {
+                        "Datastream": {"@iot.id": str(uid)},
+                        "components": ["phenomenonTime", "result", "resultQuality"],
+                        "dataArray": data_array,
+                    }
+                ]
+            ),
         )

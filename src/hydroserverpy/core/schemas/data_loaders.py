@@ -9,8 +9,10 @@ if TYPE_CHECKING:
 
 class DataLoaderFields(BaseModel):
     name: str = Field(
-        ..., strip_whitespace=True, max_length=255,
-        description='The name of the data loader.'
+        ...,
+        strip_whitespace=True,
+        max_length=255,
+        description="The name of the data loader.",
     )
 
 
@@ -37,7 +39,7 @@ class DataLoader(HydroServerCoreModel, DataLoaderFields):
         self._data_sources = None
 
     @property
-    def data_sources(self) -> List['DataSource']:
+    def data_sources(self) -> List["DataSource"]:
         """
         The data sources associated with the data loader. If not already cached, fetch the data sources from the server.
 
@@ -55,7 +57,7 @@ class DataLoader(HydroServerCoreModel, DataLoaderFields):
         Refresh the data loader with the latest data from the server and update cached data sources.
         """
 
-        entity = self._endpoint.get(uid=self.uid).model_dump(exclude=['uid'])
+        entity = self._endpoint.get(uid=self.uid).model_dump(exclude=["uid"])
         self._original_data = entity
         self.__dict__.update(entity)
         if self._data_sources is not None:

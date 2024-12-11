@@ -20,33 +20,33 @@ from enum import Enum
 class TimeUnit(Enum):
     """Enumeration for time units."""
 
-    SECOND = 's'
-    MINUTE = 'm'
-    HOUR = 'h'
-    DAY = 'D'
-    WEEK = 'W'
-    MONTH = 'M'
-    YEAR = 'Y'
+    SECOND = "s"
+    MINUTE = "m"
+    HOUR = "h"
+    DAY = "D"
+    WEEK = "W"
+    MONTH = "M"
+    YEAR = "Y"
 
 
 class FilterOperation(Enum):
     """Enumeration for filter operations."""
 
-    LT = 'LT'
-    LTE = 'LTE'
-    GT = 'GT'
-    GTE = 'GTE'
-    E = 'E'
+    LT = "LT"
+    LTE = "LTE"
+    GT = "GT"
+    GTE = "GTE"
+    E = "E"
 
 
 class Operator(Enum):
     """Enumeration for mathematical operations."""
 
-    MULT = 'MULT'
-    DIV = 'DIV'
-    ADD = 'ADD'
-    SUB = 'SUB'
-    ASSIGN = 'ASSIGN'
+    MULT = "MULT"
+    DIV = "DIV"
+    ADD = "ADD"
+    SUB = "SUB"
+    ASSIGN = "ASSIGN"
 
 
 class HydroServerQualityControl:
@@ -61,15 +61,23 @@ class HydroServerQualityControl:
 
     datastream_id: Union[UUID, str]
 
-    def __init__(self, datastream_id: Union[UUID, str], observations: pd.DataFrame) -> None:
+    def __init__(
+        self, datastream_id: Union[UUID, str], observations: pd.DataFrame
+    ) -> None:
 
-        assert 'timestamp' in observations.columns, "Observations must have a 'timestamp' column"
-        assert pd.api.types.is_datetime64_any_dtype(observations['timestamp']), \
-            "Observations 'timestamp' column must be of datetime type"
+        assert (
+            "timestamp" in observations.columns
+        ), "Observations must have a 'timestamp' column"
+        assert pd.api.types.is_datetime64_any_dtype(
+            observations["timestamp"]
+        ), "Observations 'timestamp' column must be of datetime type"
 
-        assert 'value' in observations.columns, "Observations must have a 'value' column"
-        assert pd.api.types.is_float_dtype(observations['value']), \
-            "Observations 'value' column must be of float type"
+        assert (
+            "value" in observations.columns
+        ), "Observations must have a 'value' column"
+        assert pd.api.types.is_float_dtype(
+            observations["value"]
+        ), "Observations 'value' column must be of float type"
 
         self.datastream_id = str(datastream_id)
         self._df = observations
@@ -94,7 +102,9 @@ class HydroServerQualityControl:
     ###################
 
     @staticmethod
-    def _has_filter(data_filter: Dict[str, Union[float, int]], key: FilterOperation) -> bool:
+    def _has_filter(
+        data_filter: Dict[str, Union[float, int]], key: FilterOperation
+    ) -> bool:
         """
         Checks if a given filter operation exists in the filter dictionary.
 
@@ -106,9 +116,9 @@ class HydroServerQualityControl:
         :rtype: bool
         """
 
-        return (
-            key.value in data_filter and
-            (isinstance(data_filter[key.value], float) or isinstance(data_filter[key.value], int))
+        return key.value in data_filter and (
+            isinstance(data_filter[key.value], float)
+            or isinstance(data_filter[key.value], int)
         )
 
     def filter(self, data_filter: Dict[str, Union[float, int]]) -> None:
@@ -122,24 +132,19 @@ class HydroServerQualityControl:
         query = []
 
         if self._has_filter(data_filter, FilterOperation.LT):
-            query.append(
-                f'`value` < {data_filter[FilterOperation.LT.value]}')
+            query.append(f"`value` < {data_filter[FilterOperation.LT.value]}")
 
         if self._has_filter(data_filter, FilterOperation.LTE):
-            query.append(
-                f'`value` <= {data_filter[FilterOperation.LTE.value]}')
+            query.append(f"`value` <= {data_filter[FilterOperation.LTE.value]}")
 
         if self._has_filter(data_filter, FilterOperation.GT):
-            query.append(
-                f'`value` > {data_filter[FilterOperation.GT.value]}')
+            query.append(f"`value` > {data_filter[FilterOperation.GT.value]}")
 
         if self._has_filter(data_filter, FilterOperation.GTE):
-            query.append(
-                f'`value` >= {data_filter[FilterOperation.GTE.value]}')
+            query.append(f"`value` >= {data_filter[FilterOperation.GTE.value]}")
 
         if self._has_filter(data_filter, FilterOperation.E):
-            query.append(
-                f'`value` == {data_filter[FilterOperation.E.value]}')
+            query.append(f"`value` == {data_filter[FilterOperation.E.value]}")
 
         if len(query):
             self._filtered_observations = self._df.query(" | ".join(query))
@@ -162,9 +167,13 @@ class HydroServerQualityControl:
         :rtype: pd.DataFrame
         """
 
-        return self.observations[self._df['timestamp'].diff() > np.timedelta64(time_value, time_unit)]
+        return self.observations[
+            self._df["timestamp"].diff() > np.timedelta64(time_value, time_unit)
+        ]
 
-    def fill_gap(self, gap: Tuple[int, str], fill: Tuple[int, str], interpolate_values: bool) -> pd.DataFrame:
+    def fill_gap(
+        self, gap: Tuple[int, str], fill: Tuple[int, str], interpolate_values: bool
+    ) -> pd.DataFrame:
         """
         Fills identified gaps in the observations with placeholder values and optionally interpolates the values.
 
@@ -188,8 +197,8 @@ class HydroServerQualityControl:
             gap_end_index = gap_row[0]
             gap_start_index = gap_end_index - 1
 
-            gap_start_date = self._df.iloc[gap_start_index]['timestamp']
-            gap_end_date = self._df.iloc[gap_end_index]['timestamp']
+            gap_start_date = self._df.iloc[gap_start_index]["timestamp"]
+            gap_end_date = self._df.iloc[gap_end_index]["timestamp"]
 
             start = gap_start_date + time_gap
             end = gap_end_date
@@ -210,15 +219,15 @@ class HydroServerQualityControl:
             self.interpolate(added_index)
 
         # Return the list of points that filled the gaps
-        return pd.DataFrame(
-            points, columns=['timestamp', 'value']
-        )
+        return pd.DataFrame(points, columns=["timestamp", "value"])
 
     ######################################
     # Data point operations
     ######################################
 
-    def add_points(self, points: List[List[Union[str, float]]], index: Optional[List[int]] = None) -> None:
+    def add_points(
+        self, points: List[List[Union[str, float]]], index: Optional[List[int]] = None
+    ) -> None:
         """
         Adds new points to the observations, optionally at specified indices.
 
@@ -251,8 +260,7 @@ class HydroServerQualityControl:
                 df1 = self._df.iloc[:idx, :]
                 df2 = self._df.iloc[idx:, :]
 
-                points_df = pd.DataFrame(
-                    val, columns=['timestamp', 'value'])
+                points_df = pd.DataFrame(val, columns=["timestamp", "value"])
                 self._df = pd.concat([df1, points_df, df2]).reset_index(drop=True)
 
         else:
@@ -260,17 +268,18 @@ class HydroServerQualityControl:
             # data in the DataFrame is pre-sorted.
 
             # Create a new dataframe with the points
-            points_df = pd.DataFrame(
-                points, columns=['timestamp', 'value'])
+            points_df = pd.DataFrame(points, columns=["timestamp", "value"])
 
             # Concatenate both dataframes. New rows will be at the end.
             self._df = pd.concat([self._df, points_df])
 
             # Sort and reset index
-            self._df = self._df.sort_values('timestamp')
+            self._df = self._df.sort_values("timestamp")
             self._df.reset_index(drop=True, inplace=True)
 
-    def change_values(self, index_list: List[int], operator: str, value: Union[int, float]) -> None:
+    def change_values(
+        self, index_list: List[int], operator: str, value: Union[int, float]
+    ) -> None:
         """
         Changes the values of observations based on the specified operator and value.
 
@@ -299,7 +308,9 @@ class HydroServerQualityControl:
             else:
                 return x
 
-        self._df.loc[index_list, 'value'] = self._df.loc[index_list, 'value'].apply(operation)
+        self._df.loc[index_list, "value"] = self._df.loc[index_list, "value"].apply(
+            operation
+        )
 
     def delete_points(self, index_list: List[int]) -> None:
         """
@@ -312,7 +323,9 @@ class HydroServerQualityControl:
         self._df.drop(index=index_list, inplace=True)
         self._df.reset_index(drop=True, inplace=True)
 
-    def shift_points(self, index_list: List[int], time_value: int, time_unit: str) -> None:
+    def shift_points(
+        self, index_list: List[int], time_value: int, time_unit: str
+    ) -> None:
         """
         Shifts the timestamps of the observations at the specified indices by a given time value and unit.
 
@@ -328,8 +341,10 @@ class HydroServerQualityControl:
         condition = self._df.index.isin(index_list)
 
         # Apply the shift
-        self._df.loc[condition, 'timestamp'] = self._df.loc[condition, 'timestamp'] + shift_value
-        self._df = self._df.sort_values('timestamp')
+        self._df.loc[condition, "timestamp"] = (
+            self._df.loc[condition, "timestamp"] + shift_value
+        )
+        self._df = self._df.sort_values("timestamp")
         self._df.reset_index(drop=True, inplace=True)
 
     def interpolate(self, index_list: List[int]) -> None:
@@ -341,8 +356,8 @@ class HydroServerQualityControl:
         """
 
         condition = self._df.index.isin(index_list)
-        self._df['value'].mask(condition, inplace=True)
-        self._df['value'].interpolate(method='linear', inplace=True)
+        self._df["value"].mask(condition, inplace=True)
+        self._df["value"].interpolate(method="linear", inplace=True)
 
     def drift_correction(self, start: int, end: int, gap_width: float) -> pd.DataFrame:
         """
@@ -360,32 +375,31 @@ class HydroServerQualityControl:
 
         # validate range
         if start >= end:
-            print('Start and end index cannot overlap')
+            print("Start and end index cannot overlap")
             return self._df
         elif end > len(self._df) - 1:
-            print('End index out of range')
+            print("End index out of range")
             return self._df
         elif start < 0:
-            print('Start index must be greater than or equal to 0')
+            print("Start index must be greater than or equal to 0")
             return self._df
 
-        points = self._df.iloc[start:end + 1]
-        start_date = points.iloc[0]['timestamp']
-        end_date = points.iloc[-1]['timestamp']
+        points = self._df.iloc[start : end + 1]
+        start_date = points.iloc[0]["timestamp"]
+        end_date = points.iloc[-1]["timestamp"]
 
         x_l = (end_date - start_date).total_seconds()
         ndv = -9999
         # y_n = y_0 + G(x_i / x_l)
 
         def f(row):
-            if row['value'] != ndv:
-                return (
-                    row['value'] +
-                    (gap_width * ((row['timestamp'] - start_date).total_seconds() / x_l))
+            if row["value"] != ndv:
+                return row["value"] + (
+                    gap_width * ((row["timestamp"] - start_date).total_seconds() / x_l)
                 )
             else:
-                return row['value']
+                return row["value"]
 
-        self._df.loc[points.index, 'value'] = points.apply(f, axis=1)
+        self._df.loc[points.index, "value"] = points.apply(f, axis=1)
 
         return self._df

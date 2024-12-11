@@ -1,8 +1,16 @@
 import requests
 from typing import Optional
-from hydroserverpy.core.endpoints import (DataLoaderEndpoint, DataSourceEndpoint, DatastreamEndpoint, ThingEndpoint,
-                                          SensorEndpoint, UnitEndpoint, ProcessingLevelEndpoint,
-                                          ObservedPropertyEndpoint, ResultQualifierEndpoint)
+from hydroserverpy.core.endpoints import (
+    DataLoaderEndpoint,
+    DataSourceEndpoint,
+    DatastreamEndpoint,
+    ThingEndpoint,
+    SensorEndpoint,
+    UnitEndpoint,
+    ProcessingLevelEndpoint,
+    ObservedPropertyEndpoint,
+    ResultQualifierEndpoint,
+)
 
 
 class HydroServer:
@@ -22,16 +30,23 @@ class HydroServer:
     """
 
     def __init__(
-            self,
-            host: str,
-            username: Optional[str] = None,
-            password: Optional[str] = None,
-            apikey: Optional[str] = None,
-            api_route: str = 'api'
+        self,
+        host: str,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        apikey: Optional[str] = None,
+        api_route: str = "api",
     ):
-        self.host = host.strip('/')
-        self.auth = (username or '__key__', password or apikey,) if (username and password) or apikey else None
-        self.api_route = api_route.strip('/')
+        self.host = host.strip("/")
+        self.auth = (
+            (
+                username or "__key__",
+                password or apikey,
+            )
+            if (username and password) or apikey
+            else None
+        )
+        self.api_route = api_route.strip("/")
         self._session = None
         self._timeout = 60
         self._initialize_session()
@@ -49,10 +64,8 @@ class HydroServer:
 
         self._session = requests.Session()
 
-        if self.auth and self.auth[0] == '__key__':
-            self._session.headers.update(
-                {'key': self.auth[1]}
-            )
+        if self.auth and self.auth[0] == "__key__":
+            self._session.headers.update({"key": self.auth[1]})
         elif self.auth:
             self._session.auth = self.auth
 
@@ -75,7 +88,8 @@ class HydroServer:
                 response = getattr(self._session, method)(
                     f'{self.host}/{path.strip("/")}',
                     timeout=self._timeout,
-                    *args, **kwargs
+                    *args,
+                    **kwargs,
                 )
                 response.raise_for_status()
                 return response

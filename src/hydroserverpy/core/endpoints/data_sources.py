@@ -18,7 +18,7 @@ class DataSourceEndpoint(HydroServerEndpoint):
     :ivar _endpoint_route: The specific route of the endpoint, set to `'data-sources'`.
     """
 
-    def __init__(self, service: 'HydroServer') -> None:
+    def __init__(self, service: "HydroServer") -> None:
         """
         Initialize the DataSourceEndpoint.
 
@@ -29,7 +29,7 @@ class DataSourceEndpoint(HydroServerEndpoint):
         super().__init__(service)
         self._model = DataSource
         self._api_route = self._service.api_route
-        self._endpoint_route = 'data-sources'
+        self._endpoint_route = "data-sources"
 
     def list(self) -> List[DataSource]:
         """
@@ -80,13 +80,14 @@ class DataSourceEndpoint(HydroServerEndpoint):
         :rtype: List[Datastream]
         """
 
-        response = getattr(self._service, '_request')(
-            'get', f'{self._api_route}/data/{self._endpoint_route}/{str(uid)}/datastreams'
+        response = getattr(self._service, "_request")(
+            "get",
+            f"{self._api_route}/data/{self._endpoint_route}/{str(uid)}/datastreams",
         )
 
         endpoint = DatastreamEndpoint(self._service)
 
         return [
-            Datastream(_endpoint=endpoint, _uid=UUID(str(entity.pop('id'))), **entity)
+            Datastream(_endpoint=endpoint, _uid=UUID(str(entity.pop("id"))), **entity)
             for entity in json.loads(response.content)
         ]

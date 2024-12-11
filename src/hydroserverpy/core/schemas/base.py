@@ -1,4 +1,10 @@
-from pydantic import BaseModel, PrivateAttr, AliasGenerator, AliasChoices, computed_field
+from pydantic import (
+    BaseModel,
+    PrivateAttr,
+    AliasGenerator,
+    AliasChoices,
+    computed_field,
+)
 from pydantic.alias_generators import to_camel
 from uuid import UUID
 from typing import Optional
@@ -81,7 +87,8 @@ class HydroServerCoreModel(HydroServerBaseModel):
         """
 
         return {
-            key: getattr(self, key) for key, value in self._original_data.items()
+            key: getattr(self, key)
+            for key, value in self._original_data.items()
             if hasattr(self, key) and getattr(self, key) != value
         }
 
@@ -90,8 +97,8 @@ class HydroServerCoreModel(HydroServerBaseModel):
         Refresh the model with the latest data from the server.
         """
 
-        entity = self._endpoint.get(uid=self.uid).model_dump(exclude=['uid'])
-        self._original_data = entity.dict(by_alias=False, exclude=['uid'])
+        entity = self._endpoint.get(uid=self.uid).model_dump(exclude=["uid"])
+        self._original_data = entity.dict(by_alias=False, exclude=["uid"])
         self.__dict__.update(self._original_data)
 
     def save(self) -> None:
@@ -101,7 +108,7 @@ class HydroServerCoreModel(HydroServerBaseModel):
 
         if self._patch_data:
             entity = self._endpoint.update(uid=self.uid, **self._patch_data)
-            self._original_data = entity.dict(by_alias=False, exclude=['uid'])
+            self._original_data = entity.dict(by_alias=False, exclude=["uid"])
             self.__dict__.update(self._original_data)
 
     def delete(self) -> None:
@@ -112,6 +119,6 @@ class HydroServerCoreModel(HydroServerBaseModel):
         """
 
         if not self._uid:
-            raise AttributeError('This resource cannot be deleted: UID is not set.')
+            raise AttributeError("This resource cannot be deleted: UID is not set.")
         self._endpoint.delete(uid=self._uid)
         self._uid = None
