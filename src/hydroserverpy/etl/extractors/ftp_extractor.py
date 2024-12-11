@@ -1,7 +1,10 @@
 import logging
 from ftplib import FTP
 from io import BytesIO
+from typing import Dict
+
 from .base import Extractor
+from ..types import TimeRange
 
 
 class FTPExtractor(Extractor):
@@ -19,12 +22,15 @@ class FTPExtractor(Extractor):
         self.password = password
         self.filepath = filepath
 
+    def prepare_params(self, data_requirements: Dict[str, TimeRange]):
+        pass
+
     def extract(self):
         """
         Downloads the file from the FTP server and returns a file-like object.
         """
+        ftp = FTP()
         try:
-            ftp = FTP()
             ftp.connect(self.host, self.port)
             ftp.login(user=self.username, passwd=self.password)
             logging.info(f"Connected to FTP server: {self.host}:{self.port}")

@@ -5,15 +5,15 @@ import pandas as pd
 
 class Transformer(ABC):
     @abstractmethod
-    def transform(self) -> None:
+    def transform(self, *args, **kwargs) -> None:
         pass
 
     @property
     def needs_datastreams(self) -> bool:
-        False
+        return False
 
+    @staticmethod
     def standardize_dataframe(
-        self,
         df,
         datastream_ids,
         timestamp_column: str = "timestamp",
@@ -37,7 +37,8 @@ class Transformer(ABC):
 
         if missing_datastream_ids:
             raise ValueError(
-                f"The following datastream IDs are specified in the config file but their related keys could not be found in the source system's extracted data: {missing_datastream_ids}"
+                "The following datastream IDs are specified in the config file but their related keys could not be "
+                f"found in the source system's extracted data: {missing_datastream_ids}"
             )
 
         # Keep only 'timestamp' and datastream_id columns

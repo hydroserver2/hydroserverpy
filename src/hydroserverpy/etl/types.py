@@ -3,5 +3,5 @@ import pandas as pd
 
 
 class TimeRange(TypedDict):
-    start_date: pd.Timestamp
-    end_date: pd.Timestamp
+    start_time: pd.Timestamp
+    end_time: pd.Timestamp

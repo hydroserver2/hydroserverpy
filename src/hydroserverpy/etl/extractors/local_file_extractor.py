@@ -1,10 +1,16 @@
 import logging
+from typing import Dict
+
 from .base import Extractor
+from ..types import TimeRange
 
 
 class LocalFileExtractor(Extractor):
     def __init__(self, filepath: str):
         self.filepath = filepath
+
+    def prepare_params(self, data_requirements: Dict[str, TimeRange]):
+        pass
 
     def extract(self):
         """

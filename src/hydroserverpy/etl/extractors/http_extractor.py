@@ -1,5 +1,5 @@
 import logging
-from hydroserverpy.etl.extractors.base import TimeRange
+from hydroserverpy.etl.types import TimeRange
 import requests
 from io import BytesIO
 from typing import Dict
@@ -73,7 +73,8 @@ class HTTPExtractor(Extractor):
         data.seek(0)
         return data
 
-    def format_url(self, url_template, url_variables):
+    @staticmethod
+    def format_url(url_template, url_variables):
         try:
             url = url_template.format(**url_variables)
         except KeyError as e:

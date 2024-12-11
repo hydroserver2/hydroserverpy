@@ -22,7 +22,7 @@ class CSVTransformer(Transformer):
         self.timestamp_format = timestamp_format
         self.delimiter = delimiter
 
-    def transform(self, data_file) -> pd.DataFrame:
+    def transform(self, data_file) -> Union[pd.DataFrame, None]:
         """
         Transforms a CSV file-like object into a Pandas DataFrame where the column
         names are replaced with their target datastream ids.
@@ -81,7 +81,8 @@ class CSVTransformer(Transformer):
                 skiprows.remove(self.header_row)
         return skiprows
 
-    def convert_to_zero_based(self, index: Union[str, int]) -> Union[str, int]:
+    @staticmethod
+    def convert_to_zero_based(index: Union[str, int]) -> Union[str, int]:
         if isinstance(index, int):
             return index - 1
         return index

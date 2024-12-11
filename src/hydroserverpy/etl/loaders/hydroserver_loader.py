@@ -1,9 +1,8 @@
 from hydroserverpy.core.service import HydroServer
-from pandas import DataFrame
-from typing import Dict
-import pandas as pd
+from typing import Dict, Optional
 from .base import Loader
 import logging
+import pandas as pd
 
 
 class HydroServerLoader(HydroServer, Loader):
@@ -14,14 +13,14 @@ class HydroServerLoader(HydroServer, Loader):
     def __init__(
         self,
         host: str,
-        username: str | None = None,
-        password: str | None = None,
-        apikey: str | None = None,
+        username: Optional[str] = None,
+        password: Optional[str] = None,
+        apikey: Optional[str] = None,
         api_route: str = "api",
     ):
         super().__init__(host, username, password, apikey, api_route)
 
-    def load(self, data: DataFrame, source_target_map) -> None:
+    def load(self, data: pd.DataFrame, source_target_map) -> None:
         """
         Load observations from a DataFrame to the HydroServer.
 
@@ -46,7 +45,9 @@ class HydroServerLoader(HydroServer, Loader):
                 continue
             self.datastreams.load_observations(uid=ds_id, observations=df)
 
-    def get_data_requirements(self, source_target_map) -> Dict[str, pd.Timestamp]:
+    def get_data_requirements(
+        self, source_target_map
+    ) -> Dict[str, Dict[str, pd.Timestamp]]:
         """
         Each target system needs to be able to answer the question: 'What data do you need?'
         and return a time range for each target time series. Usually the answer will be
