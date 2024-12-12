@@ -7,22 +7,28 @@ from requests import HTTPError
 from datetime import datetime, timezone, timedelta
 from dateutil.parser import isoparse
 from .exceptions import HeaderParsingError, TimestampParsingError
+import warnings
 
 if TYPE_CHECKING:
     from ..core.schemas import DataSource
 
-logger = logging.getLogger('hydroserver_etl')
+logger = logging.getLogger("hydroserver_etl")
 logger.addHandler(logging.NullHandler())
 
 
-class HydroServerETL:
+class HydroServerETLCSV:
 
     def __init__(
-            self,
-            service,
-            data_file: IO[str],
-            data_source: 'DataSource',
+        self,
+        service,
+        data_file: IO[str],
+        data_source: "DataSource",
     ):
+        warnings.warn(
+            "HydroServerETLCSV is deprecated and will be removed in a future version. "
+            "Please use the new HydroServerETL class.",
+            DeprecationWarning,
+        )
         self._service = service
         self._data_file = data_file
         self._data_source = data_source
@@ -66,12 +72,12 @@ class HydroServerETL:
                     self._failed_datastreams.extend(self._post_observations())
 
         except HeaderParsingError as e:
-            self._message = f'Failed to parse header for {self._data_source.name} with error: {str(e)}'
+            self._message = f"Failed to parse header for {self._data_source.name} with error: {str(e)}"
             logger.error(self._message)
             self._file_header_error = True
 
         except TimestampParsingError as e:
-            self._message = f'Failed to parse one or more timestamps for {self._data_source.name} with error: {str(e)}'
+            self._message = f"Failed to parse one or more timestamps for {self._data_source.name} with error: {str(e)}"
             logger.error(self._message)
             self._file_timestamp_error = True
 
@@ -79,7 +85,7 @@ class HydroServerETL:
         self._failed_datastreams.extend(self._post_observations())
 
         if not self._message and len(self._failed_datastreams) > 0:
-            self._message = f'One or more datastreams failed to sync with HydroServer for {self._data_source.name}.'
+            self._message = f"One or more datastreams failed to sync with HydroServer for {self._data_source.name}."
 
         self._update_data_source()
 
@@ -99,7 +105,8 @@ class HydroServerETL:
         """
 
         if index == self._data_source.header_row or (
-                index == self._data_source.data_start_row and self._timestamp_column_index is None
+            index == self._data_source.data_start_row
+            and self._timestamp_column_index is None
         ):
             self._parse_file_header(row)
 
@@ -110,18 +117,29 @@ class HydroServerETL:
 
         for datastream in self._datastreams.values():
             if str(datastream.uid) not in self._datastream_start_row_indexes.keys():
-                if not datastream.phenomenon_end_time or timestamp > datastream.phenomenon_end_time:
+                if (
+                    not datastream.phenomenon_end_time
+                    or timestamp > datastream.phenomenon_end_time
+                ):
                     self._datastream_start_row_indexes[str(datastream.uid)] = index
 
-            if str(datastream.uid) in self._datastream_start_row_indexes.keys() \
-                    and self._datastream_start_row_indexes[str(datastream.uid)] <= index:
+            if (
+                str(datastream.uid) in self._datastream_start_row_indexes.keys()
+                and self._datastream_start_row_indexes[str(datastream.uid)] <= index
+            ):
                 if str(datastream.uid) not in self._observations.keys():
                     self._observations[str(datastream.uid)] = []
 
-                self._observations[str(datastream.uid)].append({
-                    'phenomenon_time': timestamp,
-                    'result': row[self._datastream_column_indexes[datastream.data_source_column]]
-                })
+                self._observations[str(datastream.uid)].append(
+                    {
+                        "phenomenon_time": timestamp,
+                        "result": row[
+                            self._datastream_column_indexes[
+                                datastream.data_source_column
+                            ]
+                        ],
+                    }
+                )
 
     def _parse_file_header(self, row: List[str]) -> None:
         """
@@ -136,22 +154,29 @@ class HydroServerETL:
         """
 
         try:
-            self._timestamp_column_index = row.index(self._data_source.timestamp_column) \
-                if isinstance(self._data_source.timestamp_column, str) \
+            self._timestamp_column_index = (
+                row.index(self._data_source.timestamp_column)
+                if isinstance(self._data_source.timestamp_column, str)
                 else int(self._data_source.timestamp_column) - 1
+            )
             if self._timestamp_column_index > len(row):
                 raise ValueError
             self._datastream_column_indexes = {
-                datastream.data_source_column: row.index(datastream.data_source_column)
-                if not datastream.data_source_column.isdigit()
-                else int(datastream.data_source_column) - 1
+                datastream.data_source_column: (
+                    row.index(datastream.data_source_column)
+                    if not datastream.data_source_column.isdigit()
+                    else int(datastream.data_source_column) - 1
+                )
                 for datastream in self._datastreams.values()
             }
-            if len(self._datastream_column_indexes.values()) > 0 and \
-                    max(self._datastream_column_indexes.values()) > len(row):
+            if len(self._datastream_column_indexes.values()) > 0 and max(
+                self._datastream_column_indexes.values()
+            ) > len(row):
                 raise ValueError
         except ValueError as e:
-            logger.error(f'Failed to load data from data source: "{self._data_source.name}"')
+            logger.error(
+                f'Failed to load data from data source: "{self._data_source.name}"'
+            )
             raise HeaderParsingError(str(e)) from e
 
     def _parse_row_timestamp(self, row: List[str]) -> datetime:
@@ -164,32 +189,36 @@ class HydroServerETL:
         """
 
         try:
-            if self._data_source.timestamp_format == 'iso' or self._data_source.timestamp_format is None:
-                timestamp = isoparse(
-                    row[self._timestamp_column_index]
-                )
+            if (
+                self._data_source.timestamp_format == "iso"
+                or self._data_source.timestamp_format is None
+            ):
+                timestamp = isoparse(row[self._timestamp_column_index])
             else:
                 timestamp = datetime.strptime(
                     row[self._timestamp_column_index],
-                    self._data_source.timestamp_format
+                    self._data_source.timestamp_format,
                 )
         except ValueError as e:
             raise TimestampParsingError(str(e)) from e
 
         if timestamp.tzinfo is None:
             if not self._data_source.timestamp_offset:
-                timestamp = timestamp.replace(
-                    tzinfo=timezone.utc
-                )
+                timestamp = timestamp.replace(tzinfo=timezone.utc)
             else:
                 try:
                     timestamp = timestamp.replace(
                         tzinfo=datetime.strptime(
-                            self._data_source.timestamp_offset[:-2] + ':' + self._data_source.timestamp_offset[3:], '%z'
+                            self._data_source.timestamp_offset[:-2]
+                            + ":"
+                            + self._data_source.timestamp_offset[3:],
+                            "%z",
                         ).tzinfo
                     )
                 except ValueError as e:
-                    logger.error(f'Failed to load data from data source: "{self._data_source.name}"')
+                    logger.error(
+                        f'Failed to load data from data source: "{self._data_source.name}"'
+                    )
                     raise TimestampParsingError(str(e)) from e
 
         return timestamp
@@ -213,15 +242,18 @@ class HydroServerETL:
             if datastream_id not in self._failed_datastreams and len(observations) > 0:
 
                 logger.info(
-                    f'Loading observations from ' +
-                    f'{observations[0]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} to ' +
-                    f'{observations[-1]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} for datastream: ' +
-                    f'{str(datastream_id)} in data source "{self._data_source.name}".'
+                    f"Loading observations from "
+                    + f'{observations[0]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} to '
+                    + f'{observations[-1]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} for datastream: '
+                    + f'{str(datastream_id)} in data source "{self._data_source.name}".'
                 )
 
                 observations_df = pd.DataFrame(
-                    [[observation['phenomenon_time'], observation['result']] for observation in observations],
-                    columns=['timestamp', 'value']
+                    [
+                        [observation["phenomenon_time"], observation["result"]]
+                        for observation in observations
+                    ],
+                    columns=["timestamp", "value"],
                 )
 
                 try:
@@ -233,17 +265,18 @@ class HydroServerETL:
                     failed_datastreams.append(datastream_id)
 
                 if not self._last_loaded_timestamp or (
-                        observations[-1]['phenomenon_time'] and observations[-1]['phenomenon_time'] >
-                        self._last_loaded_timestamp
+                    observations[-1]["phenomenon_time"]
+                    and observations[-1]["phenomenon_time"]
+                    > self._last_loaded_timestamp
                 ):
-                    self._last_loaded_timestamp = observations[-1]['phenomenon_time']
+                    self._last_loaded_timestamp = observations[-1]["phenomenon_time"]
             elif datastream_id in self._failed_datastreams:
                 logger.info(
-                    f'Skipping observations POST request from ' +
-                    f'{observations[0]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} to ' +
-                    f'{observations[-1]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} for datastream: ' +
-                    f'{str(datastream_id)} in data source "{self._data_source.name}",' +
-                    f'due to previous failed POST request.'
+                    f"Skipping observations POST request from "
+                    + f'{observations[0]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} to '
+                    + f'{observations[-1]["phenomenon_time"].strftime("%Y-%m-%dT%H:%M:%S%z")} for datastream: '
+                    + f'{str(datastream_id)} in data source "{self._data_source.name}",'
+                    + f"due to previous failed POST request."
                 )
 
         self._observations = {}
@@ -260,10 +293,12 @@ class HydroServerETL:
 
         if self._data_source.crontab is not None:
             next_sync = croniter.croniter(
-                self._data_source.crontab,
-                datetime.now()
+                self._data_source.crontab, datetime.now()
             ).get_next(datetime)
-        elif self._data_source.interval is not None and self._data_source.interval_units is not None:
+        elif (
+            self._data_source.interval is not None
+            and self._data_source.interval_units is not None
+        ):
             next_sync = datetime.now() + timedelta(
                 **{self._data_source.interval_units: self._data_source.interval}
             )
@@ -272,8 +307,11 @@ class HydroServerETL:
 
         self._data_source.data_source_thru = self._last_loaded_timestamp
         self._data_source.last_sync_successful = (
-            True if not self._file_timestamp_error and not self._file_header_error
-            and len(self._failed_datastreams) == 0 else False
+            True
+            if not self._file_timestamp_error
+            and not self._file_header_error
+            and len(self._failed_datastreams) == 0
+            else False
         )
         self._data_source.last_sync_message = self._message
         self._data_source.last_synced = datetime.now(timezone.utc)

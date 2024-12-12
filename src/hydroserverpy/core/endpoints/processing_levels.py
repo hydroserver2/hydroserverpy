@@ -27,13 +27,13 @@ class ProcessingLevelEndpoint(HydroServerEndpoint):
         super().__init__(service)
         self._model = ProcessingLevel
         self._api_route = self._service.api_route
-        self._endpoint_route = 'processing-levels'
+        self._endpoint_route = "processing-levels"
 
     def list(
-            self,
-            include_owned: bool = True,
-            include_unowned: bool = True,
-            include_templates: bool = True
+        self,
+        include_owned: bool = True,
+        include_unowned: bool = True,
+        include_templates: bool = True,
     ) -> List[ProcessingLevel]:
         """
         Retrieve a collection of processing levels.
@@ -43,22 +43,40 @@ class ProcessingLevelEndpoint(HydroServerEndpoint):
         :param include_templates: Whether to include template observed properties.
         """
 
-        if include_owned is True and include_unowned is True and include_templates is True:
-            owner = 'anyUserOrNoUser'
-        elif include_owned is True and include_unowned is True and include_templates is False:
-            owner = 'anyUser'
-        elif include_owned is True and include_unowned is False and include_templates is True:
-            owner = 'currentUserOrNoUser'
-        elif include_owned is True and include_unowned is False and include_templates is False:
-            owner = 'currentUser'
-        elif include_owned is False and include_unowned is False and include_templates is True:
-            owner = 'noUser'
+        if (
+            include_owned is True
+            and include_unowned is True
+            and include_templates is True
+        ):
+            owner = "anyUserOrNoUser"
+        elif (
+            include_owned is True
+            and include_unowned is True
+            and include_templates is False
+        ):
+            owner = "anyUser"
+        elif (
+            include_owned is True
+            and include_unowned is False
+            and include_templates is True
+        ):
+            owner = "currentUserOrNoUser"
+        elif (
+            include_owned is True
+            and include_unowned is False
+            and include_templates is False
+        ):
+            owner = "currentUser"
+        elif (
+            include_owned is False
+            and include_unowned is False
+            and include_templates is True
+        ):
+            owner = "noUser"
         else:
             return []
 
-        return super()._get(params={
-            'owner': owner
-        })
+        return super()._get(params={"owner": owner})
 
     @expand_docstring(include_uid=True)
     def get(self, uid: Union[UUID, str]) -> ProcessingLevel:

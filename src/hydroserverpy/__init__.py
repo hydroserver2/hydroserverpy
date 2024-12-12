@@ -1,6 +1,6 @@
 from .core.service import HydroServer
 from .quality.service import HydroServerQualityControl
-from .etl.service import HydroServerETL
+from .etl.hydroserver_etl import HydroServerETL
 
 
 __all__ = [

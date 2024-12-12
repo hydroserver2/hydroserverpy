@@ -18,7 +18,7 @@ class DataLoaderEndpoint(HydroServerEndpoint):
     :ivar _endpoint_route: The specific route of the endpoint, set to `'data-loaders'`.
     """
 
-    def __init__(self, service: 'HydroServer') -> None:
+    def __init__(self, service: "HydroServer") -> None:
         """
         Initialize the DataLoaderEndpoint.
 
@@ -29,7 +29,7 @@ class DataLoaderEndpoint(HydroServerEndpoint):
         super().__init__(service)
         self._model = DataLoader
         self._api_route = self._service.api_route
-        self._endpoint_route = 'data-loaders'
+        self._endpoint_route = "data-loaders"
 
     def list(self) -> List[DataLoader]:
         """
@@ -80,13 +80,14 @@ class DataLoaderEndpoint(HydroServerEndpoint):
         :rtype: List[DataSource]
         """
 
-        response = getattr(self._service, '_request')(
-            'get', f'{self._api_route}/data/{self._endpoint_route}/{str(uid)}/data-sources'
+        response = getattr(self._service, "_request")(
+            "get",
+            f"{self._api_route}/data/{self._endpoint_route}/{str(uid)}/data-sources",
         )
 
         endpoint = DataSourceEndpoint(self._service)
 
         return [
-            DataSource(_endpoint=endpoint, _uid=UUID(str(entity.pop('id'))), **entity)
+            DataSource(_endpoint=endpoint, _uid=UUID(str(entity.pop("id"))), **entity)
             for entity in json.loads(response.content)
         ]

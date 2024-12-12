@@ -5,16 +5,20 @@ from hydroserverpy.core.schemas.base import HydroServerCoreModel
 
 class ProcessingLevelFields(BaseModel):
     code: str = Field(
-        ..., strip_whitespace=True, max_length=255,
-        description='A code representing the processing level.'
+        ...,
+        strip_whitespace=True,
+        max_length=255,
+        description="A code representing the processing level.",
     )
     definition: Optional[str] = Field(
-        None, strip_whitespace=True,
-        description='The definition of the processing level.'
+        None,
+        strip_whitespace=True,
+        description="The definition of the processing level.",
     )
     explanation: Optional[str] = Field(
-        None, strip_whitespace=True,
-        description='The explanation of the processing level.'
+        None,
+        strip_whitespace=True,
+        description="The explanation of the processing level.",
     )
 
 
