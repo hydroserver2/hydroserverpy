@@ -10,7 +10,7 @@ from .exceptions import HeaderParsingError, TimestampParsingError
 import warnings
 
 if TYPE_CHECKING:
-    from ..core.schemas import DataSource
+    from hydroserverpy_old.core.schemas import DataSource
 
 logger = logging.getLogger("hydroserver_etl")
 logger.addHandler(logging.NullHandler())
