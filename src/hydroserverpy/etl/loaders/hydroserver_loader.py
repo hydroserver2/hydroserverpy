@@ -1,4 +1,4 @@
-from hydroserverpy.core.service import HydroServer
+from hydroserverpy import HydroServer
 from typing import Dict, Optional
 from .base import Loader
 import logging
