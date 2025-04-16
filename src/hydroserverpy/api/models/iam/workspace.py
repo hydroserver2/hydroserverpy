@@ -16,6 +16,9 @@ if TYPE_CHECKING:
         ProcessingLevel,
         ResultQualifier,
         Datastream,
+        OrchestrationSystem,
+        DataSource,
+        DataArchive
     )
 
 
@@ -41,6 +44,9 @@ class Workspace(HydroServerModel, WorkspaceFields):
         self._units = None
         self._sensors = None
         self._datastreams = None
+        self._orchestrationsystems = None
+        self._datasources = None
+        self._dataarchives = None
 
     @property
     def roles(self) -> List["Role"]:
@@ -130,6 +136,33 @@ class Workspace(HydroServerModel, WorkspaceFields):
             self._datastreams = self._connection.datastreams.list(workspace=self.uid)
 
         return self._datastreams
+
+    @property
+    def orchestrationsystems(self) -> List["OrchestrationSystem"]:
+        """The orchestration systems associated with this workspace."""
+
+        if self._orchestrationsystems is None:
+            self._orchestrationsystems = self._connection.orchestrationsystems.list(workspace=self.uid)
+
+        return self._orchestrationsystems
+
+    @property
+    def datasources(self) -> List["DataSource"]:
+        """The data sources associated with this workspace."""
+
+        if self._datasources is None:
+            self._datasources = self._connection.datasources.list(workspace=self.uid)
+
+        return self._datasources
+
+    @property
+    def dataarchives(self) -> List["DataArchive"]:
+        """The data archives associated with this workspace."""
+
+        if self._dataarchives is None:
+            self._dataarchives = self._connection.dataarchives.list(workspace=self.uid)
+
+        return self._dataarchives
 
     def refresh(self) -> None:
         """Refresh the workspace details from HydroServer."""

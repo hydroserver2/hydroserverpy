@@ -10,6 +10,9 @@ from hydroserverpy.api.services import (
     ResultQualifierService,
     SensorService,
     DatastreamService,
+    OrchestrationSystemService,
+    DataSourceService,
+    DataArchiveService,
 )
 
 
@@ -150,3 +153,21 @@ class HydroServer:
         """Utilities for managing HydroServer datastreams."""
 
         return DatastreamService(self)
+
+    @property
+    def orchestrationsystems(self):
+        """Utilities for managing HydroServer orchestration systems."""
+
+        return OrchestrationSystemService(self)
+
+    @property
+    def datasources(self):
+        """Utilities for managing HydroServer data sources."""
+
+        return DataSourceService(self)
+
+    @property
+    def dataarchives(self):
+        """Utilities for managing HydroServer data archives."""
+
+        return DataArchiveService(self)
