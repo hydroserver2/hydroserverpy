@@ -200,8 +200,7 @@ class HydroServerETLCSV:
 
         try:
             if (
-                self._data_source.settings["transformer"].get("timestampFormat")
-                == "ISO8601"
+                self._data_source.settings["transformer"].get("timestampFormat") in ["utc", "constant", "ISO8601"]
                 or self._data_source.settings["transformer"].get("timestampFormat")
                 is None
             ):
@@ -228,11 +227,11 @@ class HydroServerETLCSV:
                     timestamp = timestamp.replace(
                         tzinfo=datetime.strptime(
                             self._data_source.settings["transformer"].get(
-                                "timestampFormat"
+                                "timestampOffset"
                             )[:-2]
                             + ":"
                             + self._data_source.settings["transformer"].get(
-                                "timestampFormat"
+                                "timestampOffset"
                             )[3:],
                             "%z",
                         ).tzinfo
