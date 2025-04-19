@@ -1,4 +1,5 @@
 from typing import TYPE_CHECKING, Type, Union, Optional
+from datetime import datetime
 from uuid import UUID
 
 if TYPE_CHECKING:
@@ -38,7 +39,7 @@ class EndpointService:
         path = f"/{self._api_route}/{self._endpoint_route}"
         headers = {"Content-type": "application/json"}
         response = self._connection.request(
-            "post", path, headers=headers, json=kwargs
+            "post", path, headers=headers, json=self._to_iso_time(kwargs)
         ).json()
 
         return self._model(
@@ -49,7 +50,7 @@ class EndpointService:
         path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}"
         headers = {"Content-type": "application/json"}
         response = self._connection.request(
-            "patch", path, headers=headers, json=kwargs
+            "patch", path, headers=headers, json=self._to_iso_time(kwargs)
         ).json()
 
         return self._model(
@@ -61,6 +62,15 @@ class EndpointService:
         response = self._connection.request("delete", path)
 
         return response
+
+    def _to_iso_time(self, obj):
+        if isinstance(obj, dict):
+            return {k: self._to_iso_time(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [self._to_iso_time(i) for i in obj]
+        elif isinstance(obj, datetime):
+            return obj.isoformat()
+        return obj
 
 
 class SensorThingsService(EndpointService):

@@ -10,7 +10,7 @@ from .exceptions import HeaderParsingError, TimestampParsingError
 import warnings
 
 if TYPE_CHECKING:
-    from hydroserverpy_old.core.schemas import DataSource
+    from hydroserverpy.api.models import DataSource
 
 logger = logging.getLogger("hydroserver_etl")
 logger.addHandler(logging.NullHandler())
@@ -36,10 +36,15 @@ class HydroServerETLCSV:
             datastream.uid: datastream for datastream in data_source.datastreams
         }
 
+        self._datastream_mapping = {
+            mapping["targetIdentifier"]: mapping["sourceIdentifier"]
+            for payload in self._data_source.settings["payloads"]
+            for mapping in payload.get("mappings", [])
+        }
+
         self._timestamp_column_index = None
         self._datastream_column_indexes = None
         self._datastream_start_row_indexes = {}
-        self._last_loaded_timestamp = self._data_source.data_source_thru
 
         self._message = None
         self._failed_datastreams = []
@@ -59,7 +64,10 @@ class HydroServerETLCSV:
         :return: None
         """
 
-        data_reader = csv.reader(self._data_file, delimiter=self._data_source.delimiter)
+        data_reader = csv.reader(
+            self._data_file,
+            delimiter=self._data_source.settings["transformer"]["delimiter"],
+        )
 
         try:
             for i, row in enumerate(data_reader):
@@ -104,13 +112,13 @@ class HydroServerETLCSV:
         :return: A list of datetime and value pairs for each datastream
         """
 
-        if index == self._data_source.header_row or (
-            index == self._data_source.data_start_row
+        if index == self._data_source.settings["transformer"]["headerRow"] or (
+            index == self._data_source.settings["transformer"]["dataStartRow"]
             and self._timestamp_column_index is None
         ):
             self._parse_file_header(row)
 
-        if index < self._data_source.data_start_row:
+        if index < self._data_source.settings["transformer"]["dataStartRow"]:
             return
 
         timestamp = self._parse_row_timestamp(row)
@@ -135,7 +143,7 @@ class HydroServerETLCSV:
                         "phenomenon_time": timestamp,
                         "result": row[
                             self._datastream_column_indexes[
-                                datastream.data_source_column
+                                self._datastream_mapping[str(datastream.uid)]
                             ]
                         ],
                     }
@@ -155,17 +163,19 @@ class HydroServerETLCSV:
 
         try:
             self._timestamp_column_index = (
-                row.index(self._data_source.timestamp_column)
-                if isinstance(self._data_source.timestamp_column, str)
-                else int(self._data_source.timestamp_column) - 1
+                row.index(self._data_source.settings["transformer"]["timestampKey"])
+                if isinstance(
+                    self._data_source.settings["transformer"]["timestampKey"], str
+                )
+                else int(self._data_source.settings["transformer"]["timestampKey"]) - 1
             )
             if self._timestamp_column_index > len(row):
                 raise ValueError
             self._datastream_column_indexes = {
-                datastream.data_source_column: (
-                    row.index(datastream.data_source_column)
-                    if not datastream.data_source_column.isdigit()
-                    else int(datastream.data_source_column) - 1
+                self._datastream_mapping[str(datastream.uid)]: (
+                    row.index(self._datastream_mapping[str(datastream.uid)])
+                    if not self._datastream_mapping[str(datastream.uid)].isdigit()
+                    else int(self._datastream_mapping[str(datastream.uid)]) - 1
                 )
                 for datastream in self._datastreams.values()
             }
@@ -190,28 +200,40 @@ class HydroServerETLCSV:
 
         try:
             if (
-                self._data_source.timestamp_format == "iso"
-                or self._data_source.timestamp_format is None
+                self._data_source.settings["transformer"].get("timestampFormat")
+                == "ISO8601"
+                or self._data_source.settings["transformer"].get("timestampFormat")
+                is None
             ):
                 timestamp = isoparse(row[self._timestamp_column_index])
             else:
                 timestamp = datetime.strptime(
                     row[self._timestamp_column_index],
-                    self._data_source.timestamp_format,
+                    self._data_source.settings["transformer"].get("timestampFormat"),
                 )
         except ValueError as e:
             raise TimestampParsingError(str(e)) from e
 
         if timestamp.tzinfo is None:
-            if not self._data_source.timestamp_offset:
+            if not self._data_source.settings["transformer"].get(
+                "timestampOffset"
+            ) or self._data_source.settings["transformer"].get(
+                "timestampOffset"
+            ).endswith(
+                "0000"
+            ):
                 timestamp = timestamp.replace(tzinfo=timezone.utc)
             else:
                 try:
                     timestamp = timestamp.replace(
                         tzinfo=datetime.strptime(
-                            self._data_source.timestamp_offset[:-2]
+                            self._data_source.settings["transformer"].get(
+                                "timestampFormat"
+                            )[:-2]
                             + ":"
-                            + self._data_source.timestamp_offset[3:],
+                            + self._data_source.settings["transformer"].get(
+                                "timestampFormat"
+                            )[3:],
                             "%z",
                         ).tzinfo
                     )
@@ -264,12 +286,6 @@ class HydroServerETLCSV:
                 except HTTPError:
                     failed_datastreams.append(datastream_id)
 
-                if not self._last_loaded_timestamp or (
-                    observations[-1]["phenomenon_time"]
-                    and observations[-1]["phenomenon_time"]
-                    > self._last_loaded_timestamp
-                ):
-                    self._last_loaded_timestamp = observations[-1]["phenomenon_time"]
             elif datastream_id in self._failed_datastreams:
                 logger.info(
                     f"Skipping observations POST request from "
@@ -292,29 +308,28 @@ class HydroServerETLCSV:
         """
 
         if self._data_source.crontab is not None:
-            next_sync = croniter.croniter(
+            next_run = croniter.croniter(
                 self._data_source.crontab, datetime.now()
             ).get_next(datetime)
         elif (
             self._data_source.interval is not None
             and self._data_source.interval_units is not None
         ):
-            next_sync = datetime.now() + timedelta(
+            next_run = datetime.now() + timedelta(
                 **{self._data_source.interval_units: self._data_source.interval}
             )
         else:
-            next_sync = None
+            next_run = None
 
-        self._data_source.data_source_thru = self._last_loaded_timestamp
-        self._data_source.last_sync_successful = (
+        self._data_source.last_run_successful = (
             True
             if not self._file_timestamp_error
             and not self._file_header_error
             and len(self._failed_datastreams) == 0
             else False
         )
-        self._data_source.last_sync_message = self._message
-        self._data_source.last_synced = datetime.now(timezone.utc)
-        self._data_source.next_sync = next_sync
+        self._data_source.last_run_message = self._message
+        self._data_source.last_run = datetime.now(timezone.utc)
+        self._data_source.next_run = next_run
 
         self._data_source.save()

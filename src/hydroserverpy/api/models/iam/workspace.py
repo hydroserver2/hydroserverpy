@@ -18,7 +18,7 @@ if TYPE_CHECKING:
         Datastream,
         OrchestrationSystem,
         DataSource,
-        DataArchive
+        DataArchive,
     )
 
 
@@ -142,7 +142,9 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The orchestration systems associated with this workspace."""
 
         if self._orchestrationsystems is None:
-            self._orchestrationsystems = self._connection.orchestrationsystems.list(workspace=self.uid)
+            self._orchestrationsystems = self._connection.orchestrationsystems.list(
+                workspace=self.uid
+            )
 
         return self._orchestrationsystems
 

@@ -21,10 +21,7 @@ class DataArchive(
 ):
     def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
         super().__init__(
-            _connection=_connection,
-            _model_ref="dataarchives",
-            _uid=_uid,
-            **data
+            _connection=_connection, _model_ref="dataarchives", _uid=_uid, **data
         )
 
         self._workspace_id = str(data.get("workspace_id") or data["workspaceId"])
@@ -96,9 +93,13 @@ class DataArchive(
     def add_datastream(self, datastream: Union["Datastream", UUID, str]):
         """Add a datastream to this data archive."""
 
-        self._connection.dataarchives.add_datastream(uid=self.uid, datastream=datastream)
+        self._connection.dataarchives.add_datastream(
+            uid=self.uid, datastream=datastream
+        )
 
     def remove_datastream(self, datastream: Union["Datastream", UUID, str]):
         """Remove a datastream from this data archive."""
 
-        self._connection.dataarchives.remove_datastream(uid=self.uid, datastream=datastream)
+        self._connection.dataarchives.remove_datastream(
+            uid=self.uid, datastream=datastream
+        )

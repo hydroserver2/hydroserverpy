@@ -6,19 +6,19 @@ from pydantic import BaseModel, Field
 
 class OrchestrationConfigurationFields(BaseModel):
     interval: Optional[int] = Field(
-        None, gt=0, validation_alias=AliasPath("status", "interval")
+        None, gt=0, validation_alias=AliasPath("schedule", "interval")
     )
     interval_units: Optional[Literal["minutes", "hours", "days"]] = Field(
-        None, validation_alias=AliasPath("status", "intervalUnits")
+        None, validation_alias=AliasPath("schedule", "intervalUnits")
     )
     crontab: Optional[str] = Field(
-        None, max_length=255, validation_alias=AliasPath("status", "crontab")
+        None, max_length=255, validation_alias=AliasPath("schedule", "crontab")
     )
     start_time: Optional[datetime] = Field(
-        None, validation_alias=AliasPath("status", "startTime")
+        None, validation_alias=AliasPath("schedule", "startTime")
     )
     end_time: Optional[datetime] = Field(
-        None, validation_alias=AliasPath("status", "endTime")
+        None, validation_alias=AliasPath("schedule", "endTime")
     )
     last_run_successful: Optional[bool] = Field(
         None, validation_alias=AliasPath("status", "lastRunSuccessful")

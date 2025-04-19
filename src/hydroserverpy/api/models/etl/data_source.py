@@ -1,6 +1,9 @@
+import tempfile
 from typing import Union, List, Optional, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field
+from urllib.request import urlopen
+from hydroserverpy.etl_csv.hydroserver_etl_csv import HydroServerETLCSV
 from .orchestration_system import OrchestrationSystem
 from .orchestration_configuration import OrchestrationConfigurationFields
 from ..sta.datastream import Datastream
@@ -19,10 +22,7 @@ class DataSourceFields(BaseModel):
 class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationFields):
     def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
         super().__init__(
-            _connection=_connection,
-            _model_ref="datasources",
-            _uid=_uid,
-            **data
+            _connection=_connection, _model_ref="datasources", _uid=_uid, **data
         )
 
         self._workspace_id = str(data.get("workspace_id") or data["workspaceId"])
@@ -86,6 +86,10 @@ class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationF
     def datastreams(self) -> List["Datastream"]:
         """The datastreams this data source provides data for."""
 
+        if self._datastreams is None:
+            data_source = self._connection.datasources.get(uid=self.uid)
+            self._datastreams = data_source.datastreams
+
         return self._datastreams
 
     def refresh(self):
@@ -93,6 +97,7 @@ class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationF
 
         super()._refresh()
         self._workspace = None
+        self._datastreams = None
 
     def save(self):
         """Save changes to this data source to HydroServer."""
@@ -112,4 +117,34 @@ class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationF
     def remove_datastream(self, datastream: Union["Datastream", UUID, str]):
         """Remove a datastream from this data source."""
 
-        self._connection.datasources.remove_datastream(uid=self.uid, datastream=datastream)
+        self._connection.datasources.remove_datastream(
+            uid=self.uid, datastream=datastream
+        )
+
+    # TODO: Replace with ETL module.
+    def load_data(self):
+        """Load data for this data source."""
+
+        if self.paused is True:
+            return
+
+        if self.settings["extractor"]["type"] == "local":
+            with open(self.settings["extractor"]["path"]) as data_file:
+                loader = HydroServerETLCSV(
+                    self._connection, data_file=data_file, data_source=self
+                )
+                loader.run()
+        elif self.settings["extractor"]["type"] == "HTTP":
+            with tempfile.NamedTemporaryFile(mode="w") as temp_file:
+                with urlopen(self.settings["extractor"]["urlTemplate"]) as response:
+                    chunk_size = 1024 * 1024 * 10  # Use a 10mb chunk size.
+                    while True:
+                        chunk = response.read(chunk_size)
+                        if not chunk:
+                            break
+                        temp_file.write(chunk)
+                temp_file.seek(0)
+                loader = HydroServerETLCSV(
+                    self._connection, data_file=temp_file, data_source=self
+                )
+                loader.run()
