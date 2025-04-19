@@ -263,7 +263,9 @@ class Datastream(HydroServerModel, DatastreamFields):
         """The processing level of this datastream."""
 
         if self._processing_level is None:
-            self._processing_level = self._connection.processinglevels.get(uid=self._processing_level_id)
+            self._processing_level = self._connection.processinglevels.get(
+                uid=self._processing_level_id
+            )
             self._original_data["processing_level"] = self._processing_level
 
         return self._processing_level

@@ -3,8 +3,6 @@ from requests import HTTPError
 
 
 def raise_for_hs_status(response):
-    """"""
-
     try:
         response.raise_for_status()
     except HTTPError as e:

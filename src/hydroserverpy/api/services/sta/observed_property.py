@@ -35,7 +35,9 @@ class ObservedPropertyService(SensorThingsService):
 
         return super()._list(params=params)
 
-    def get(self, uid: Union[UUID, str], fetch_by_datastream_uid: bool = False) -> "ObservedProperty":
+    def get(
+        self, uid: Union[UUID, str], fetch_by_datastream_uid: bool = False
+    ) -> "ObservedProperty":
         """Get an observed property by ID."""
 
         return self._get(
