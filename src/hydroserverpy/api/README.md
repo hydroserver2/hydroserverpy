@@ -167,6 +167,7 @@ new_thing = hs_api.things.create(
     county="Cache",
     country="US",
     data_disclaimer="WARNING: These data may be provisional and subject to revision.",
+    is_private=False,
     workspace="00000000-0000-0000-0000-000000000000"
 )
 ```
@@ -181,6 +182,7 @@ thing = hs_api.things.get(uid='00000000-0000-0000-0000-000000000000')
 # Update one or more properties of the thing.
 thing.name = 'Updated Site Name'
 thing.description = 'This site metadata has been modified.'
+thing.is_private = True
 
 # Save the changes back to HydroServer.
 thing.save()
@@ -263,10 +265,10 @@ Observed properties are used in HydroServer to represent the physical property b
 observed_properties = hs_api.observedproperties.list()
 
 # Get observed properties belonging to a workspace
-workspace_observed_properties = hs_api.things.list(workspace="00000000-0000-0000-0000-000000000000")
+workspace_observed_properties = hs_api.observedproperties.list(workspace="00000000-0000-0000-0000-000000000000")
 
 # Get observed property with a given ID
-observed_property = hs_api.observedproperty.get(uid='00000000-0000-0000-0000-000000000000')
+observed_property = hs_api.observedproperties.get(uid='00000000-0000-0000-0000-000000000000')
 ```
 
 #### Example: Create Observed Property
@@ -566,10 +568,10 @@ Datastreams are used in HydroServer to represent a group of environmental observ
 datastreams = hs_api.datastreams.list()
 
 # Get processing levels belonging to a workspace
-workspace_datastreams = hs_api.processinglevels.list(workspace="00000000-0000-0000-0000-000000000000")
+workspace_datastreams = hs_api.datastreams.list(workspace="00000000-0000-0000-0000-000000000000")
 
 # Get processing levels belonging to a thing
-thing_datastreams = hs_api.processinglevels.list(thing="00000000-0000-0000-0000-000000000000")
+thing_datastreams = hs_api.datastreams.list(thing="00000000-0000-0000-0000-000000000000")
 
 # Get datastream with a given ID
 datastream = hs_api.datastreams.get(uid='00000000-0000-0000-0000-000000000000')

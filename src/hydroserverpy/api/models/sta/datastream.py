@@ -141,20 +141,6 @@ class Datastream(HydroServerModel, DatastreamFields):
             _connection=_connection, _model_ref="datastreams", _uid=_uid, **data
         )
 
-        self._workspace_id = str(
-            data.get("workspace_id")
-            or data.get("workspaceId")
-            or data["properties"]["workspace"]["id"]
-        )
-        self._processing_level_id = str(
-            data.get("workspace_id")
-            or data.get("workspaceId")
-            or data["properties"]["processingLevelId"]
-        )
-        self._unit_id = str(
-            data.get("unit_id") or data.get("unitId") or data["properties"]["unitId"]
-        )
-
         self._workspace = None
         self._thing = None
         self._observed_property = None
@@ -167,7 +153,8 @@ class Datastream(HydroServerModel, DatastreamFields):
         """The workspace this datastream belongs to."""
 
         if self._workspace is None:
-            self._workspace = self._connection.workspaces.get(uid=self._workspace_id)
+            datastream = self._connection.request("get", f"/api/data/datastreams/{str(self.uid)}").json()
+            self._workspace = self._connection.workspaces.get(uid=datastream["workspaceId"])
 
         return self._workspace
 
@@ -246,7 +233,8 @@ class Datastream(HydroServerModel, DatastreamFields):
         """The unit this datastream uses."""
 
         if self._unit is None:
-            self._unit = self._connection.units.get(uid=self._unit_id)
+            datastream = self._connection.request("get", f"/api/data/datastreams/{str(self.uid)}").json()
+            self._unit = self._connection.units.get(uid=datastream["unitId"])
             self._original_data["unit"] = self._unit
 
         return self._unit
@@ -263,9 +251,8 @@ class Datastream(HydroServerModel, DatastreamFields):
         """The processing level of this datastream."""
 
         if self._processing_level is None:
-            self._processing_level = self._connection.processinglevels.get(
-                uid=self._processing_level_id
-            )
+            datastream = self._connection.request("get", f"/api/data/datastreams/{str(self.uid)}").json()
+            self._processing_level = self._connection.processinglevels.get(uid=datastream["processingLevelId"])
             self._original_data["processing_level"] = self._processing_level
 
         return self._processing_level
@@ -285,13 +272,10 @@ class Datastream(HydroServerModel, DatastreamFields):
         """Refresh this datastream from HydroServer."""
 
         self._workspace = None
-        self._workspace_id = None
         self._thing = None
         self._observed_property = None
         self._unit = None
-        self._unit_id = None
         self._processing_level = None
-        self._processing_level_id = None
         self._sensor = None
         super()._refresh()
 

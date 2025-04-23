@@ -1,8 +1,8 @@
+import requests
 import tempfile
 from typing import Union, List, Optional, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field
-from urllib.request import urlopen
 from hydroserverpy.etl_csv.hydroserver_etl_csv import HydroServerETLCSV
 from .orchestration_system import OrchestrationSystem
 from .orchestration_configuration import OrchestrationConfigurationFields
@@ -135,14 +135,17 @@ class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationF
                 )
                 loader.run()
         elif self.settings["extractor"]["type"] == "HTTP":
-            with tempfile.NamedTemporaryFile(mode="w") as temp_file:
-                with urlopen(self.settings["extractor"]["urlTemplate"]) as response:
-                    chunk_size = 1024 * 1024 * 10  # Use a 10mb chunk size.
-                    while True:
-                        chunk = response.read(chunk_size)
-                        if not chunk:
-                            break
-                        temp_file.write(chunk)
+            with tempfile.NamedTemporaryFile(mode="w+") as temp_file:
+                response = requests.get(
+                    self.settings["extractor"]["urlTemplate"],
+                    stream=True,
+                    timeout=60,
+                )
+                response.raise_for_status()
+                chunk_size = 1024 * 1024 * 10  # Use a 10mb chunk size.
+                for chunk in response.iter_content(chunk_size=chunk_size):
+                    if chunk:
+                        temp_file.write(chunk.decode("utf-8"))
                 temp_file.seek(0)
                 loader = HydroServerETLCSV(
                     self._connection, data_file=temp_file, data_source=self

@@ -1,4 +1,5 @@
 import csv
+import math
 import logging
 import croniter
 import pandas as pd
@@ -138,14 +139,27 @@ class HydroServerETLCSV:
                 if str(datastream.uid) not in self._observations.keys():
                     self._observations[str(datastream.uid)] = []
 
+                raw_result = row[
+                    self._datastream_column_indexes[
+                        self._datastream_mapping[str(datastream.uid)]
+                    ]
+                ]
+
+                if isinstance(raw_result, (int, float)):
+                    result = raw_result
+                else:
+                    try:
+                        result = float(raw_result)
+                    except (TypeError, ValueError):
+                        result = datastream.no_data_value
+
+                if math.isnan(result):
+                    result = datastream.no_data_value
+
                 self._observations[str(datastream.uid)].append(
                     {
                         "phenomenon_time": timestamp,
-                        "result": row[
-                            self._datastream_column_indexes[
-                                self._datastream_mapping[str(datastream.uid)]
-                            ]
-                        ],
+                        "result": result,
                     }
                 )
 
@@ -308,13 +322,13 @@ class HydroServerETLCSV:
 
         if self._data_source.crontab is not None:
             next_run = croniter.croniter(
-                self._data_source.crontab, datetime.now()
+                self._data_source.crontab, datetime.now(timezone.utc)
             ).get_next(datetime)
         elif (
             self._data_source.interval is not None
             and self._data_source.interval_units is not None
         ):
-            next_run = datetime.now() + timedelta(
+            next_run = datetime.now(timezone.utc) + timedelta(
                 **{self._data_source.interval_units: self._data_source.interval}
             )
         else:
