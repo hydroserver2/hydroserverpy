@@ -320,3 +320,23 @@ class Datastream(HydroServerModel, DatastreamFields):
             uid=self.uid,
             observations=observations,
         )
+
+    # TODO: Find a better long-term solution for this issue.
+    def sync_phenomenon_end_time(self):
+        """Ensures the phenomenon_end_time field matches the actual end time of the observations."""
+
+        response = self._connection.request(
+            "get", f"/api/data/datastreams/{str(self.uid)}/observations",
+            params={
+                "order": "desc",
+                "page": 1,
+                "page_size": 1
+            }
+        ).json()
+
+        if len(response["phenomenon_time"]) > 0:
+            self.phenomenon_end_time = datetime.fromisoformat(response["phenomenon_time"][0])
+        else:
+            self.phenomenon_end_time = None
+
+        self.save()

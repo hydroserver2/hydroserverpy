@@ -52,7 +52,7 @@ class HydroServerETLCSV:
         self._file_header_error = False
         self._file_timestamp_error = False
 
-        self._chunk_size = 10000
+        self._chunk_size = 1000
         self._observations = {}
 
     def run(self):
@@ -125,6 +125,9 @@ class HydroServerETLCSV:
         timestamp = self._parse_row_timestamp(row)
 
         for datastream in self._datastreams.values():
+            if index == self._data_source.settings["transformer"]["dataStartRow"]:
+                datastream.sync_phenomenon_end_time()
+
             if str(datastream.uid) not in self._datastream_start_row_indexes.keys():
                 if (
                     not datastream.phenomenon_end_time
@@ -296,8 +299,9 @@ class HydroServerETLCSV:
                         uid=datastream_id,
                         observations=observations_df,
                     )
-                except HTTPError:
+                except HTTPError as e:
                     failed_datastreams.append(datastream_id)
+                    logger.error(f"Failed to POST observations to datastream: {str(datastream_id)} - {e}")
 
             elif datastream_id in self._failed_datastreams:
                 logger.info(
