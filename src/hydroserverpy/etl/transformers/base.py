@@ -15,12 +15,17 @@ class Transformer(ABC):
     @staticmethod
     def standardize_dataframe(
         df,
-        datastream_ids,
+        payload_mappings,
         timestamp_column: str = "timestamp",
         timestamp_format: str = "ISO8601",
     ):
+        rename_map = {
+            mapping["sourceIdentifier"]: mapping["targetIdentifier"]
+            for mapping in payload_mappings
+        }
+
         df.rename(
-            columns={timestamp_column: "timestamp", **datastream_ids},
+            columns={timestamp_column: "timestamp", **rename_map},
             inplace=True,
         )
 
@@ -30,20 +35,19 @@ class Transformer(ABC):
             logging.error(message)
             raise ValueError(message)
 
-        # Verify that all datastream_ids are present in the DataFrame
-        expected_columns = set(datastream_ids.values())
-        actual_columns = set(df.columns)
-        missing_datastream_ids = expected_columns - actual_columns
+        # verify datastream columns
+        # TODO: Log some warnings when a specified source identifier can't be found in the file.
+        expected = set(rename_map.values())
+        missing = expected - set(df.columns)
 
-        if missing_datastream_ids:
+        if missing:
             raise ValueError(
                 "The following datastream IDs are specified in the config file but their related keys could not be "
-                f"found in the source system's extracted data: {missing_datastream_ids}"
+                f"found in the source system's extracted data: {missing}"
             )
 
-        # Keep only 'timestamp' and datastream_id columns
-        columns_to_keep = ["timestamp"] + list(expected_columns)
-        df = df[columns_to_keep]
+        # keep only timestamp + datastream columns
+        df = df[["timestamp", *expected]]
 
         # Convert timestamp column to datetime if not already
         if not pd.api.types.is_datetime64_any_dtype(df["timestamp"]):

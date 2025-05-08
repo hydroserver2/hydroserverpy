@@ -27,7 +27,7 @@ class HTTPExtractor(Extractor):
         ]
 
         if start_times:
-            oldest_start_time = min(start_times).isoformat()
+            oldest_start_time = min(start_times)
             start_time_key = self.params.pop("start_time_key", None)
             if start_time_key:
                 self.params[start_time_key] = oldest_start_time
@@ -42,7 +42,7 @@ class HTTPExtractor(Extractor):
         ]
 
         if end_times:
-            newest_end_time = max(end_times).isoformat()
+            newest_end_time = max(end_times)
             end_time_key = self.params.pop("end_time_key", None)
             if end_time_key:
                 self.params[end_time_key] = newest_end_time
