@@ -7,12 +7,7 @@ import jmespath
 
 
 class JSONTransformer(Transformer):
-    def __init__(
-        self,
-        query_string: str,
-        datastream_ids: Dict[str, str],
-        timestamp_format: Optional[str] = "ISO8601",
-    ):
+    def __init__(self, settings: object):
         """
         Initializes the JSONTransformer.
 
@@ -23,11 +18,13 @@ class JSONTransformer(Transformer):
             datastream_ids (dict): Mapping from JSON field names to datastream IDs.
             timestamp_format (str, optional): The format of the timestamp, if it needs special parsing.
         """
-        self.query_string = query_string
-        self.datastream_ids = datastream_ids
-        self.timestamp_format = timestamp_format
 
-    def transform(self, data_file):
+        self.JMESPath = settings["JMESPath"]
+        self.timestampKey = settings["timestampKey"]
+        # TODO: allow user to specify timestamp format
+        # self.timestampFormat = settings['timestampFormat']
+
+    def transform(self, data_file, mappings):
         """
         Transforms a JSON file-like object into the standard Pandas dataframe format.
         Since JMESPath can natively rename column names, the assumption is the timestamp column
@@ -49,13 +46,14 @@ class JSONTransformer(Transformer):
 
         return self.standardize_dataframe(
             df,
-            self.datastream_ids,
-            timestamp_format=self.timestamp_format,
+            mappings,
+            timestamp_column=self.timestampKey,
+            # timestamp_format=self.timestamp_format,
         )
 
     def extract_data_points(self, json_data: Any) -> Optional[List[dict]]:
         """Extracts data points from the JSON data using the data_path."""
-        data_points = jmespath.search(self.query_string, json_data)
+        data_points = jmespath.search(self.JMESPath, json_data)
 
         if isinstance(data_points, dict):
             data_points = [data_points]

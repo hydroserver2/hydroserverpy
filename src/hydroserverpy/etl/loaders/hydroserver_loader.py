@@ -48,8 +48,8 @@ class HydroServerLoader(HydroServer, Loader):
             if timestamp_column.dt.tz is None:
                 df["timestamp"] = timestamp_column.dt.tz_localize("UTC")
 
-            tr = time_ranges[ds_id]
-            start_ts = pd.to_datetime(tr["start_time"], utc=True)
+            time_range = time_ranges[ds_id]
+            start_ts = pd.to_datetime(time_range["start_time"], utc=True)
 
             if start_ts:
                 df = df[df["timestamp"] > start_ts]

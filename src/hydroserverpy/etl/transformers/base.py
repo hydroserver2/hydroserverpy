@@ -46,11 +46,17 @@ class Transformer(ABC):
                 f"found in the source system's extracted data: {missing}"
             )
 
-        # keep only timestamp + datastream columns
-        df = df[["timestamp", *expected]]
+        # keep only timestamp + datastream columns; remove the rest inplace
+        to_keep = ["timestamp", *expected]
+        df.drop(columns=df.columns.difference(to_keep), inplace=True)
 
         # Convert timestamp column to datetime if not already
         if not pd.api.types.is_datetime64_any_dtype(df["timestamp"]):
             df["timestamp"] = pd.to_datetime(df["timestamp"], format=timestamp_format)
+
+        df.drop_duplicates(subset=["timestamp"], keep="last")
+        logging.info(f"standardized dataframe created: {df.shape}")
+        logging.info(f"{df.info()}")
+        logging.info(f"{df.head()}")
 
         return df
