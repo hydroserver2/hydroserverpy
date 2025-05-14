@@ -1,7 +1,8 @@
-from typing import TYPE_CHECKING, Union, List
+from typing import TYPE_CHECKING, Union, List, Tuple, Optional
 from pydantic import EmailStr
 from uuid import UUID
-from hydroserverpy.api.models import Workspace, Role, Collaborator
+from datetime import datetime
+from hydroserverpy.api.models import Workspace, Role, Collaborator, APIKey
 from ..base import EndpointService
 
 
@@ -106,6 +107,114 @@ class WorkspaceService(EndpointService):
 
         path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/collaborators"
         self._connection.request("delete", path, json={"email": email})
+
+    def list_api_keys(self, uid: Union[UUID, str]) -> List["APIKey"]:
+        """Get all API keys associated with a workspace."""
+
+        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys"
+        response = self._connection.request("get", path)
+
+        return [APIKey(_connection=self._connection, _uid=UUID(str(obj.pop("id"))), **obj) for obj in response.json()]
+
+    def get_api_key(self, uid: Union[UUID, str], api_key_id: Union[UUID, str]) -> "APIKey":
+        """Get an API key associated with a workspace."""
+
+        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys/{api_key_id}"
+        response = self._connection.request("get", path).json()
+
+        return APIKey(_connection=self._connection, _uid=UUID(str(response.pop("id"))), **response)
+
+    def create_api_key(
+        self,
+        uid: Union[UUID, str],
+        role: Union["Role", UUID, str],
+        name: str,
+        description: Optional[str] = None,
+        is_active: bool = True,
+        expires_at: Optional[datetime] = None
+    ) -> Tuple["APIKey", str]:
+        """Create an API key for a workspace."""
+
+        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys"
+        kwargs = {
+            "roleId": str(getattr(role, "uid", role)),
+            "name": name,
+            "description": description,
+            "isActive": is_active,
+            "expiresAt": expires_at
+        }
+        headers = {"Content-type": "application/json"}
+
+        response = self._connection.request(
+            "post", path, headers=headers, json=self._to_iso_time(kwargs)
+        ).json()
+
+        return APIKey(
+            _connection=self._connection, _uid=UUID(str(response.pop("id"))), **response
+        ), response["key"]
+
+    def update_api_key(
+        self,
+        uid: Union[UUID, str],
+        api_key_id: Union[UUID, str],
+        role: Union["Role", UUID, str] = ...,
+        name: str = ...,
+        description: Optional[str] = ...,
+        is_active: bool = ...,
+        expires_at: Optional[datetime] = ...
+    ) -> "APIKey":
+        """Update an existing API key."""
+
+        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys/{str(api_key_id)}"
+        kwargs = {
+            "roleId": ... if role is ... else str(getattr(role, "uid", role)),
+            "name": name,
+            "description": description,
+            "isActive": is_active,
+            "expiresAt": (
+                expires_at.isoformat()
+                if expires_at
+                not in (
+                    None,
+                    ...,
+                )
+                else None
+            )
+        }
+        headers = {"Content-type": "application/json"}
+
+        response = self._connection.request(
+            "patch", path, headers=headers,
+            json={k: v for k, v in kwargs.items() if v is not ...}
+        ).json()
+
+        return APIKey(
+            _connection=self._connection, _uid=UUID(str(response.pop("id"))), **response
+        )
+
+    def delete_api_key(
+        self,
+        uid: Union[UUID, str],
+        api_key_id: Union[UUID, str]
+    ):
+        """Delete an existing API key."""
+
+        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys/{str(api_key_id)}"
+        self._connection.request("delete", path)
+
+    def regenerate_api_key(
+        self,
+        uid: Union[UUID, str],
+        api_key_id: Union[UUID, str]
+    ):
+        """Regenerate an existing API key."""
+
+        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys/{str(api_key_id)}/regenerate"
+        response = self._connection.request("put", path).json()
+
+        return APIKey(
+            _connection=self._connection, _uid=UUID(str(response.pop("id"))), **response
+        ), response["key"]
 
     def transfer_ownership(self, uid: Union[UUID, str], email: str) -> None:
         """Transfer ownership of a workspace to another HydroServer user."""

@@ -2,6 +2,7 @@ from .iam.account import Account
 from .iam.workspace import Workspace
 from .iam.role import Role
 from .iam.collaborator import Collaborator
+from .iam.apikey import APIKey
 from .iam.account import Account
 from .sta.datastream import Datastream
 from .sta.observed_property import ObservedProperty
@@ -17,5 +18,6 @@ from .etl.data_archive import DataArchive
 Workspace.model_rebuild()
 Role.model_rebuild()
 Collaborator.model_rebuild()
+APIKey.model_rebuild()
 
 Unit.model_rebuild()
