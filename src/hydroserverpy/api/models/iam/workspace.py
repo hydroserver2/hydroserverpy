@@ -1,5 +1,6 @@
 from typing import List, Union, Optional, TYPE_CHECKING
 from uuid import UUID
+from datetime import datetime
 from pydantic import BaseModel, Field, EmailStr
 from ..base import HydroServerModel
 
@@ -8,6 +9,7 @@ if TYPE_CHECKING:
     from hydroserverpy.api.models import (
         Role,
         Collaborator,
+        APIKey,
         Account,
         Thing,
         ObservedProperty,
@@ -188,6 +190,79 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """Delete this workspace from HydroServer."""
 
         super()._delete()
+
+    def list_api_keys(self) -> List["APIKey"]:
+        """Get all API keys associated with this workspace."""
+
+        return self._connection.workspaces.list_api_keys(uid=self.uid)
+
+    def get_api_key(self, api_key: Union["APIKey", UUID, str]) -> "APIKey":
+        """Get an API key associated with this workspace."""
+
+        return self._connection.workspaces.get_api_key(
+            uid=self.uid,
+            api_key_id=str(getattr(api_key, "uid", api_key))
+        )
+
+    def create_api_key(
+        self,
+        role: Union["Role", UUID, str],
+        name: str,
+        description: Optional[str] = None,
+        is_active: bool = True,
+        expires_at: Optional[datetime] = None
+    ):
+        """Create an API key associated with this workspace."""
+
+        api_key, key = self._connection.workspaces.create_api_key(
+            uid=self.uid,
+            role=role,
+            name=name,
+            description=description,
+            is_active=is_active,
+            expires_at=expires_at
+        )
+
+        return api_key, key
+
+    def update_api_key(
+            self,
+            api_key_id: Union[UUID, str],
+            role: Union["Role", UUID, str] = ...,
+            name: str = ...,
+            description: Optional[str] = ...,
+            is_active: bool = ...,
+            expires_at: Optional[datetime] = ...
+    ):
+        """Create an API key associated with this workspace."""
+
+        return self._connection.workspaces.update_api_key(
+            uid=self.uid,
+            api_key_id=api_key_id,
+            role=role,
+            name=name,
+            description=description,
+            is_active=is_active,
+            expires_at=expires_at
+        )
+
+    def delete_api_key(self, api_key_id: Union[UUID, str]):
+        """Delete an API key associated with this workspace."""
+
+        return self._connection.workspaces.delete_api_key(
+            uid=self.uid,
+            api_key_id=api_key_id
+        )
+
+    def regenerate_api_key(self, api_key_id: Union[UUID, str]):
+        """Regenerate an API key associated with this workspace."""
+
+        api_key, key = self._connection.workspaces.regenerate_api_key(
+            uid=self.uid,
+            api_key_id=api_key_id
+        )
+
+        return api_key, key
 
     def add_collaborator(
         self, email: EmailStr, role: Union["Role", UUID, str]
