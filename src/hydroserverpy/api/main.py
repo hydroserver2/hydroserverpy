@@ -62,7 +62,7 @@ class HydroServer:
         auth = auth or self.auth
 
         if auth and auth[0] == "__key__":
-            self._session.headers.update({"key": auth[1]})
+            self._session.headers.update({"X-API-Key": auth[1]})
         elif auth:
             self._session.headers.update(
                 {"Authorization": f"Bearer {self._authenticate(auth[0], auth[1])}"}
