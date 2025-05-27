@@ -2,7 +2,7 @@ import datetime
 from hydroserverpy import HydroServer
 from typing import Dict, Optional
 
-from src.hydroserverpy.etl.types import TimeRange
+from hydroserverpy.etl.types import TimeRange
 from .base import Loader
 import logging
 import pandas as pd
