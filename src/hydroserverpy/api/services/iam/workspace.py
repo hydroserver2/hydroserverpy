@@ -178,7 +178,7 @@ class WorkspaceService(EndpointService):
                     None,
                     ...,
                 )
-                else None
+                else expires_at
             )
         }
         headers = {"Content-type": "application/json"}
