@@ -195,7 +195,7 @@ class DatastreamService(SensorThingsService):
                     None,
                     ...,
                 )
-                else None
+                else phenomenon_begin_time
             ),
             "phenomenonEndTime": (
                 phenomenon_end_time.isoformat()
@@ -204,7 +204,7 @@ class DatastreamService(SensorThingsService):
                     None,
                     ...,
                 )
-                else None
+                else phenomenon_end_time
             ),
             "resultBeginTime": (
                 result_begin_time.isoformat()
@@ -213,7 +213,7 @@ class DatastreamService(SensorThingsService):
                     None,
                     ...,
                 )
-                else None
+                else result_begin_time
             ),
             "resultEndTime": (
                 result_end_time.isoformat()
@@ -222,7 +222,7 @@ class DatastreamService(SensorThingsService):
                     None,
                     ...,
                 )
-                else None
+                else result_end_time
             ),
             "isPrivate": is_private,
             "isVisible": is_visible,
