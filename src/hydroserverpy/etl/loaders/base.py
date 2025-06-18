@@ -9,5 +9,5 @@ class Loader(ABC):
         pass
 
     @abstractmethod
-    def get_data_requirements(self, df: pd.DataFrame) -> Dict[str, pd.Timestamp]:
+    def earliest_begin_date(self, payload_mappings) -> str:
         pass

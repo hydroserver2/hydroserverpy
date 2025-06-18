@@ -1,8 +1,6 @@
-import datetime
 from hydroserverpy import HydroServer
-from typing import Dict, Optional
+from typing import Optional
 
-from hydroserverpy.etl.types import TimeRange
 from .base import Loader
 import logging
 import pandas as pd
@@ -26,66 +24,47 @@ class HydroServerLoader(HydroServer, Loader):
             password=password,
             apikey=apikey,
         )
+        self._begin_cache: dict[str, str] = {}
 
-    def load(self, data: pd.DataFrame, payload_settings) -> None:
+    def load(self, data: pd.DataFrame, payload) -> None:
         """
         Load observations from a DataFrame to the HydroServer.
-
         :param data: A Pandas DataFrame where each column corresponds to a datastream.
         """
-        mappings = payload_settings["mappings"]
-        time_ranges = self.get_data_requirements(mappings)
-        for ds_id in data.columns:
-            if ds_id == "timestamp":
-                continue
-
-            df = data[["timestamp", ds_id]].copy()
-            df.rename(columns={ds_id: "value"}, inplace=True)
-            df.dropna(subset=["value"], inplace=True)
-
-            # ensure the timestamp column is UTC‑aware
-            timestamp_column = df["timestamp"]
-            if timestamp_column.dt.tz is None:
-                df["timestamp"] = timestamp_column.dt.tz_localize("UTC")
-
-            time_range = time_ranges[ds_id]
-            start_ts = pd.to_datetime(time_range["start_time"], utc=True)
-
-            if start_ts:
-                df = df[df["timestamp"] > start_ts]
-            logging.info(f"start cutoff for data loading {start_ts}")
-            if df.empty:
-                logging.warning(
-                    f"No new data to upload for datastream {ds_id}. Skipping."
-                )
-                continue
-            self.datastreams.load_observations(uid=ds_id, observations=df)
-
-    def get_data_requirements(self, source_target_map) -> Dict[str, TimeRange]:
-        """
-        Each target system needs to be able to answer the question: 'What data do you need?'
-        and return a time range for each target time series. Usually the answer will be
-        'anything newer than my most recent observation'.
-        """
-        data_requirements = {}
-        target_ids = [mapping["targetIdentifier"] for mapping in source_target_map]
-        for id in target_ids:
-            datastream = self.datastreams.get(uid=id)
-            if not datastream:
-                message = "Couldn't fetch target datastream. ETL process aborted."
-                logging.error(message)
-                raise message
-
-            start_ts = pd.Timestamp(
-                datastream.phenomenon_end_time or "1970-01-01T00:00:00Z"
+        begin_date = self.earliest_begin_date(payload)
+        new_data = data[data["timestamp"] > begin_date]
+        for col in new_data.columns.difference(["timestamp"]):
+            df = (
+                new_data[["timestamp", col]]
+                .rename(columns={col: "value"})
+                .dropna(subset=["value"])
             )
-            if start_ts.tzinfo is None:
-                start_ts = start_ts.tz_localize("UTC")
+            if df.empty:
+                logging.warning(f"No new data for {col}, skipping.")
+                continue
+            logging.info(f"loading dataframe {df}")
+            logging.info(f"dtypes: {df.dtypes}")
 
-            end_ts = pd.Timestamp.now(tz="UTC")
+            df["value"] = pd.to_numeric(df["value"], errors="raise")
+            self.datastreams.load_observations(uid=col, observations=df)
 
-            data_requirements[id] = {
-                "start_time": start_ts.isoformat(),
-                "end_time": end_ts.isoformat(),
-            }
-        return data_requirements
+    def _fetch_earliest_begin(self, mappings: list[dict]) -> pd.Timestamp:
+        timestamps = []
+        for m in mappings:
+            ds = self.datastreams.get(uid=m["targetIdentifier"])
+            if not ds:
+                raise RuntimeError(f"Datastream {m['targetIdentifier']} not found.")
+            raw = ds.phenomenon_end_time or "1970-01-01"
+            ts = pd.to_datetime(raw, utc=True)
+            logging.info(f"timestamp {ts}")
+            timestamps.append(ts)
+        return min(timestamps)
+
+    def earliest_begin_date(self, payload: dict) -> pd.Timestamp:
+        """
+        Return earliest begin date for a payload, or compute+cache it on first call.
+        """
+        key = payload["name"]
+        if key not in self._begin_cache:
+            self._begin_cache[key] = self._fetch_earliest_begin(payload["mappings"])
+        return self._begin_cache[key]

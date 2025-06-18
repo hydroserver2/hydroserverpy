@@ -129,7 +129,7 @@ class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationF
             return
 
         if self.settings["extractor"]["type"] == "local":
-            with open(self.settings["extractor"]["path"]) as data_file:
+            with open(self.settings["extractor"]["sourceUri"]) as data_file:
                 loader = HydroServerETLCSV(
                     self._connection, data_file=data_file, data_source=self
                 )
@@ -137,7 +137,7 @@ class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationF
         elif self.settings["extractor"]["type"] == "HTTP":
             with tempfile.NamedTemporaryFile(mode="w+") as temp_file:
                 response = requests.get(
-                    self.settings["extractor"]["urlTemplate"],
+                    self.settings["extractor"]["sourceUri"],
                     stream=True,
                     timeout=60,
                 )
