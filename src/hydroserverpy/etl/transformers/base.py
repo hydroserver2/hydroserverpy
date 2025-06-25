@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
-from datetime import timedelta, timezone
 import logging
 from typing import Union
-import pandas as pd
+from src.hydroserverpy.etl.timestamp_parser import TimestampParser
 
 
 class Transformer(ABC):
@@ -16,6 +15,10 @@ class Transformer(ABC):
         if isinstance(self.timestamp_key, int):
             # Users will always interact in 1-based, so if the key is a column index, convert to 0-based
             self.timestamp_key = self.timestamp_key - 1
+
+        self.timestamp_parser = TimestampParser(
+            self.timestamp_format, self.timestamp_offset
+        )
 
     @abstractmethod
     def transform(self, *args, **kwargs) -> None:
@@ -55,7 +58,7 @@ class Transformer(ABC):
         to_keep = ["timestamp", *expected]
         df.drop(columns=df.columns.difference(to_keep), inplace=True)
 
-        df["timestamp"] = self._parse_timestamps(df["timestamp"])
+        df["timestamp"] = self.timestamp_parser.parse_series(df["timestamp"])
 
         df.drop_duplicates(subset=["timestamp"], keep="last")
         logging.info(f"standardized dataframe created: {df.shape}")
@@ -63,55 +66,3 @@ class Transformer(ABC):
         logging.info(f"{df.head()}")
 
         return df
-
-    def _parse_timestamps(self, raw_series: pd.Series) -> pd.Series:
-        """Return a Series of pandas UTC datetimes for the four supported modes."""
-        logging.info(f"parsing timestamps. Format: {self.timestamp_format}")
-
-        fmt = self.timestamp_format.lower()
-
-        VALID_KEYS = {"utc", "iso8601", "constant"}
-        if fmt not in VALID_KEYS and "%" not in self.timestamp_format:
-            raise ValueError(
-                f"timestamp_format must be one of {', '.join(VALID_KEYS)} "
-                "or a valid strftime pattern."
-            )
-
-        series = raw_series.str.strip()
-
-        if fmt == "utc":
-            # Accept Z-suffix, no offset, fractional seconds, etc.
-            parsed = pd.to_datetime(series, utc=True, errors="coerce")
-
-        elif fmt == "iso8601":
-            # pandas reads the embedded offset, then we shift to UTC
-            parsed = pd.to_datetime(series, errors="coerce").dt.tz_convert("UTC")
-
-        elif fmt == "constant":
-            offset = str(self.timestamp_offset).strip()
-            if not (len(offset) == 5 and offset[0] in "+-"):
-                raise ValueError(f"Invalid timestampOffset: {self.timestamp_offset}")
-
-            sign_multiplier = 1 if offset[0] == "+" else -1
-            hours = int(offset[1:3])
-            minutes = int(offset[3:5])
-            total_minutes = sign_multiplier * (hours * 60 + minutes)
-            local_timezone = timezone(timedelta(minutes=total_minutes))
-
-            naive_times = pd.to_datetime(series, errors="coerce")
-            localized_times = naive_times.dt.tz_localize(local_timezone)
-            parsed = localized_times.dt.tz_convert("UTC")
-
-        else:
-            logging.info(f"timestamp format is custom {self.timestamp_format}")
-            parsed = pd.to_datetime(
-                series, format=self.timestamp_format, errors="coerce"
-            ).dt.tz_localize("UTC")
-
-        if parsed.isna().any():
-            bad_rows = series[parsed.isna()].head(5).tolist()
-            logging.warning(
-                f"{parsed.isna().sum()} timestamps failed to parse. Sample bad values: {bad_rows}"
-            )
-
-        return parsed
