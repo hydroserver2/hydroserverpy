@@ -3,7 +3,7 @@ import logging
 import pandas as pd
 from datetime import datetime
 
-from src.hydroserverpy.etl.timestamp_parser import TimestampParser
+from hydroserverpy.etl.timestamp_parser import TimestampParser
 
 
 class Extractor:
