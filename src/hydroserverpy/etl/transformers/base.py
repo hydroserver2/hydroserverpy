@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 import logging
 from typing import Union
-from src.hydroserverpy.etl.timestamp_parser import TimestampParser
+from hydroserverpy.etl.timestamp_parser import TimestampParser
 
 
 class Transformer(ABC):
