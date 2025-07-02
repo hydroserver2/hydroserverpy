@@ -1,7 +1,7 @@
 from typing import Union, List, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field
-from ..base import HydroServerModel
+from ..base import HydroServerResourceModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -13,7 +13,7 @@ class OrchestrationSystemFields(BaseModel):
     orchestration_system_type: str = Field(..., max_length=255, alias="type")
 
 
-class OrchestrationSystem(HydroServerModel, OrchestrationSystemFields):
+class OrchestrationSystem(HydroServerResourceModel, OrchestrationSystemFields):
     def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
         super().__init__(
             _connection=_connection,

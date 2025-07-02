@@ -1,9 +1,9 @@
-from typing import Union, Optional, Literal, TYPE_CHECKING
+from typing import Union, Optional, Literal, List, TYPE_CHECKING
 from pydantic import BaseModel, Field, AliasChoices, AliasPath, field_validator
 from pandas import DataFrame
 from uuid import UUID
 from datetime import datetime
-from ..base import HydroServerModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -130,7 +130,7 @@ class DatastreamFields(BaseModel):
         return value
 
 
-class Datastream(HydroServerModel, DatastreamFields):
+class Datastream(HydroServerResourceModel, DatastreamFields):
     def __init__(
         self,
         _connection: "HydroServer",
@@ -340,3 +340,17 @@ class Datastream(HydroServerModel, DatastreamFields):
             self.phenomenon_end_time = None
 
         self.save()
+
+
+class DatastreamCollection(HydroServerCollectionModel):
+    data: List[Datastream]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        _uid: Union[UUID, str],
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="datastreams", **data
+        )

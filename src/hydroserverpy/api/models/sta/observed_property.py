@@ -1,7 +1,7 @@
 from typing import Union, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field, AliasChoices, AliasPath
-from ..base import HydroServerModel
+from ..base import HydroServerResourceModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -25,7 +25,7 @@ class ObservedPropertyFields(BaseModel):
     )
 
 
-class ObservedProperty(HydroServerModel, ObservedPropertyFields):
+class ObservedProperty(HydroServerResourceModel, ObservedPropertyFields):
     def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
         super().__init__(
             _connection=_connection, _model_ref="observedproperties", _uid=_uid, **data

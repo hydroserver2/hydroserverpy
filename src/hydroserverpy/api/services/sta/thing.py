@@ -1,7 +1,7 @@
 import json
-from typing import TYPE_CHECKING, Union, IO, List, Dict, Optional
+from typing import TYPE_CHECKING, Union, IO, List, Dict, Optional, Tuple
 from uuid import UUID
-from ..base import SensorThingsService
+from ..base import EndpointService
 from hydroserverpy.api.models import Thing
 
 
@@ -10,50 +10,70 @@ if TYPE_CHECKING:
     from hydroserverpy.api.models import Workspace
 
 
-class ThingService(SensorThingsService):
+class ThingService(EndpointService):
     def __init__(self, connection: "HydroServer"):
         self._model = Thing
         self._api_route = "api/data"
         self._endpoint_route = "things"
-        self._sta_route = "api/sensorthings/v1.1/Things"
 
         super().__init__(connection)
 
     def list(
         self,
         workspace: Optional[Union["Workspace", UUID, str]] = None,
+        bbox: Optional[List[Tuple[float, float, float, float]]] = None,
+        state: Optional[List[str]] = None,
+        county: Optional[List[str]] = None,
+        country: Optional[List[str]] = None,
+        site_type: Optional[List[str]] = None,
+        sampling_feature_type: Optional[List[str]] = None,
+        sampling_feature_code: Optional[List[str]] = None,
+        tag: Optional[List[Tuple[str, str]]] = None,
+        is_private: Optional[bool] = None,
         page: int = 1,
         page_size: int = 100,
+        order_by: Optional[List[str]] = None,
     ) -> List["Thing"]:
         """Fetch a collection of things."""
 
-        params = {
-            "$top": page_size,
-            "$skip": page_size * (page - 1),
-            "$expand": "Locations",
+        params = {}
+
+        if workspace is not None:
+            params["workspace"] = [str(getattr(i, 'uid', i)) for i in workspace]
+        if bbox is not None:
+            params["bbox"] = [",".join([str(c) for c in i]) for i in bbox]
+        if state is not None:
+            params["state"] = state
+        if county is not None:
+            params["county"] = county
+        if country is not None:
+            params["country"] = country
+        if site_type is not None:
+            params["site_type"] = site_type
+        if sampling_feature_type is not None:
+            params["sampling_feature_type"] = sampling_feature_type
+        if sampling_feature_code is not None:
+            params["sampling_feature_code"] = sampling_feature_code
+        if tag is not None:
+            params["tag"] = [f"{str(i[0])}:{str(i[1])}" for i in tag]
+        if is_private is not None:
+            params["is_private"] = is_private
+
+        pagination = {
+            "page": page,
+            "page_size": page_size,
+            "order_by": order_by,
         }
 
-        if workspace:
-            params["$filter"] = (
-                f"properties/workspace/id eq '{str(getattr(workspace, 'uid', workspace))}'"
-            )
-
-        return super()._list(params=params)
+        return super()._list(params=params, pagination=pagination)
 
     def get(
-        self, uid: Union[UUID, str], fetch_by_datastream_uid: bool = False
+        self, uid: Union[UUID, str]
     ) -> "Thing":
         """Get a thing by ID."""
 
-        params = {"$expand": "Locations"}
         return self._get(
             uid=str(uid),
-            path=(
-                f"api/sensorthings/v1.1/Datastreams('{str(uid)}')/Thing"
-                if fetch_by_datastream_uid
-                else None
-            ),
-            params=params,
         )
 
     def create(

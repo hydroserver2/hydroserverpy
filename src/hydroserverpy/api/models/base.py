@@ -1,15 +1,23 @@
-from typing import Optional
+from typing import Optional, TypeVar, Any
 from uuid import UUID
 from pydantic import BaseModel, PrivateAttr, ConfigDict, computed_field
 from pydantic.alias_generators import to_camel
 
+T = TypeVar("T", bound=BaseModel)
 
-class HydroServerBaseModel(BaseModel):
+
+class HydroServerResourceModel(BaseModel):
     _uid: Optional[UUID] = PrivateAttr()
+    _model_ref: str = PrivateAttr()
+    _original_data: Optional[dict] = PrivateAttr()
 
-    def __init__(self, _uid: Optional[UUID] = None, **data):
+    def __init__(self, _connection, _model_ref, _uid: Optional[UUID] = None, **data):
         super().__init__(**data)
-        self._uid = _uid
+
+        self._uid = UUID(_uid) if isinstance(_uid, str) else _uid
+        self._connection = _connection
+        self._model_ref = _model_ref
+        self._original_data = self.dict(by_alias=False).copy()
 
     @computed_field
     @property
@@ -17,28 +25,6 @@ class HydroServerBaseModel(BaseModel):
         """The unique identifier for this resource."""
 
         return self._uid
-
-    model_config = ConfigDict(
-        validate_assignment=True,
-        populate_by_name=True,
-        str_strip_whitespace=True,
-        alias_generator=to_camel,
-    )
-
-
-class HydroServerModel(HydroServerBaseModel):
-    _model_ref: str = PrivateAttr()
-    _original_data: Optional[dict] = PrivateAttr()
-
-    def __init__(self, _connection, _model_ref, _uid: Optional[UUID] = None, **data):
-        if isinstance(_uid, str):
-            _uid = UUID(_uid)
-
-        super().__init__(_uid=_uid, **data)
-
-        self._connection = _connection
-        self._model_ref = _model_ref
-        self._original_data = self.dict(by_alias=False).copy()
 
     @property
     def _patch_data(self) -> dict:
@@ -72,3 +58,43 @@ class HydroServerModel(HydroServerBaseModel):
 
         getattr(self._connection, self._model_ref).delete(uid=self._uid)
         self._uid = None
+
+    model_config = ConfigDict(
+        validate_assignment=True,
+        populate_by_name=True,
+        str_strip_whitespace=True,
+        alias_generator=to_camel,
+    )
+
+
+class HydroServerCollectionModel(BaseModel):
+    _model_ref: str = PrivateAttr()
+
+    filters: Optional[dict[str, Any]] = None
+    ordering: Optional[list[str]] = None
+    page: Optional[int] = None
+    page_size: Optional[int] = None
+    total_count: Optional[int] = None
+
+    def __init__(self, _connection, _model_ref, _uid: Optional[UUID] = None, **data):
+        super().__init__(**data)
+
+        self._connection = _connection
+        self._model_ref = _model_ref
+
+    def next_page(self):
+        """Fetches the next page of data from HydroServer."""
+
+        return getattr(self._connection, self._model_ref).list(params=self.filters, pagination={
+            "page": self.page + 1, "page_size": self.page_size, "ordering": self.ordering
+        })
+
+    def previous_page(self):
+        """Fetches the previous page of data from HydroServer."""
+
+        if self.page <= 1:
+            return None
+
+        return getattr(self._connection, self._model_ref).list(params=self.filters, pagination={
+            "page": self.page - 1, "page_size": self.page_size, "ordering": self.ordering
+        })

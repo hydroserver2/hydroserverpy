@@ -2,7 +2,7 @@ from typing import List, Union, Optional, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
 from pydantic import BaseModel, Field, EmailStr
-from ..base import HydroServerModel
+from ..base import HydroServerResourceModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -32,7 +32,7 @@ class WorkspaceFields(BaseModel):
     pending_transfer_to: Optional["Account"] = None
 
 
-class Workspace(HydroServerModel, WorkspaceFields):
+class Workspace(HydroServerResourceModel, WorkspaceFields):
     def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
         super().__init__(
             _connection=_connection, _model_ref="workspaces", _uid=_uid, **data

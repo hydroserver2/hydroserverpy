@@ -3,12 +3,10 @@ from uuid import UUID
 from pydantic import (
     BaseModel,
     Field,
-    AliasChoices,
     AliasPath,
-    AnyHttpUrl,
-    field_validator,
+    AnyHttpUrl
 )
-from ..base import HydroServerModel
+from ..base import HydroServerResourceModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -18,63 +16,19 @@ if TYPE_CHECKING:
 class ThingFields(BaseModel):
     name: str = Field(..., max_length=200)
     description: str
-    sampling_feature_type: str = Field(
-        ...,
-        max_length=200,
-        validation_alias=AliasChoices(
-            "samplingFeatureType", AliasPath("properties", "samplingFeatureType")
-        ),
-    )
-    sampling_feature_code: str = Field(
-        ...,
-        max_length=200,
-        validation_alias=AliasChoices(
-            "samplingFeatureCode", AliasPath("properties", "samplingFeatureCode")
-        ),
-    )
-    site_type: str = Field(
-        ...,
-        max_length=200,
-        validation_alias=AliasChoices("siteType", AliasPath("properties", "siteType")),
-    )
+    sampling_feature_type: str = Field(..., max_length=200)
+    sampling_feature_code: str = Field(..., max_length=200)
+    site_type: str = Field(..., max_length=200)
+    data_disclaimer: Optional[str] = None
+    is_private: bool
     tags: Dict[str, str] = Field(
         ...,
         json_schema_extra={"editable": False, "read_only": True},
-        validation_alias=AliasChoices("tags", AliasPath("properties", "tags")),
     )
     photos: Dict[str, AnyHttpUrl] = Field(
         ...,
         json_schema_extra={"editable": False, "read_only": True},
-        validation_alias=AliasChoices("photos", AliasPath("properties", "photos")),
     )
-    data_disclaimer: Optional[str] = Field(
-        None,
-        validation_alias=AliasChoices(
-            "dataDisclaimer", AliasPath("properties", "dataDisclaimer")
-        ),
-    )
-    is_private: bool = Field(
-        ...,
-        validation_alias=AliasChoices(
-            "isPrivate", AliasPath("properties", "isPrivate")
-        ),
-    )
-
-    @field_validator("tags", mode="before")
-    def convert_tags(
-        cls, value: Union[List[Dict[str, str]], Dict[str, str]]
-    ) -> Dict[str, str]:
-        if isinstance(value, list):
-            return {item["key"]: item["value"] for item in value}
-        return value
-
-    @field_validator("photos", mode="before")
-    def convert_photos(
-        cls, value: Union[List[Dict[str, str]], Dict[str, str]]
-    ) -> Dict[str, str]:
-        if isinstance(value, list):
-            return {item["name"]: item["link"] for item in value}
-        return value
 
 
 class LocationFields(BaseModel):
@@ -82,74 +36,47 @@ class LocationFields(BaseModel):
         ...,
         ge=-90,
         le=90,
-        validation_alias=AliasChoices(
-            "latitude",
-            AliasPath("Locations", 0, "location", "geometry", "coordinates", 0),
-        ),
+        validation_alias=AliasPath("location", "latitude")
     )
     longitude: float = Field(
         ...,
         ge=-180,
         le=180,
-        validation_alias=AliasChoices(
-            "longitude",
-            AliasPath("Locations", 0, "location", "geometry", "coordinates", 1),
-        ),
+        validation_alias=AliasPath("location", "longitude")
     )
     elevation_m: Optional[float] = Field(
         None,
         ge=-99999,
         le=99999,
-        validation_alias=AliasChoices(
-            "elevation_m", AliasPath("Locations", 0, "properties", "elevation_m")
-        ),
+        alias="elevation_m",
+        validation_alias=AliasPath("location", "elevation_m")
     )
     elevation_datum: Optional[str] = Field(
         None,
         max_length=255,
-        validation_alias=AliasChoices(
-            "elevationDatum", AliasPath("Locations", 0, "properties", "elevationDatum")
-        ),
+        validation_alias=AliasPath("location", "elevation_datum")
     )
     state: Optional[str] = Field(
-        None,
-        max_length=200,
-        validation_alias=AliasChoices(
-            "state", AliasPath("Locations", 0, "properties", "state")
-        ),
+        None, max_length=200, validation_alias=AliasPath("location", "state")
     )
     county: Optional[str] = Field(
-        None,
-        max_length=200,
-        validation_alias=AliasChoices(
-            "county", AliasPath("Locations", 0, "properties", "county")
-        ),
+        None, max_length=200, validation_alias=AliasPath("location", "county")
     )
     country: Optional[str] = Field(
-        None,
-        max_length=2,
-        validation_alias=AliasChoices(
-            "country", AliasPath("Locations", 0, "properties", "country")
-        ),
+        None, max_length=2, validation_alias=AliasPath("location", "country")
     )
 
 
-class Thing(HydroServerModel, ThingFields, LocationFields):
+class Thing(HydroServerResourceModel, ThingFields, LocationFields):
     def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
         super().__init__(
             _connection=_connection, _model_ref="things", _uid=_uid, **data
         )
 
-        self._workspace_id = str(
-            data.get("workspace_id")
-            or data.get("workspaceId")
-            or data["properties"]["workspace"]["id"]
-        )
+        self._workspace_id = str(data.get("workspace_id"))
 
         self._workspace = None
         self._datastreams = None
-        self._photos = None
-        self._tags = None
 
     @property
     def workspace(self) -> "Workspace":

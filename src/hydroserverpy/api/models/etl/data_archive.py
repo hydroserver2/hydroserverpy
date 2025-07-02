@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from .orchestration_system import OrchestrationSystem
 from .orchestration_configuration import OrchestrationConfigurationFields
 from ..sta.datastream import Datastream
-from ..base import HydroServerModel
+from ..base import HydroServerResourceModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -17,7 +17,7 @@ class DataArchiveFields(BaseModel):
 
 
 class DataArchive(
-    HydroServerModel, DataArchiveFields, OrchestrationConfigurationFields
+    HydroServerResourceModel, DataArchiveFields, OrchestrationConfigurationFields
 ):
     def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
         super().__init__(

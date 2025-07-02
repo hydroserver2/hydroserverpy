@@ -1,31 +1,57 @@
 from typing import TYPE_CHECKING, Type, Union, Optional
 from datetime import datetime
 from uuid import UUID
+from hydroserverpy.api.models.base import HydroServerCollection
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models.base import HydroServerModel
+    from hydroserverpy.api.models.base import HydroServerResourceModel
 
 
 class EndpointService:
-    _model: Type["HydroServerModel"]
+    _model: Type["HydroServerResourceModel"]
     _api_route: str
     _endpoint_route: str
 
     def __init__(self, connection: "HydroServer") -> None:
         self._connection = connection
 
-    def _list(self, params: Optional[dict] = None):
+    def _list(self, params: Optional[dict] = None, pagination: Optional[dict] = None):
         path = f"/{self._api_route}/{self._endpoint_route}"
 
-        response = self._connection.request("get", path, params=params).json()
+        if pagination is not None:
+            params["page"] = pagination.get("page", 1)
+            params["page_size"] = pagination.get("page_size", 100)
+            params["ordering"] = ",".join(pagination.get("ordering", []))
 
-        return [
-            self._model(
-                _connection=self._connection, _uid=UUID(str(obj.pop("id"))), **obj
-            )
-            for obj in response
-        ]
+        response = self._connection.request("get", path, params=params)
+
+        return HydroServerCollection(
+            _connection=self._connection,
+            _model_ref=self._model._model_ref,  # noqa
+            data=[
+                self._model(
+                    _connection=self._connection, _uid=UUID(str(obj.pop("id"))), **obj
+                )
+                for obj in response.json()
+            ]
+        )
+
+        return {
+
+            "data": [
+                self._model(
+                    _connection=self._connection, _uid=UUID(str(obj.pop("id"))), **obj
+                )
+                for obj in response
+            ],
+            "pagination": {
+                "page": "",
+                "page_size": "",
+                "total_count": "",
+                "total_pages": "",
+            }
+        }
 
     def _get(self, uid: Union[UUID, str]):
         path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}"

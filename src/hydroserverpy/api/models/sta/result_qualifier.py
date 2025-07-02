@@ -1,7 +1,7 @@
 from typing import Union, Optional, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field
-from ..base import HydroServerModel
+from ..base import HydroServerResourceModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -13,7 +13,7 @@ class ResultQualifierFields(BaseModel):
     description: str
 
 
-class ResultQualifier(HydroServerModel, ResultQualifierFields):
+class ResultQualifier(HydroServerResourceModel, ResultQualifierFields):
     def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
         super().__init__(
             _connection=_connection, _model_ref="resultqualifiers", _uid=_uid, **data
