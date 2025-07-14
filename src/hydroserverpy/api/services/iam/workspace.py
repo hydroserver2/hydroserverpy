@@ -18,10 +18,30 @@ class WorkspaceService(EndpointService):
 
         super().__init__(connection)
 
-    def list(self, associated_only: bool = False) -> List["Workspace"]:
+    def list(
+        self,
+        is_private: Optional[bool] = None,
+        is_associated: Optional[bool] = None,
+        page: int = 1,
+        page_size: int = 100,
+        order_by: Optional[List[str]] = None,
+    ) -> List["Workspace"]:
         """Fetch a collection of HydroServer resources."""
 
-        return super()._list(params={"associated_only": associated_only})
+        params = {}
+
+        if is_private is not None:
+            params["is_private"] = is_private
+        if is_associated is not None:
+            params["is_associated"] = is_associated
+
+        pagination = {
+            "page": page,
+            "page_size": page_size,
+            "order_by": order_by,
+        }
+
+        return super()._list(params=params, pagination=pagination)
 
     def get(self, uid: Union[UUID, str]) -> "Workspace":
         """Get a workspace by ID."""
@@ -51,8 +71,37 @@ class WorkspaceService(EndpointService):
 
         super()._delete(uid=str(uid))
 
-    def list_roles(self, uid: Union[UUID, str]) -> List["Role"]:
+    def list_roles(
+        self,
+        uid: Union[UUID, str],
+        is_user_role: Optional[bool] = None,
+        is_apikey_role: Optional[bool] = None,
+        page: int = 1,
+        page_size: int = 100,
+        order_by: Optional[List[str]] = None,
+    ) -> List["Role"]:
         """Get all roles that can be assigned within a workspace."""
+
+        params = {}
+
+        if is_user_role is not None:
+            params["is_user_role"] = is_user_role
+        if is_apikey_role is not None:
+            params["is_apikey_role"] = is_apikey_role
+
+        pagination = {
+            "page": page,
+            "page_size": page_size,
+            "order_by": order_by,
+        }
+
+        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/roles"
+        response = self._connection.request("get", path)
+
+        return super()._list(params=params, pagination=pagination)
+
+
+
 
         path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/roles"
         response = self._connection.request("get", path)

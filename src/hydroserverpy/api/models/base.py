@@ -71,12 +71,12 @@ class HydroServerCollectionModel(BaseModel):
     _model_ref: str = PrivateAttr()
 
     filters: Optional[dict[str, Any]] = None
-    ordering: Optional[list[str]] = None
+    order_by: Optional[list[str]] = None
     page: Optional[int] = None
     page_size: Optional[int] = None
     total_count: Optional[int] = None
 
-    def __init__(self, _connection, _model_ref, _uid: Optional[UUID] = None, **data):
+    def __init__(self, _connection, _model_ref=None, **data):
         super().__init__(**data)
 
         self._connection = _connection
@@ -85,16 +85,22 @@ class HydroServerCollectionModel(BaseModel):
     def next_page(self):
         """Fetches the next page of data from HydroServer."""
 
-        return getattr(self._connection, self._model_ref).list(params=self.filters, pagination={
-            "page": self.page + 1, "page_size": self.page_size, "ordering": self.ordering
-        })
+        return getattr(self._connection, self._model_ref).list(
+            **(self.filters or {}),
+            page=(self.page or 0) + 1,
+            page_size=self.page_size or 100,
+            order_by=self.order_by
+        )
 
     def previous_page(self):
         """Fetches the previous page of data from HydroServer."""
 
-        if self.page <= 1:
+        if not self.page or self.page <= 1:
             return None
 
-        return getattr(self._connection, self._model_ref).list(params=self.filters, pagination={
-            "page": self.page - 1, "page_size": self.page_size, "ordering": self.ordering
-        })
+        return getattr(self._connection, self._model_ref).list(
+            **(self.filters or {}),
+            page=self.page - 1,
+            page_size=self.page_size or 100,
+            order_by=self.order_by
+        )

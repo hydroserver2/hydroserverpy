@@ -1,7 +1,7 @@
-from typing import Union, TYPE_CHECKING
+from typing import Union, List, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -47,3 +47,16 @@ class Unit(HydroServerResourceModel, UnitFields):
         """Delete this unit from HydroServer."""
 
         super()._delete()
+
+
+class UnitCollection(HydroServerCollectionModel):
+    data: List[Unit]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="units", **data
+        )

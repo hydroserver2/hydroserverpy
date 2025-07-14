@@ -20,15 +20,24 @@ class ResultQualifierService(EndpointService):
     def list(
         self,
         workspace: Optional[Union["Workspace", UUID, str]] = None,
+        page: int = 1,
+        page_size: int = 100,
+        order_by: Optional[List[str]] = None,
     ) -> List["ResultQualifier"]:
         """Fetch a collection of result qualifiers."""
 
-        workspace_id = getattr(workspace, "uid", workspace)
-        workspace_id = str(workspace_id) if workspace_id else None
+        params = {}
 
-        return super()._list(
-            params={"workspace_id": workspace_id} if workspace_id else {},
-        )
+        if workspace is not None:
+            params["workspace"] = str(getattr(workspace, "uid", workspace))
+
+        pagination = {
+            "page": page,
+            "page_size": page_size,
+            "order_by": order_by,
+        }
+
+        return super()._list(params=params, pagination=pagination)
 
     def get(self, uid: Union[UUID, str]) -> "ResultQualifier":
         """Get a result qualifier by ID."""

@@ -3,9 +3,8 @@ import pandas as pd
 from typing import Union, Optional, Literal, List, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
-from hydroserverpy.api.models import Datastream
-from ..base import SensorThingsService
-
+from hydroserverpy.api.models import Datastream, DatastreamCollection
+from ..base import EndpointService
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -19,9 +18,10 @@ if TYPE_CHECKING:
     )
 
 
-class DatastreamService(SensorThingsService):
+class DatastreamService(EndpointService):
     def __init__(self, connection: "HydroServer"):
         self._model = Datastream
+        self._collection_model = DatastreamCollection
         self._api_route = "api/data"
         self._endpoint_route = "datastreams"
         self._sta_route = "api/sensorthings/v1.1/Datastreams"
@@ -32,25 +32,83 @@ class DatastreamService(SensorThingsService):
         self,
         workspace: Optional[Union["Workspace", UUID, str]] = None,
         thing: Optional[Union["Thing", UUID, str]] = None,
+        sensor: Optional[Union["Sensor", UUID, str]] = None,
+        observed_property: Optional[Union["ObservedProperty", UUID, str]] = None,
+        processing_level: Optional[Union["ProcessingLevel", UUID, str]] = None,
+        unit: Optional[Union["Unit", UUID, str]] = None,
+        observation_type: Optional[str] = None,
+        sampled_medium: Optional[str] = None,
+        status: Optional[str] = None,
+        result_type: Optional[str] = None,
+        is_private: Optional[bool] = None,
+        value_count_max: Optional[int] = None,
+        value_count_min: Optional[int] = None,
+        phenomenon_begin_time_max: Optional[datetime] = None,
+        phenomenon_begin_time_min: Optional[datetime] = None,
+        phenomenon_end_time_max: Optional[datetime] = None,
+        phenomenon_end_time_min: Optional[datetime] = None,
+        result_begin_time_max: Optional[datetime] = None,
+        result_begin_time_min: Optional[datetime] = None,
+        result_end_time_max: Optional[datetime] = None,
+        result_end_time_min: Optional[datetime] = None,
         page: int = 1,
         page_size: int = 100,
+        order_by: Optional[List[str]] = None,
     ) -> List["Datastream"]:
         """Fetch a collection of datastreams."""
 
-        params = {"$top": page_size, "$skip": page_size * (page - 1)}
+        params = {}
 
-        filters = []
-        if workspace:
-            filters.append(
-                f"properties/workspace/id eq '{str(getattr(workspace, 'uid', workspace))}'"
-            )
-        if thing:
-            filters.append(f"Thing/id eq '{str(getattr(thing, 'uid', thing))}'")
+        if workspace is not None:
+            params["workspace"] = str(getattr(workspace, "uid", workspace))
+        if thing is not None:
+            params["thing"] = str(getattr(thing, "uid", thing))
+        if sensor is not None:
+            params["sensor"] = str(getattr(sensor, "uid", sensor))
+        if observed_property is not None:
+            params["observed_property"] = str(getattr(observed_property, "uid", observed_property))
+        if processing_level is not None:
+            params["processing_level"] = str(getattr(processing_level, "uid", processing_level))
+        if unit is not None:
+            params["unit"] = str(getattr(unit, "uid", unit))
+        if observation_type is not None:
+            params["observation_type"] = observation_type
+        if sampled_medium is not None:
+            params["sampled_medium"] = sampled_medium
+        if status is not None:
+            params["status"] = status
+        if result_type is not None:
+            params["result_type"] = result_type
+        if is_private is not None:
+            params["is_private"] = is_private
+        if value_count_max is not None:
+            params["value_count_max"] = value_count_max
+        if value_count_min is not None:
+            params["value_count_min"] = value_count_min
+        if phenomenon_begin_time_max is not None:
+            params["phenomenon_begin_time_max"] = phenomenon_begin_time_max
+        if phenomenon_begin_time_min is not None:
+            params["phenomenon_begin_time_min"] = phenomenon_begin_time_min
+        if phenomenon_end_time_max is not None:
+            params["phenomenon_end_time_max"] = phenomenon_end_time_max
+        if phenomenon_end_time_min is not None:
+            params["phenomenon_end_time_min"] = phenomenon_end_time_min
+        if result_begin_time_max is not None:
+            params["result_begin_time_max"] = result_begin_time_max
+        if result_begin_time_min is not None:
+            params["result_begin_time_min"] = result_begin_time_min
+        if result_end_time_max is not None:
+            params["result_end_time_max"] = result_end_time_max
+        if result_end_time_min is not None:
+            params["result_end_time_min"] = result_end_time_min
 
-        if filters:
-            params["$filter"] = " and ".join(filters)
+        pagination = {
+            "page": page,
+            "page_size": page_size,
+            "order_by": order_by,
+        }
 
-        return super()._list(params=params)
+        return super()._list(params=params, pagination=pagination)
 
     def get(self, uid: Union[UUID, str]) -> "Datastream":
         """Get a datastream by ID."""

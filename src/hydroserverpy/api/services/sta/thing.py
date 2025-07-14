@@ -2,7 +2,7 @@ import json
 from typing import TYPE_CHECKING, Union, IO, List, Dict, Optional, Tuple
 from uuid import UUID
 from ..base import EndpointService
-from hydroserverpy.api.models import Thing
+from hydroserverpy.api.models import Thing, ThingCollection
 
 
 if TYPE_CHECKING:
@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 class ThingService(EndpointService):
     def __init__(self, connection: "HydroServer"):
         self._model = Thing
+        self._collection_model = ThingCollection
         self._api_route = "api/data"
         self._endpoint_route = "things"
 
@@ -21,14 +22,14 @@ class ThingService(EndpointService):
     def list(
         self,
         workspace: Optional[Union["Workspace", UUID, str]] = None,
-        bbox: Optional[List[Tuple[float, float, float, float]]] = None,
-        state: Optional[List[str]] = None,
-        county: Optional[List[str]] = None,
-        country: Optional[List[str]] = None,
-        site_type: Optional[List[str]] = None,
-        sampling_feature_type: Optional[List[str]] = None,
-        sampling_feature_code: Optional[List[str]] = None,
-        tag: Optional[List[Tuple[str, str]]] = None,
+        bbox: Optional[Tuple[float, float, float, float]] = None,
+        state: Optional[str] = None,
+        county: Optional[str] = None,
+        country: Optional[str] = None,
+        site_type: Optional[str] = None,
+        sampling_feature_type: Optional[str] = None,
+        sampling_feature_code: Optional[str] = None,
+        tag: Optional[Tuple[str, str]] = None,
         is_private: Optional[bool] = None,
         page: int = 1,
         page_size: int = 100,
@@ -39,9 +40,9 @@ class ThingService(EndpointService):
         params = {}
 
         if workspace is not None:
-            params["workspace"] = [str(getattr(i, 'uid', i)) for i in workspace]
+            params["workspace"] = str(getattr(workspace, "uid", workspace))
         if bbox is not None:
-            params["bbox"] = [",".join([str(c) for c in i]) for i in bbox]
+            params["bbox"] = ",".join([str(i) for i in bbox])
         if state is not None:
             params["state"] = state
         if county is not None:

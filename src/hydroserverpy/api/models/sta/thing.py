@@ -6,7 +6,7 @@ from pydantic import (
     AliasPath,
     AnyHttpUrl
 )
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -142,3 +142,16 @@ class Thing(HydroServerResourceModel, ThingFields, LocationFields):
 
         self._connection.things.delete_photo(uid=self.uid, name=name)
         del self.photos[name]
+
+
+class ThingCollection(HydroServerCollectionModel):
+    data: List[Thing]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="things", **data
+        )

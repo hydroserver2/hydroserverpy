@@ -1,7 +1,7 @@
-from typing import Union, Optional, TYPE_CHECKING
+from typing import Union, List, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -47,3 +47,16 @@ class ResultQualifier(HydroServerResourceModel, ResultQualifierFields):
         """Delete this result qualifier from HydroServer."""
 
         super()._delete()
+
+
+class ResultQualifierCollection(HydroServerCollectionModel):
+    data: List[ResultQualifier]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="resultqualifiers", **data
+        )

@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 from .orchestration_system import OrchestrationSystem
 from .orchestration_configuration import OrchestrationConfigurationFields
 from ..sta.datastream import Datastream
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -102,4 +102,17 @@ class DataArchive(
 
         self._connection.dataarchives.remove_datastream(
             uid=self.uid, datastream=datastream
+        )
+
+
+class DataArchiveCollection(HydroServerCollectionModel):
+    data: List[DataArchive]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="dataarchives", **data
         )

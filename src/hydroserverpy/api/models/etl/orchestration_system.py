@@ -1,7 +1,7 @@
 from typing import Union, List, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -76,3 +76,16 @@ class OrchestrationSystem(HydroServerResourceModel, OrchestrationSystemFields):
         """Delete this orchestration system from HydroServer."""
 
         super()._delete()
+
+
+class OrchestrationSystemCollection(HydroServerCollectionModel):
+    data: List[OrchestrationSystem]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="orchestrationsystems", **data
+        )

@@ -1,7 +1,7 @@
-from typing import Union, Optional, TYPE_CHECKING
+from typing import Union, Optional, List, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -48,3 +48,16 @@ class ProcessingLevel(HydroServerResourceModel, ProcessingLevelFields):
         """Delete this processing level from HydroServer."""
 
         super()._delete()
+
+
+class ProcessingLevelCollection(HydroServerCollectionModel):
+    data: List[ProcessingLevel]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="processinglevels", **data
+        )

@@ -1,7 +1,7 @@
-from typing import Union, TYPE_CHECKING
+from typing import Union, List, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field, AliasChoices, AliasPath
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -70,3 +70,17 @@ class ObservedProperty(HydroServerResourceModel, ObservedPropertyFields):
         """Delete this observed property from HydroServer."""
 
         super()._delete()
+
+
+class ObservedPropertyCollection(HydroServerCollectionModel):
+    data: List[ObservedProperty]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="observedproperties", **data
+        )
+

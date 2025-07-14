@@ -1,7 +1,7 @@
-from typing import Union, Optional, TYPE_CHECKING
+from typing import Union, Optional, List, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel, Field, AliasChoices, AliasPath
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -103,3 +103,16 @@ class Sensor(HydroServerResourceModel, SensorFields):
         """Delete this sensor from HydroServer."""
 
         super()._delete()
+
+
+class SensorCollection(HydroServerCollectionModel):
+    data: List[Sensor]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="sensors", **data
+        )

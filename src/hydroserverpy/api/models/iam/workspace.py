@@ -2,7 +2,7 @@ from typing import List, Union, Optional, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
 from pydantic import BaseModel, Field, EmailStr
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -311,3 +311,16 @@ class Workspace(HydroServerResourceModel, WorkspaceFields):
 
         self._connection.workspaces.cancel_ownership_transfer(uid=self.uid)
         self.refresh()
+
+
+class WorkspaceCollection(HydroServerCollectionModel):
+    data: List[Workspace]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="workspaces", **data
+        )

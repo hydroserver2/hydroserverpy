@@ -1,15 +1,15 @@
 from typing import Optional, Union, List, TYPE_CHECKING
 from uuid import UUID
-from ..base import SensorThingsService
+from ..base import EndpointService
 from hydroserverpy.api.models import ObservedProperty
 
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models import Workspace
+    from hydroserverpy.api.models import Workspace, Thing, Datastream
 
 
-class ObservedPropertyService(SensorThingsService):
+class ObservedPropertyService(EndpointService):
     def __init__(self, connection: "HydroServer"):
         self._model = ObservedProperty
         self._api_route = "api/data"
@@ -21,33 +21,38 @@ class ObservedPropertyService(SensorThingsService):
     def list(
         self,
         workspace: Optional[Union["Workspace", UUID, str]] = None,
+        thing: Optional[Union["Thing", UUID, str]] = None,
+        datastream: Optional[Union["Datastream", UUID, str]] = None,
+        observed_property_type: Optional[str] = None,
         page: int = 1,
         page_size: int = 100,
+        order_by: Optional[List[str]] = None,
     ) -> List["ObservedProperty"]:
         """Fetch a collection of observed properties."""
 
-        params = {"$top": page_size, "$skip": page_size * (page - 1)}
+        params = {}
 
-        if workspace:
-            params["$filter"] = (
-                f"properties/workspace/id eq '{str(getattr(workspace, 'uid', workspace))}'"
-            )
+        if workspace is not None:
+            params["workspace"] = str(getattr(workspace, "uid", workspace))
+        if thing is not None:
+            params["thing"] = str(getattr(thing, "uid", thing))
+        if datastream is not None:
+            params["datastream"] = str(getattr(datastream, "uid", datastream))
+        if observed_property_type is not None:
+            params["observed_property_type"] = observed_property_type
 
-        return super()._list(params=params)
+        pagination = {
+            "page": page,
+            "page_size": page_size,
+            "order_by": order_by,
+        }
 
-    def get(
-        self, uid: Union[UUID, str], fetch_by_datastream_uid: bool = False
-    ) -> "ObservedProperty":
+        return super()._list(params=params, pagination=pagination)
+
+    def get(self, uid: Union[UUID, str]) -> "ObservedProperty":
         """Get an observed property by ID."""
 
-        return self._get(
-            uid=str(uid),
-            path=(
-                f"api/sensorthings/v1.1/Datastreams('{str(uid)}')/ObservedProperty"
-                if fetch_by_datastream_uid
-                else None
-            ),
-        )
+        return super()._get(uid=str(uid))
 
     def create(
         self,

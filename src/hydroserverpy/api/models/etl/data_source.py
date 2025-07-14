@@ -7,7 +7,7 @@ from hydroserverpy.etl_csv.hydroserver_etl_csv import HydroServerETLCSV
 from .orchestration_system import OrchestrationSystem
 from .orchestration_configuration import OrchestrationConfigurationFields
 from ..sta.datastream import Datastream
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -151,3 +151,16 @@ class DataSource(HydroServerResourceModel, DataSourceFields, OrchestrationConfig
                     self._connection, data_file=temp_file, data_source=self
                 )
                 loader.run()
+
+
+class DataSourceCollection(HydroServerCollectionModel):
+    data: List[DataSource]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="datasources", **data
+        )

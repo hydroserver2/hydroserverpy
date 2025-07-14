@@ -1,15 +1,15 @@
 from typing import TYPE_CHECKING, Type, Union, Optional
 from datetime import datetime
 from uuid import UUID
-from hydroserverpy.api.models.base import HydroServerCollection
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models.base import HydroServerResourceModel
+    from hydroserverpy.api.models.base import HydroServerResourceModel, HydroServerCollectionModel
 
 
 class EndpointService:
     _model: Type["HydroServerResourceModel"]
+    _collection_model: Type["HydroServerCollectionModel"]
     _api_route: str
     _endpoint_route: str
 
@@ -22,36 +22,27 @@ class EndpointService:
         if pagination is not None:
             params["page"] = pagination.get("page", 1)
             params["page_size"] = pagination.get("page_size", 100)
-            params["ordering"] = ",".join(pagination.get("ordering", []))
+            if pagination.get("order_by") is not None:
+                params["order_by"] = ",".join(pagination["order_by"])
 
         response = self._connection.request("get", path, params=params)
 
-        return HydroServerCollection(
+        return self._collection_model(
             _connection=self._connection,
-            _model_ref=self._model._model_ref,  # noqa
             data=[
                 self._model(
                     _connection=self._connection, _uid=UUID(str(obj.pop("id"))), **obj
                 )
                 for obj in response.json()
-            ]
-        )
-
-        return {
-
-            "data": [
-                self._model(
-                    _connection=self._connection, _uid=UUID(str(obj.pop("id"))), **obj
-                )
-                for obj in response
             ],
-            "pagination": {
-                "page": "",
-                "page_size": "",
-                "total_count": "",
-                "total_pages": "",
-            }
-        }
+            filters={
+                k: v for k, v in params.items() if k not in ["page", "page_size", "order_by"]
+            } or None,
+            order_by=pagination.get("order_by"),
+            page=response.headers.get("X-Page"),
+            page_size=response.headers.get("X-Page-Size"),
+            total_count=response.headers.get("X-Total-Count"),
+        )
 
     def _get(self, uid: Union[UUID, str]):
         path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}"

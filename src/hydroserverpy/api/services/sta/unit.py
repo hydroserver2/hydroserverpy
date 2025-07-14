@@ -1,17 +1,18 @@
 from typing import Optional, Union, List, TYPE_CHECKING
 from uuid import UUID
 from ..base import EndpointService
-from hydroserverpy.api.models import Unit
+from hydroserverpy.api.models import Unit, UnitCollection
 
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models import Workspace
+    from hydroserverpy.api.models import Workspace, Thing, Datastream
 
 
 class UnitService(EndpointService):
     def __init__(self, connection: "HydroServer"):
         self._model = Unit
+        self._collection_model = UnitCollection
         self._api_route = "api/data"
         self._endpoint_route = "units"
 
@@ -20,15 +21,33 @@ class UnitService(EndpointService):
     def list(
         self,
         workspace: Optional[Union["Workspace", UUID, str]] = None,
+        thing: Optional[Union["Thing", UUID, str]] = None,
+        datastream: Optional[Union["Datastream", UUID, str]] = None,
+        unit_type: Optional[str] = None,
+        page: int = 1,
+        page_size: int = 100,
+        order_by: Optional[List[str]] = None,
     ) -> List["Unit"]:
         """Fetch a collection of units."""
 
-        workspace_id = getattr(workspace, "uid", workspace)
-        workspace_id = str(workspace_id) if workspace_id else None
+        params = {}
 
-        return super()._list(
-            params={"workspace_id": workspace_id} if workspace_id else {},
-        )
+        if workspace is not None:
+            params["workspace"] = str(getattr(workspace, "uid", workspace))
+        if thing is not None:
+            params["thing"] = str(getattr(thing, "uid", thing))
+        if datastream is not None:
+            params["datastream"] = str(getattr(datastream, "uid", datastream))
+        if unit_type is not None:
+            params["unit_type"] = unit_type
+
+        pagination = {
+            "page": page,
+            "page_size": page_size,
+            "order_by": order_by,
+        }
+
+        return super()._list(params=params, pagination=pagination)
 
     def get(self, uid: Union[UUID, str]) -> "Unit":
         """Get a unit by ID."""

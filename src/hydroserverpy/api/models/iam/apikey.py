@@ -1,8 +1,8 @@
-from typing import Optional, Union, TYPE_CHECKING
+from typing import Optional, Union, List, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
 from pydantic import BaseModel
-from ..base import HydroServerResourceModel
+from ..base import HydroServerResourceModel, HydroServerCollectionModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -75,3 +75,17 @@ class APIKey(HydroServerResourceModel, APIKeyFields):
         )
 
         return key
+
+
+class APIKeyCollection(HydroServerCollectionModel):
+    data: List[APIKey]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="apikeys", **data
+        )
+

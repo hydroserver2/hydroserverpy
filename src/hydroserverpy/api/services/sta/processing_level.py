@@ -6,7 +6,7 @@ from hydroserverpy.api.models import ProcessingLevel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models import Workspace
+    from hydroserverpy.api.models import Workspace, Thing, Datastream
 
 
 class ProcessingLevelService(EndpointService):
@@ -20,15 +20,30 @@ class ProcessingLevelService(EndpointService):
     def list(
         self,
         workspace: Optional[Union["Workspace", UUID, str]] = None,
+        thing: Optional[Union["Thing", UUID, str]] = None,
+        datastream: Optional[Union["Datastream", UUID, str]] = None,
+        page: int = 1,
+        page_size: int = 100,
+        order_by: Optional[List[str]] = None,
     ) -> List["ProcessingLevel"]:
         """Fetch a collection of processing levels."""
 
-        workspace_id = getattr(workspace, "uid", workspace)
-        workspace_id = str(workspace_id) if workspace_id else None
+        params = {}
 
-        return super()._list(
-            params={"workspace_id": workspace_id} if workspace_id else {},
-        )
+        if workspace is not None:
+            params["workspace"] = str(getattr(workspace, "uid", workspace))
+        if thing is not None:
+            params["thing"] = str(getattr(thing, "uid", thing))
+        if datastream is not None:
+            params["datastream"] = str(getattr(datastream, "uid", datastream))
+
+        pagination = {
+            "page": page,
+            "page_size": page_size,
+            "order_by": order_by,
+        }
+
+        return super()._list(params=params, pagination=pagination)
 
     def get(self, uid: Union[UUID, str]) -> "ProcessingLevel":
         """Get a processing level by ID."""

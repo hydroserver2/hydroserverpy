@@ -1,8 +1,10 @@
-from typing import Union, TYPE_CHECKING
+from typing import Union, List, TYPE_CHECKING
 from uuid import UUID
 from pydantic import BaseModel
+from ..base import HydroServerCollectionModel
 
 if TYPE_CHECKING:
+    from hydroserverpy import HydroServer
     from hydroserverpy.api.models.iam.account import Account
     from hydroserverpy.api.models.iam.role import Role
 
@@ -32,3 +34,17 @@ class Collaborator(CollaboratorFields):
         self._connection.workspaces.remove_collaborator(
             uid=self.workspace_id, email=self.user.email
         )
+
+
+class CollaboratorCollection(HydroServerCollectionModel):
+    data: List[Collaborator]
+
+    def __init__(
+        self,
+        _connection: "HydroServer",
+        **data,
+    ):
+        super().__init__(
+            _connection=_connection, _model_ref="collaborators", **data
+        )
+
