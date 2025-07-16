@@ -34,10 +34,8 @@ class Extractor:
                 continue
 
             if isinstance(value, (datetime, pd.Timestamp)):
-                fmt = var.get("timestampFormat", "ISO8601")
-                offset = var.get("timestampOffset", "+0000")
-                parser = TimestampParser(fmt, offset)
-                value = parser.format(value)
+                parser = TimestampParser(var["timestamp"])
+                value = parser.utc_to_string(value)
 
             filled[name] = value
         if not filled:
