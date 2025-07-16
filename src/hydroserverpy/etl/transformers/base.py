@@ -2,23 +2,19 @@ from abc import ABC, abstractmethod
 import logging
 from typing import Union
 from hydroserverpy.etl.timestamp_parser import TimestampParser
+import pandas as pd
 
 
 class Transformer(ABC):
     def __init__(self, settings: object):
-        # timestampFormat will be the strs: 'utc', 'ISO8601', 'constant', or some custom openStrftime.
-        # If 'constant', then the system will append the timestamp_offset to the end of it.
-        self.timestamp_format = settings.get("timestampFormat", "ISO8601")
-        self.timestamp_offset: str = settings.get("timestampOffset", "+0000")
-        self.timestamp_key: Union[str, int] = settings["timestampKey"]
+        self.timestamp = settings["timestamp"]
+        self.timestamp_key: Union[str, int] = self.timestamp["key"]
 
         if isinstance(self.timestamp_key, int):
             # Users will always interact in 1-based, so if the key is a column index, convert to 0-based
             self.timestamp_key = self.timestamp_key - 1
 
-        self.timestamp_parser = TimestampParser(
-            self.timestamp_format, self.timestamp_offset
-        )
+        self.timestamp_parser = TimestampParser(self.timestamp)
 
     @abstractmethod
     def transform(self, *args, **kwargs) -> None:
@@ -28,7 +24,7 @@ class Transformer(ABC):
     def needs_datastreams(self) -> bool:
         return False
 
-    def standardize_dataframe(self, df, payload_mappings):
+    def standardize_dataframe(self, df: pd.DataFrame, payload_mappings):
         rename_map = {
             mapping["sourceIdentifier"]: mapping["targetIdentifier"]
             for mapping in payload_mappings
