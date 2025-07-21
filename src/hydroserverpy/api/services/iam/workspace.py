@@ -1,72 +1,69 @@
+import json
 from typing import TYPE_CHECKING, Union, List, Tuple, Optional
 from pydantic import EmailStr
 from uuid import UUID
 from datetime import datetime
 from hydroserverpy.api.models import Workspace, Role, Collaborator, APIKey
-from ..base import EndpointService
+from hydroserverpy.api.utils import normalize_uuid
+from ..base import HydroServerBaseService
 
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
 
 
-class WorkspaceService(EndpointService):
-    def __init__(self, connection: "HydroServer"):
-        self._model = Workspace
-        self._api_route = "api/auth"
-        self._endpoint_route = "workspaces"
+class WorkspaceService(HydroServerBaseService):
+    def __init__(self, client: "HydroServer"):
+        self.model = Workspace
+        super().__init__(client)
 
-        super().__init__(connection)
+    def list(
+        self,
+        page: int = ...,
+        page_size: int = ...,
+        order_by: List[str] = ...,
+        is_private: bool = ...,
+        is_associated: bool = ...,
+        fetch_all: bool = False,
+    ) -> List["Workspace"]:
+        """Fetch a collection of HydroServer workspaces."""
 
-    def list(self, associated_only: bool = False) -> List["Workspace"]:
-        """Fetch a collection of HydroServer resources."""
-
-        return super()._list(params={"associated_only": associated_only})
-
-    def get(self, uid: Union[UUID, str]) -> "Workspace":
-        """Get a workspace by ID."""
-
-        return super()._get(uid=str(uid))
+        return super().list(
+            page=page,
+            page_size=page_size,
+            order_by=order_by,
+            fetch_all=fetch_all,
+            is_private=is_private,
+            is_associated=is_associated,
+        )
 
     def create(self, name: str, is_private: bool, **_) -> "Workspace":
         """Create a new workspace."""
 
-        kwargs = {"name": name, "isPrivate": is_private}
-
-        return super()._create(**kwargs)
+        return super().create(
+            name=name,
+            is_private=is_private,
+        )
 
     def update(
         self, uid: Union[UUID, str], name: str = ..., is_private: bool = ..., **_
     ) -> "Workspace":
         """Update a workspace."""
 
-        kwargs = {"name": name, "isPrivate": is_private}
-
-        return super()._update(
-            uid=str(uid), **{k: v for k, v in kwargs.items() if v is not ...}
+        return super().update(
+            uid=uid,
+            name=name,
+            is_private=is_private,
         )
-
-    def delete(self, uid: Union[UUID, str]) -> None:
-        """Delete a workspace."""
-
-        super()._delete(uid=str(uid))
-
-    def list_roles(self, uid: Union[UUID, str]) -> List["Role"]:
-        """Get all roles that can be assigned within a workspace."""
-
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/roles"
-        response = self._connection.request("get", path)
-
-        return [Role(**obj) for obj in response.json()]
 
     def list_collaborators(self, uid: Union[UUID, str]) -> List["Collaborator"]:
         """Get all collaborators associated with a workspace."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/collaborators"
-        response = self._connection.request("get", path)
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/collaborators"
+        response = self.client.request("get", path)
 
         return [
-            Collaborator(_connection=self._connection, workspace_id=uid, **obj)
+            Collaborator(client=self.client, uid=None, workspace_id=uid, **obj)
             for obj in response.json()
         ]
 
@@ -75,15 +72,18 @@ class WorkspaceService(EndpointService):
     ) -> "Collaborator":
         """Add a collaborator to a workspace."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/collaborators"
-        response = self._connection.request(
-            "post",
-            path,
-            json={"email": email, "roleId": str(getattr(role, "uid", role))},
-        )
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/collaborators"
+        headers = {"Content-type": "application/json"}
+        body = {
+            "email": email,
+            "roleId": normalize_uuid(role)
+        }
+        response = self.client.request(
+            "post", path, headers=headers, data=json.dumps(body, default=self.default_serializer)
+        ).json()
 
         return Collaborator(
-            _connection=self._connection, workspace_id=uid, **response.json()
+            client=self.client, uid=None, workspace_id=uid, **response
         )
 
     def edit_collaborator_role(
@@ -91,66 +91,73 @@ class WorkspaceService(EndpointService):
     ) -> "Collaborator":
         """Edit the role of a collaborator in a workspace."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/collaborators"
-        response = self._connection.request(
-            "put",
-            path,
-            json={"email": email, "roleId": str(getattr(role, "uid", role))},
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/collaborators"
+        headers = {"Content-type": "application/json"}
+        body = {
+            "email": email,
+            "roleId": normalize_uuid(role)
+        }
+
+        response = self.client.request(
+            "put", path, headers=headers, data=json.dumps(body, default=self.default_serializer)
         )
 
         return Collaborator(
-            _connection=self._connection, workspace_id=uid, **response.json()
+            client=self.client, uid=None, workspace_id=uid, **response.json()
         )
 
     def remove_collaborator(self, uid: Union[UUID, str], email: EmailStr) -> None:
         """Remove a collaborator from a workspace."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/collaborators"
-        self._connection.request("delete", path, json={"email": email})
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/collaborators"
+        self.client.request("delete", path, json={"email": email})
 
     def list_api_keys(self, uid: Union[UUID, str]) -> List["APIKey"]:
         """Get all API keys associated with a workspace."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys"
-        response = self._connection.request("get", path)
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/api-keys"
+        response = self.client.request("get", path)
 
-        return [APIKey(_connection=self._connection, _uid=UUID(str(obj.pop("id"))), **obj) for obj in response.json()]
+        return [
+            APIKey(client=self.client, **obj)
+            for obj in response.json()
+        ]
 
     def get_api_key(self, uid: Union[UUID, str], api_key_id: Union[UUID, str]) -> "APIKey":
         """Get an API key associated with a workspace."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys/{api_key_id}"
-        response = self._connection.request("get", path).json()
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/api-keys/{api_key_id}"
+        response = self.client.request("get", path)
 
-        return APIKey(_connection=self._connection, _uid=UUID(str(response.pop("id"))), **response)
+        return APIKey(client=self.client, **response.json())
 
     def create_api_key(
         self,
         uid: Union[UUID, str],
-        role: Union["Role", UUID, str],
         name: str,
+        role: Union["Role", UUID, str],
         description: Optional[str] = None,
         is_active: bool = True,
         expires_at: Optional[datetime] = None
     ) -> Tuple["APIKey", str]:
         """Create an API key for a workspace."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys"
-        kwargs = {
-            "roleId": str(getattr(role, "uid", role)),
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/api-keys"
+        headers = {"Content-type": "application/json"}
+        body = {
+            "roleId": normalize_uuid(role),
             "name": name,
             "description": description,
             "isActive": is_active,
             "expiresAt": expires_at
         }
-        headers = {"Content-type": "application/json"}
 
-        response = self._connection.request(
-            "post", path, headers=headers, json=self._to_iso_time(kwargs)
+        response = self.client.request(
+            "post", path, headers=headers, data=json.dumps(body, default=self.default_serializer),
         ).json()
 
         return APIKey(
-            _connection=self._connection, _uid=UUID(str(response.pop("id"))), **response
+            client=self.client, **response
         ), response["key"]
 
     def update_api_key(
@@ -165,32 +172,22 @@ class WorkspaceService(EndpointService):
     ) -> "APIKey":
         """Update an existing API key."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys/{str(api_key_id)}"
-        kwargs = {
-            "roleId": ... if role is ... else str(getattr(role, "uid", role)),
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/api-keys/{api_key_id}"
+        headers = {"Content-type": "application/json"}
+        body = {
+            "roleId": normalize_uuid(role),
             "name": name,
             "description": description,
             "isActive": is_active,
-            "expiresAt": (
-                expires_at.isoformat()
-                if expires_at
-                not in (
-                    None,
-                    ...,
-                )
-                else expires_at
-            )
+            "expiresAt": expires_at
         }
-        headers = {"Content-type": "application/json"}
+        body = {k: v for k, v in body.items() if v is not ...}
 
-        response = self._connection.request(
-            "patch", path, headers=headers,
-            json={k: v for k, v in kwargs.items() if v is not ...}
+        response = self.client.request(
+            "patch", path, headers=headers, data=json.dumps(body, default=self.default_serializer),
         ).json()
 
-        return APIKey(
-            _connection=self._connection, _uid=UUID(str(response.pop("id"))), **response
-        )
+        return APIKey(client=self.client, **response)
 
     def delete_api_key(
         self,
@@ -199,8 +196,8 @@ class WorkspaceService(EndpointService):
     ):
         """Delete an existing API key."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys/{str(api_key_id)}"
-        self._connection.request("delete", path)
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/api-keys/{api_key_id}"
+        self.client.request("delete", path)
 
     def regenerate_api_key(
         self,
@@ -209,27 +206,27 @@ class WorkspaceService(EndpointService):
     ):
         """Regenerate an existing API key."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/api-keys/{str(api_key_id)}/regenerate"
-        response = self._connection.request("put", path).json()
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/api-keys/{api_key_id}/regenerate"
+        response = self.client.request("put", path).json()
 
         return APIKey(
-            _connection=self._connection, _uid=UUID(str(response.pop("id"))), **response
+            client=self.client, **response
         ), response["key"]
 
     def transfer_ownership(self, uid: Union[UUID, str], email: str) -> None:
         """Transfer ownership of a workspace to another HydroServer user."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/transfer"
-        self._connection.request("post", path, json={"newOwner": email})
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/transfer"
+        self.client.request("post", path, json={"newOwner": email})
 
     def accept_ownership_transfer(self, uid: Union[UUID, str]) -> None:
         """Accept ownership transfer of a workspace."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/transfer"
-        self._connection.request("put", path)
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/transfer"
+        self.client.request("put", path)
 
     def cancel_ownership_transfer(self, uid: Union[UUID, str]) -> None:
         """Cancel ownership transfer of a workspace."""
 
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}/transfer"
-        self._connection.request("delete", path)
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/transfer"
+        self.client.request("delete", path)

@@ -33,7 +33,7 @@ from hydroserverpy import HydroServer
 # Initialize HydroServer connection with credentials.
 hs_api = HydroServer(
     host='https://playground.hydroserver.org',
-    username='user@example.com',
+    email='user@example.com',
     password='******'
 )
 ```

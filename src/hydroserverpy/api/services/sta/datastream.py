@@ -3,9 +3,10 @@ import pandas as pd
 from typing import Union, Optional, Literal, List, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
-from hydroserverpy.api.models import Datastream
-from ..base import SensorThingsService
-
+from pydantic.alias_generators import to_camel
+from hydroserverpy.api.models import Datastream, ObservationCollection
+from hydroserverpy.api.utils import normalize_uuid
+from ..base import HydroServerBaseService
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -16,46 +17,77 @@ if TYPE_CHECKING:
         Sensor,
         ObservedProperty,
         ProcessingLevel,
+        DataSource,
+        DataArchive
     )
 
 
-class DatastreamService(SensorThingsService):
-    def __init__(self, connection: "HydroServer"):
-        self._model = Datastream
-        self._api_route = "api/data"
-        self._endpoint_route = "datastreams"
-        self._sta_route = "api/sensorthings/v1.1/Datastreams"
-
-        super().__init__(connection)
+class DatastreamService(HydroServerBaseService):
+    def __init__(self, client: "HydroServer"):
+        self.model = Datastream
+        super().__init__(client)
 
     def list(
         self,
-        workspace: Optional[Union["Workspace", UUID, str]] = None,
-        thing: Optional[Union["Thing", UUID, str]] = None,
-        page: int = 1,
-        page_size: int = 100,
-    ) -> List["Datastream"]:
-        """Fetch a collection of datastreams."""
+        page: int = ...,
+        page_size: int = ...,
+        order_by: List[str] = ...,
+        workspace: Union["Workspace", UUID, str] = ...,
+        thing: Union["Thing", UUID, str] = ...,
+        sensor: Union["Sensor", UUID, str] = ...,
+        observed_property: Union["ObservedProperty", UUID, str] = ...,
+        processing_level: Union["ProcessingLevel", UUID, str] = ...,
+        unit: Union["Unit", UUID, str] = ...,
+        data_source: Optional[Union["DataSource", UUID, str]] = ...,
+        data_archive: Optional[Union["DataArchive", UUID, str]] = ...,
+        observation_type: str = ...,
+        sampled_medium: str = ...,
+        status: Optional[str] = ...,
+        result_type: str = ...,
+        is_private: bool = ...,
+        value_count_max: int = ...,
+        value_count_min: int = ...,
+        phenomenon_begin_time_max: datetime = ...,
+        phenomenon_begin_time_min: datetime = ...,
+        phenomenon_end_time_max: datetime = ...,
+        phenomenon_end_time_min: datetime = ...,
+        result_begin_time_max: datetime = ...,
+        result_begin_time_min: datetime = ...,
+        result_end_time_max: datetime = ...,
+        result_end_time_min: datetime = ...,
+        fetch_all: bool = False,
+    ) -> List["Workspace"]:
+        """Fetch a collection of HydroServer workspaces."""
 
-        params = {"$top": page_size, "$skip": page_size * (page - 1)}
-
-        filters = []
-        if workspace:
-            filters.append(
-                f"properties/workspace/id eq '{str(getattr(workspace, 'uid', workspace))}'"
-            )
-        if thing:
-            filters.append(f"Thing/id eq '{str(getattr(thing, 'uid', thing))}'")
-
-        if filters:
-            params["$filter"] = " and ".join(filters)
-
-        return super()._list(params=params)
-
-    def get(self, uid: Union[UUID, str]) -> "Datastream":
-        """Get a datastream by ID."""
-
-        return super()._get(uid=str(uid))
+        return super().list(
+            page=page,
+            page_size=page_size,
+            order_by=order_by,
+            workspace_id=normalize_uuid(workspace),
+            thing_id=normalize_uuid(thing),
+            sensor_id=normalize_uuid(sensor),
+            observed_property_id=normalize_uuid(observed_property),
+            processing_level_id=normalize_uuid(processing_level),
+            unit_id=normalize_uuid(unit),
+            data_source_id=normalize_uuid(data_source),
+            data_archive_id=normalize_uuid(data_archive),
+            observation_type=observation_type,
+            sampled_medium=sampled_medium,
+            status=status,
+            result_type=result_type,
+            is_private=is_private,
+            value_count_max=value_count_max,
+            value_count_min=value_count_min,
+            phenomenon_begin_time_max=phenomenon_begin_time_max,
+            phenomenon_begin_time_min=phenomenon_begin_time_min,
+            phenomenon_end_time_max=phenomenon_end_time_max,
+            phenomenon_end_time_min=phenomenon_end_time_min,
+            result_begin_time_max=result_begin_time_max,
+            result_begin_time_min=result_begin_time_min,
+            result_end_time_max=result_end_time_max,
+            result_end_time_min=result_end_time_min,
+            fetch_all=fetch_all,
+        )
 
     def create(
         self,
@@ -88,18 +120,14 @@ class DatastreamService(SensorThingsService):
     ) -> "Datastream":
         """Create a new datastream."""
 
-        kwargs = {
+        body = {
             "name": name,
             "description": description,
-            "thingId": str(getattr(thing, "uid", thing)),
-            "sensorId": str(getattr(sensor, "uid", sensor)),
-            "observedPropertyId": str(
-                getattr(observed_property, "uid", observed_property)
-            ),
-            "processingLevelId": str(
-                getattr(processing_level, "uid", processing_level)
-            ),
-            "unitId": str(getattr(unit, "uid", unit)),
+            "thingId": normalize_uuid(thing),
+            "sensorId": normalize_uuid(sensor),
+            "observedPropertyId": normalize_uuid(observed_property),
+            "processingLevelId": normalize_uuid(processing_level),
+            "unitId": normalize_uuid(unit),
             "observationType": observation_type,
             "resultType": result_type,
             "sampledMedium": sampled_medium,
@@ -111,21 +139,15 @@ class DatastreamService(SensorThingsService):
             "intendedTimeSpacingUnit": intended_time_spacing_unit,
             "status": status,
             "valueCount": value_count,
-            "phenomenonBeginTime": (
-                phenomenon_begin_time.isoformat() if phenomenon_begin_time else None
-            ),
-            "phenomenonEndTime": (
-                phenomenon_end_time.isoformat() if phenomenon_end_time else None
-            ),
-            "resultBeginTime": (
-                result_begin_time.isoformat() if result_begin_time else None
-            ),
-            "resultEndTime": result_end_time.isoformat() if result_end_time else None,
+            "phenomenonBeginTime": phenomenon_begin_time,
+            "phenomenonEndTime": phenomenon_end_time,
+            "resultBeginTime": result_begin_time,
+            "resultEndTime": result_end_time,
             "isPrivate": is_private,
             "isVisible": is_visible,
         }
 
-        return super()._create(**kwargs)
+        return super().create(**body)
 
     def update(
         self,
@@ -161,22 +183,14 @@ class DatastreamService(SensorThingsService):
     ) -> "Datastream":
         """Update a datastream."""
 
-        kwargs = {
+        body = {
             "name": name,
             "description": description,
-            "thingId": ... if thing is ... else str(getattr(thing, "uid", thing)),
-            "sensorId": ... if sensor is ... else str(getattr(sensor, "uid", sensor)),
-            "observedPropertyId": (
-                ...
-                if observed_property is ...
-                else str(getattr(observed_property, "uid", observed_property))
-            ),
-            "processingLevelId": (
-                ...
-                if processing_level is ...
-                else str(getattr(processing_level, "uid", processing_level))
-            ),
-            "unitId": ... if unit is ... else str(getattr(unit, "uid", unit)),
+            "thingId": normalize_uuid(thing),
+            "sensorId": normalize_uuid(sensor),
+            "observedPropertyId": normalize_uuid(observed_property),
+            "processingLevelId": normalize_uuid(processing_level),
+            "unitId": normalize_uuid(unit),
             "observationType": observation_type,
             "resultType": result_type,
             "sampledMedium": sampled_medium,
@@ -188,132 +202,55 @@ class DatastreamService(SensorThingsService):
             "intendedTimeSpacingUnit": intended_time_spacing_unit,
             "status": status,
             "valueCount": value_count,
-            "phenomenonBeginTime": (
-                phenomenon_begin_time.isoformat()
-                if phenomenon_begin_time
-                not in (
-                    None,
-                    ...,
-                )
-                else phenomenon_begin_time
-            ),
-            "phenomenonEndTime": (
-                phenomenon_end_time.isoformat()
-                if phenomenon_end_time
-                not in (
-                    None,
-                    ...,
-                )
-                else phenomenon_end_time
-            ),
-            "resultBeginTime": (
-                result_begin_time.isoformat()
-                if result_begin_time
-                not in (
-                    None,
-                    ...,
-                )
-                else result_begin_time
-            ),
-            "resultEndTime": (
-                result_end_time.isoformat()
-                if result_end_time
-                not in (
-                    None,
-                    ...,
-                )
-                else result_end_time
-            ),
+            "phenomenonBeginTime": phenomenon_begin_time,
+            "phenomenonEndTime": phenomenon_end_time,
+            "resultBeginTime": result_begin_time,
+            "resultEndTime": result_end_time,
             "isPrivate": is_private,
             "isVisible": is_visible,
         }
 
-        return super()._update(
-            uid=str(uid), **{k: v for k, v in kwargs.items() if v is not ...}
-        )
-
-    def delete(self, uid: Union[UUID, str]) -> None:
-        """Delete a datastream."""
-
-        super()._delete(uid=str(uid))
+        return super().update(uid=str(uid), **body)
 
     def get_observations(
         self,
         uid: Union[UUID, str],
-        start_time: datetime = None,
-        end_time: datetime = None,
-        page: int = 1,
+        page: int = ...,
         page_size: int = 100000,
-        include_quality: bool = False,
+        order_by: List[str] = ...,
+        phenomenon_time_max: datetime = ...,
+        phenomenon_time_min: datetime = ...,
         fetch_all: bool = False,
-    ) -> pd.DataFrame:
+    ) -> ObservationCollection:
         """Retrieve observations of a datastream."""
 
-        filters = []
-        if start_time:
-            filters.append(
-                f'phenomenonTime ge {start_time.strftime("%Y-%m-%dT%H:%M:%S%z")}'
-            )
-        if end_time:
-            filters.append(
-                f'phenomenonTime le {end_time.strftime("%Y-%m-%dT%H:%M:%S%z")}'
-            )
+        params = {
+            "page": page,
+            "page_size": page_size,
+            "order_by": ",".join(order_by) if order_by is not ... else order_by,
+            "phenomenon_time_max": phenomenon_time_max,
+            "phenomenon_time_min": phenomenon_time_min,
+            "format": "column"
+        }
+        params = {
+            k: ("null" if v is None else v)
+            for k, v in params.items()
+            if v is not ...
+        }
 
-        if fetch_all:
-            page = 1
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/observations"
+        response = self.client.request("get", path, params=params)
+        datastream = self.get(uid=uid)
+        collection = ObservationCollection(
+            datastream=datastream,
+            response=response,
+            order_by=params.get("order_by"),
+            filters={k: v for k, v in params.items() if k not in ["page", "page_size", "order_by", "format"]},
+        )
+        if fetch_all is True:
+            collection = collection.fetch_all()
 
-        observations = []
-
-        while True:
-            response = self._connection.request(
-                "get",
-                f"api/sensorthings/v1.1/Datastreams('{str(uid)}')/Observations",
-                params={
-                    "$resultFormat": "dataArray",
-                    "$select": f'phenomenonTime,result{",resultQuality" if include_quality else ""}',
-                    "$count": True,
-                    "$top": page_size,
-                    "$skip": (page - 1) * page_size,
-                    "$filter": " and ".join(filters) if filters else None,
-                },
-            )
-            response_content = json.loads(response.content)
-            data_array = (
-                response_content["value"][0]["dataArray"]
-                if response_content["value"]
-                else []
-            )
-            observations.extend(
-                [
-                    (
-                        [
-                            obs[0],
-                            obs[1],
-                            obs[2]["qualityCode"] if obs[2]["qualityCode"] else None,
-                            (
-                                obs[2]["resultQualifiers"]
-                                if obs[2]["resultQualifiers"]
-                                else None
-                            ),
-                        ]
-                        if include_quality
-                        else [obs[0], obs[1]]
-                    )
-                    for obs in data_array
-                ]
-            )
-            if not fetch_all or len(data_array) < page_size:
-                break
-            page += 1
-
-        columns = ["timestamp", "value"]
-        if include_quality:
-            columns.extend(["quality_code", "result_quality"])
-
-        data_frame = pd.DataFrame(observations, columns=columns)
-        data_frame["timestamp"] = pd.to_datetime(data_frame["timestamp"])
-
-        return data_frame
+        return collection
 
     def load_observations(
         self,
@@ -322,33 +259,37 @@ class DatastreamService(SensorThingsService):
     ) -> None:
         """Load observations to a datastream."""
 
-        data_array = [
-            [
-                row["timestamp"].strftime("%Y-%m-%dT%H:%M:%S%z"),
-                row["value"],
-                (
-                    {
-                        "qualityCode": row.get("quality_code", None),
-                        "resultQualifiers": row.get("result_qualifiers", []),
-                    }
-                    if "quality_code" in row or "result_qualifiers" in row
-                    else {}
-                ),
-            ]
-            for _, row in observations.iterrows()
-        ]
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/observations/bulk-create"
+        headers = {"Content-type": "application/json"}
+        params = {"mode": "insert"}
+        body = {
+            "fields": [to_camel(col) for col in observations.columns.tolist()],
+            "data": observations.values.tolist()
+        }
 
-        self._connection.request(
-            "post",
-            f"api/sensorthings/v1.1/CreateObservations",
-            headers={"Content-type": "application/json"},
-            data=json.dumps(
-                [
-                    {
-                        "Datastream": {"@iot.id": str(uid)},
-                        "components": ["phenomenonTime", "result", "resultQuality"],
-                        "dataArray": data_array,
-                    }
-                ]
-            ),
+        print(body)
+
+        self.client.request(
+            "post", path, headers=headers, params=params, data=json.dumps(body, default=self.default_serializer)
+        )
+
+    def delete_observations(
+        self,
+        uid: Union[UUID, str],
+        phenomenon_time_start: Optional[datetime] = None,
+        phenomenon_time_end: Optional[datetime] = None,
+    ) -> None:
+        """Delete observations from a datastream."""
+
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/observations/bulk-delete"
+        headers = {"Content-type": "application/json"}
+        body = {}
+
+        if phenomenon_time_start is not None:
+            body["phenomenonTimeStart"] = phenomenon_time_start
+        if phenomenon_time_end is not None:
+            body["phenomenonTimeEnd"] = phenomenon_time_end
+
+        self.client.request(
+            "post", path, headers=headers, data=json.dumps(body, default=self.default_serializer)
         )

@@ -1,52 +1,41 @@
 from typing import Optional, Union, List, TYPE_CHECKING
 from uuid import UUID
-from ..base import SensorThingsService
 from hydroserverpy.api.models import ObservedProperty
-
+from hydroserverpy.api.utils import normalize_uuid
+from ..base import HydroServerBaseService
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models import Workspace
+    from hydroserverpy.api.models import Workspace, Thing, Datastream
 
 
-class ObservedPropertyService(SensorThingsService):
-    def __init__(self, connection: "HydroServer"):
-        self._model = ObservedProperty
-        self._api_route = "api/data"
-        self._endpoint_route = "observed-properties"
-        self._sta_route = "api/sensorthings/v1.1/ObservedProperties"
-
-        super().__init__(connection)
+class ObservedPropertyService(HydroServerBaseService):
+    def __init__(self, client: "HydroServer"):
+        self.model = ObservedProperty
+        super().__init__(client)
 
     def list(
         self,
-        workspace: Optional[Union["Workspace", UUID, str]] = None,
-        page: int = 1,
-        page_size: int = 100,
+        page: int = ...,
+        page_size: int = ...,
+        order_by: List[str] = ...,
+        workspace: Optional[Union["Workspace", UUID, str]] = ...,
+        thing: Optional[Union["Thing", UUID, str]] = ...,
+        datastream: Optional[Union["Datastream", UUID, str]] = ...,
+        observed_property_type: str = ...,
+        fetch_all: bool = False,
     ) -> List["ObservedProperty"]:
         """Fetch a collection of observed properties."""
 
-        params = {"$top": page_size, "$skip": page_size * (page - 1)}
-
-        if workspace:
-            params["$filter"] = (
-                f"properties/workspace/id eq '{str(getattr(workspace, 'uid', workspace))}'"
-            )
-
-        return super()._list(params=params)
-
-    def get(
-        self, uid: Union[UUID, str], fetch_by_datastream_uid: bool = False
-    ) -> "ObservedProperty":
-        """Get an observed property by ID."""
-
-        return self._get(
-            uid=str(uid),
-            path=(
-                f"api/sensorthings/v1.1/Datastreams('{str(uid)}')/ObservedProperty"
-                if fetch_by_datastream_uid
-                else None
-            ),
+        return super().list(
+            page=page,
+            page_size=page_size,
+            order_by=order_by,
+            workspace_id=normalize_uuid(workspace),
+            thing_id=normalize_uuid(thing),
+            datastream_id=normalize_uuid(datastream),
+            type=observed_property_type,
+            fetch_all=fetch_all,
         )
 
     def create(
@@ -56,20 +45,20 @@ class ObservedPropertyService(SensorThingsService):
         description: str,
         observed_property_type: str,
         code: str,
-        workspace: Union["Workspace", UUID, str],
+        workspace: Optional[Union["Workspace", UUID, str]] = None,
     ) -> "ObservedProperty":
         """Create a new observed property."""
 
-        kwargs = {
+        body = {
             "name": name,
             "definition": definition,
             "description": description,
             "type": observed_property_type,
             "code": code,
-            "workspaceId": str(getattr(workspace, "uid", workspace)),
+            "workspaceId": normalize_uuid(workspace),
         }
 
-        return super()._create(**kwargs)
+        return super().create(**body)
 
     def update(
         self,
@@ -82,19 +71,12 @@ class ObservedPropertyService(SensorThingsService):
     ) -> "ObservedProperty":
         """Update an observed property."""
 
-        kwargs = {
+        body = {
             "name": name,
             "definition": definition,
             "description": description,
-            "type": observed_property_type,
+            "observedPropertyType": observed_property_type,
             "code": code,
         }
 
-        return super()._update(
-            uid=str(uid), **{k: v for k, v in kwargs.items() if v is not ...}
-        )
-
-    def delete(self, uid: Union[UUID, str]) -> None:
-        """Delete an observed property."""
-
-        super()._delete(uid=str(uid))
+        return super().update(uid=str(uid), **body)
