@@ -1,59 +1,54 @@
 import json
-from typing import TYPE_CHECKING, Union, IO, List, Dict, Optional
+from typing import TYPE_CHECKING, Union, IO, List, Dict, Optional, Tuple
 from uuid import UUID
-from ..base import SensorThingsService
 from hydroserverpy.api.models import Thing
-
+from hydroserverpy.api.utils import normalize_uuid
+from ..base import HydroServerBaseService
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
     from hydroserverpy.api.models import Workspace
 
 
-class ThingService(SensorThingsService):
-    def __init__(self, connection: "HydroServer"):
-        self._model = Thing
-        self._api_route = "api/data"
-        self._endpoint_route = "things"
-        self._sta_route = "api/sensorthings/v1.1/Things"
-
-        super().__init__(connection)
+class ThingService(HydroServerBaseService):
+    def __init__(self, client: "HydroServer"):
+        self.model = Thing
+        super().__init__(client)
 
     def list(
         self,
-        workspace: Optional[Union["Workspace", UUID, str]] = None,
-        page: int = 1,
-        page_size: int = 100,
+        page: int = ...,
+        page_size: int = ...,
+        order_by: List[str] = ...,
+        workspace: Union["Workspace", UUID, str] = ...,
+        bbox: Tuple[float, float, float, float] = ...,
+        state: str = ...,
+        county: str = ...,
+        country: str = ...,
+        site_type: str = ...,
+        sampling_feature_type: str = ...,
+        sampling_feature_code: str = ...,
+        tag: Tuple[str, str] = ...,
+        is_private: bool = ...,
+        fetch_all: bool = False,
     ) -> List["Thing"]:
         """Fetch a collection of things."""
 
-        params = {
-            "$top": page_size,
-            "$skip": page_size * (page - 1),
-            "$expand": "Locations",
-        }
-
-        if workspace:
-            params["$filter"] = (
-                f"properties/workspace/id eq '{str(getattr(workspace, 'uid', workspace))}'"
-            )
-
-        return super()._list(params=params)
-
-    def get(
-        self, uid: Union[UUID, str], fetch_by_datastream_uid: bool = False
-    ) -> "Thing":
-        """Get a thing by ID."""
-
-        params = {"$expand": "Locations"}
-        return self._get(
-            uid=str(uid),
-            path=(
-                f"api/sensorthings/v1.1/Datastreams('{str(uid)}')/Thing"
-                if fetch_by_datastream_uid
-                else None
-            ),
-            params=params,
+        return super().list(
+            page=page,
+            page_size=page_size,
+            order_by=order_by,
+            workspace_id=normalize_uuid(workspace),
+            bbox=",".join([str(i) for i in bbox]) if bbox is not ... else bbox,
+            state=state,
+            county=county,
+            country=country,
+            site_type=site_type,
+            sampling_feature_type=sampling_feature_type,
+            sampling_feature_code=sampling_feature_code,
+            tag=[f"{tag[0]}:{tag[1]}"] if tag is not ... else tag,
+            is_private=is_private,
+            fetch_all=fetch_all,
         )
 
     def create(
@@ -76,25 +71,27 @@ class ThingService(SensorThingsService):
     ) -> "Thing":
         """Create a new thing."""
 
-        kwargs = {
+        body = {
             "name": name,
             "description": description,
             "samplingFeatureType": sampling_feature_type,
             "samplingFeatureCode": sampling_feature_code,
             "siteType": site_type,
             "isPrivate": is_private,
-            "latitude": latitude,
-            "longitude": longitude,
-            "elevation_m": elevation_m,
-            "elevationDatum": elevation_datum,
-            "state": state,
-            "county": county,
-            "country": country,
             "dataDisclaimer": data_disclaimer,
-            "workspaceId": str(getattr(workspace, "uid", workspace)),
+            "workspaceId": normalize_uuid(workspace),
+            "location": {
+                "latitude": latitude,
+                "longitude": longitude,
+                "elevation_m": elevation_m,
+                "elevationDatum": elevation_datum,
+                "state": state,
+                "county": county,
+                "country": country,
+            }
         }
 
-        return super()._create(**kwargs)
+        return super().create(**body)
 
     def update(
         self,
@@ -104,7 +101,7 @@ class ThingService(SensorThingsService):
         sampling_feature_type: str = ...,
         sampling_feature_code: str = ...,
         site_type: str = ...,
-        is_private: False = ...,
+        is_private: bool = ...,
         latitude: float = ...,
         longitude: float = ...,
         elevation_m: Optional[float] = ...,
@@ -116,73 +113,83 @@ class ThingService(SensorThingsService):
     ) -> "Thing":
         """Update a thing."""
 
-        kwargs = {
+        body = {
             "name": name,
             "description": description,
             "samplingFeatureType": sampling_feature_type,
             "samplingFeatureCode": sampling_feature_code,
             "siteType": site_type,
             "isPrivate": is_private,
-            "latitude": latitude,
-            "longitude": longitude,
-            "elevation_m": elevation_m,
-            "elevationDatum": elevation_datum,
-            "state": state,
-            "county": county,
-            "country": country,
             "dataDisclaimer": data_disclaimer,
+            "location": {
+                "latitude": latitude,
+                "longitude": longitude,
+                "elevation_m": elevation_m,
+                "elevationDatum": elevation_datum,
+                "state": state,
+                "county": county,
+                "country": country,
+            }
         }
 
-        return super()._update(
-            uid=str(uid), **{k: v for k, v in kwargs.items() if v is not ...}
-        )
-
-    def delete(self, uid: Union[UUID, str]) -> None:
-        """Delete a thing."""
-
-        super()._delete(uid=str(uid))
+        return super().update(uid=str(uid), **body)
 
     def add_tag(self, uid: Union[UUID, str], key: str, value: str) -> Dict[str, str]:
         """Tag a HydroServer thing."""
 
-        return self._connection.request(
-            "post",
-            f"{self._api_route}/{self._endpoint_route}/{str(uid)}/tags",
-            data=json.dumps({"key": key, "value": value}),
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/tags"
+        headers = {"Content-type": "application/json"}
+        body = {
+            "key": key,
+            "value": value
+        }
+        return self.client.request(
+            "post", path, headers=headers, data=json.dumps(body, default=self.default_serializer)
         ).json()
 
     def update_tag(self, uid: Union[UUID, str], key: str, value: str) -> Dict[str, str]:
         """Update the tag of a HydroServer thing."""
 
-        return self._connection.request(
-            "put",
-            f"{self._api_route}/{self._endpoint_route}/{str(uid)}/tags",
-            data=json.dumps({"key": key, "value": value}),
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/tags"
+        headers = {"Content-type": "application/json"}
+        body = {
+            "key": key,
+            "value": value
+        }
+        return self.client.request(
+            "put", path, headers=headers, data=json.dumps(body, default=self.default_serializer)
         ).json()
 
-    def delete_tag(self, uid: Union[UUID, str], key: str) -> None:
+    def delete_tag(self, uid: Union[UUID, str], key: str, value: str) -> None:
         """Remove a tag from a HydroServer thing."""
 
-        self._connection.request(
-            "delete",
-            f"{self._api_route}/{self._endpoint_route}/{str(uid)}/tags",
-            data=json.dumps({"key": key}),
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/tags"
+        headers = {"Content-type": "application/json"}
+        body = {
+            "key": key,
+            "value": value
+        }
+        self.client.request(
+            "delete", path, headers=headers, data=json.dumps(body, default=self.default_serializer)
         )
 
     def add_photo(self, uid: Union[UUID, str], file: IO[bytes]) -> Dict[str, str]:
         """Add a photo of a HydroServer thing."""
 
-        return self._connection.request(
-            "post",
-            f"{self._api_route}/{self._endpoint_route}/{str(uid)}/photos",
-            files={"file": file},
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/photos"
+
+        return self.client.request(
+            "post", path, files={"file": file}
         ).json()
 
     def delete_photo(self, uid: Union[UUID, str], name: str) -> None:
         """Delete a photo of a HydroServer thing."""
 
-        self._connection.request(
-            "delete",
-            f"{self._api_route}/{self._endpoint_route}/{str(uid)}/photos",
-            data=json.dumps({"name": name}),
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/photos"
+        headers = {"Content-type": "application/json"}
+        body = {
+            "name": name
+        }
+        self.client.request(
+            "delete", path, headers=headers, data=json.dumps(body, default=self.default_serializer)
         )

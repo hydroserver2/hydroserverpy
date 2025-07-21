@@ -291,7 +291,7 @@ class HydroServerETLCSV:
                         [observation["phenomenon_time"], observation["result"]]
                         for observation in observations
                     ],
-                    columns=["timestamp", "value"],
+                    columns=["phenomenon_time", "result"],
                 )
 
                 try:

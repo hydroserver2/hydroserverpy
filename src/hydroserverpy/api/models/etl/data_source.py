@@ -1,60 +1,49 @@
-import requests
+import uuid
 import tempfile
-from typing import Union, List, Optional, TYPE_CHECKING
-from uuid import UUID
-from pydantic import BaseModel, Field
+import requests
+from typing import Union, ClassVar, Optional, TYPE_CHECKING, List
+from pydantic import Field
 from hydroserverpy.etl_csv.hydroserver_etl_csv import HydroServerETLCSV
 from .orchestration_system import OrchestrationSystem
 from .orchestration_configuration import OrchestrationConfigurationFields
 from ..sta.datastream import Datastream
-from ..base import HydroServerModel
+from ..base import HydroServerBaseModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
     from hydroserverpy.api.models import Workspace
 
 
-class DataSourceFields(BaseModel):
+class DataSource(
+    HydroServerBaseModel, OrchestrationConfigurationFields
+):
     name: str = Field(..., max_length=255)
     settings: Optional[dict] = None
+    orchestration_system_id: uuid.UUID
+    workspace_id: uuid.UUID
 
+    _editable_fields: ClassVar[set[str]] = {
+        "name", "settings", "interval", "interval_units", "crontab", "start_time", "end_time", "last_run_successful",
+        "last_run_message", "last_run", "next_run", "paused"
+    }
 
-class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationFields):
-    def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
-        super().__init__(
-            _connection=_connection, _model_ref="datasources", _uid=_uid, **data
-        )
-
-        self._workspace_id = str(data.get("workspace_id") or data["workspaceId"])
-        self._orchestration_system_id = str(
-            data.get("orchestration_system_id") or data["orchestrationSystem"]["id"]
-        )
+    def __init__(self, client: "HydroServer", **data):
+        super().__init__(client=client, service=client.datasources, **data)
 
         self._workspace = None
+        self._orchestration_system = None
+        self._datastreams = None
 
-        if data.get("orchestrationSystem"):
-            self._orchestration_system = OrchestrationSystem(
-                _connection=_connection,
-                _uid=self._orchestration_system_id,
-                **data["orchestrationSystem"]
-            )
-        else:
-            self._orchestration_system = None
-
-        if data.get("datastreams"):
-            self._datastreams = [
-                Datastream(_connection=_connection, _uid=datastream["id"], **datastream)
-                for datastream in data["datastreams"]
-            ]
-        else:
-            self._datastreams = []
+    @classmethod
+    def get_route(cls):
+        return "data-sources"
 
     @property
     def workspace(self) -> "Workspace":
         """The workspace this data source belongs to."""
 
-        if self._workspace is None and self._workspace_id:
-            self._workspace = self._connection.workspaces.get(uid=self._workspace_id)
+        if self._workspace is None:
+            self._workspace = self.client.workspaces.get(uid=self.workspace_id)
 
         return self._workspace
 
@@ -62,62 +51,31 @@ class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationF
     def orchestration_system(self) -> "OrchestrationSystem":
         """The orchestration system that manages this data source."""
 
-        if self._orchestration_system is None and self._orchestration_system_id:
-            self._orchestration_system = self._connection.orchestration_systems.get(
-                uid=self._orchestration_system_id
-            )
+        if self._orchestration_system is None:
+            self._orchestration_system = self.client.orchestrationsystems.get(uid=self.orchestration_system_id)
 
         return self._orchestration_system
-
-    @orchestration_system.setter
-    def orchestration_system(
-        self, orchestration_system: Union["OrchestrationSystem", UUID, str]
-    ):
-        if not orchestration_system:
-            raise ValueError("Orchestration system of data source cannot be None.")
-        if str(getattr(orchestration_system, "uid", orchestration_system)) != str(
-            self.orchestration_system.uid
-        ):
-            self._orchestration_system = self._connection.orchestrationsystems.get(
-                uid=str(getattr(orchestration_system, "uid", orchestration_system))
-            )
 
     @property
     def datastreams(self) -> List["Datastream"]:
         """The datastreams this data source provides data for."""
 
         if self._datastreams is None:
-            data_source = self._connection.datasources.get(uid=self.uid)
-            self._datastreams = data_source.datastreams
+            self._datastreams = self.client.datastreams.list(data_source=self.uid, fetch_all=True)
 
         return self._datastreams
 
-    def refresh(self):
-        """Refresh this data source from HydroServer."""
-
-        super()._refresh()
-        self._workspace = None
-        self._datastreams = None
-
-    def save(self):
-        """Save changes to this data source to HydroServer."""
-
-        super()._save()
-
-    def delete(self):
-        """Delete this data source from HydroServer."""
-
-        super()._delete()
-
-    def add_datastream(self, datastream: Union["Datastream", UUID, str]):
+    def add_datastream(self, datastream: Union["Datastream", uuid.UUID, str]):
         """Add a datastream to this data source."""
 
-        self._connection.datasources.add_datastream(uid=self.uid, datastream=datastream)
+        self.client.datasources.add_datastream(
+            uid=self.uid, datastream=datastream
+        )
 
-    def remove_datastream(self, datastream: Union["Datastream", UUID, str]):
+    def remove_datastream(self, datastream: Union["Datastream", uuid.UUID, str]):
         """Remove a datastream from this data source."""
 
-        self._connection.datasources.remove_datastream(
+        self.client.datasources.remove_datastream(
             uid=self.uid, datastream=datastream
         )
 
@@ -131,7 +89,7 @@ class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationF
         if self.settings["extractor"]["type"] == "local":
             with open(self.settings["extractor"]["sourceUri"]) as data_file:
                 loader = HydroServerETLCSV(
-                    self._connection, data_file=data_file, data_source=self
+                    self.client, data_file=data_file, data_source=self
                 )
                 loader.run()
         elif self.settings["extractor"]["type"] == "HTTP":
@@ -148,6 +106,6 @@ class DataSource(HydroServerModel, DataSourceFields, OrchestrationConfigurationF
                         temp_file.write(chunk.decode("utf-8"))
                 temp_file.seek(0)
                 loader = HydroServerETLCSV(
-                    self._connection, data_file=temp_file, data_source=self
+                    self.client, data_file=temp_file, data_source=self
                 )
                 loader.run()

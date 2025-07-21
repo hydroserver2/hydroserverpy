@@ -5,6 +5,7 @@ from .iam.collaborator import Collaborator
 from .iam.apikey import APIKey
 from .iam.account import Account
 from .sta.datastream import Datastream
+from .sta.observation import ObservationCollection
 from .sta.observed_property import ObservedProperty
 from .sta.processing_level import ProcessingLevel
 from .sta.result_qualifier import ResultQualifier
@@ -19,5 +20,3 @@ Workspace.model_rebuild()
 Role.model_rebuild()
 Collaborator.model_rebuild()
 APIKey.model_rebuild()
-
-Unit.model_rebuild()

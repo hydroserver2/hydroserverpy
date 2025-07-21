@@ -1,59 +1,62 @@
 from typing import Optional, Union, List, TYPE_CHECKING
 from uuid import UUID
-from ..base import EndpointService
 from hydroserverpy.api.models import Unit
-
+from hydroserverpy.api.utils import normalize_uuid
+from ..base import HydroServerBaseService
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models import Workspace
+    from hydroserverpy.api.models import Workspace, Thing, Datastream
 
 
-class UnitService(EndpointService):
-    def __init__(self, connection: "HydroServer"):
-        self._model = Unit
-        self._api_route = "api/data"
-        self._endpoint_route = "units"
-
-        super().__init__(connection)
+class UnitService(HydroServerBaseService):
+    def __init__(self, client: "HydroServer"):
+        self.model = Unit
+        super().__init__(client)
 
     def list(
         self,
-        workspace: Optional[Union["Workspace", UUID, str]] = None,
+        page: int = ...,
+        page_size: int = ...,
+        order_by: List[str] = ...,
+        workspace: Union["Workspace", UUID, str] = ...,
+        thing: Optional[Union["Thing", UUID, str]] = ...,
+        datastream: Optional[Union["Datastream", UUID, str]] = ...,
+        unit_type: str = ...,
+        fetch_all: bool = False,
     ) -> List["Unit"]:
         """Fetch a collection of units."""
 
-        workspace_id = getattr(workspace, "uid", workspace)
-        workspace_id = str(workspace_id) if workspace_id else None
-
-        return super()._list(
-            params={"workspace_id": workspace_id} if workspace_id else {},
+        return super().list(
+            page=page,
+            page_size=page_size,
+            order_by=order_by,
+            workspace_id=normalize_uuid(workspace),
+            thing_id=normalize_uuid(thing),
+            datastream_id=normalize_uuid(datastream),
+            unit_type=unit_type,
+            fetch_all=fetch_all,
         )
-
-    def get(self, uid: Union[UUID, str]) -> "Unit":
-        """Get a unit by ID."""
-
-        return super()._get(uid=str(uid))
 
     def create(
         self,
-        workspace: Union["Workspace", UUID, str],
         name: str,
         symbol: str,
         definition: str,
         unit_type: str,
+        workspace: Optional[Union["Workspace", UUID, str]] = None,
     ) -> "Unit":
         """Create a new unit."""
 
-        kwargs = {
+        body = {
             "name": name,
             "symbol": symbol,
             "definition": definition,
             "type": unit_type,
-            "workspaceId": str(getattr(workspace, "uid", workspace)),
+            "workspaceId": normalize_uuid(workspace),
         }
 
-        return super()._create(**kwargs)
+        return super().create(**body)
 
     def update(
         self,
@@ -65,18 +68,11 @@ class UnitService(EndpointService):
     ) -> "Unit":
         """Update a unit."""
 
-        kwargs = {
+        body = {
             "name": name,
             "symbol": symbol,
             "definition": definition,
             "type": unit_type,
         }
 
-        return super()._update(
-            uid=str(uid), **{k: v for k, v in kwargs.items() if v is not ...}
-        )
-
-    def delete(self, uid: Union[UUID, str]) -> None:
-        """Delete a unit."""
-
-        super()._delete(uid=str(uid))
+        return super().update(uid=str(uid), **body)

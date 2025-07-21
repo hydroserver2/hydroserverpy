@@ -1,55 +1,52 @@
 from typing import Optional, Union, List, TYPE_CHECKING
 from uuid import UUID
-from ..base import EndpointService
 from hydroserverpy.api.models import ResultQualifier
-
+from hydroserverpy.api.utils import normalize_uuid
+from ..base import HydroServerBaseService
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
     from hydroserverpy.api.models import Workspace
 
 
-class ResultQualifierService(EndpointService):
-    def __init__(self, connection: "HydroServer"):
-        self._model = ResultQualifier
-        self._api_route = "api/data"
-        self._endpoint_route = "result-qualifiers"
-
-        super().__init__(connection)
+class ResultQualifierService(HydroServerBaseService):
+    def __init__(self, client: "HydroServer"):
+        self.model = ResultQualifier
+        super().__init__(client)
 
     def list(
         self,
-        workspace: Optional[Union["Workspace", UUID, str]] = None,
+        page: int = ...,
+        page_size: int = ...,
+        order_by: List[str] = ...,
+        workspace: Optional[Union["Workspace", UUID, str]] = ...,
+        fetch_all: bool = False,
     ) -> List["ResultQualifier"]:
         """Fetch a collection of result qualifiers."""
 
-        workspace_id = getattr(workspace, "uid", workspace)
-        workspace_id = str(workspace_id) if workspace_id else None
-
-        return super()._list(
-            params={"workspace_id": workspace_id} if workspace_id else {},
+        return super().list(
+            page=page,
+            page_size=page_size,
+            order_by=order_by,
+            workspace_id=normalize_uuid(workspace),
+            fetch_all=fetch_all,
         )
-
-    def get(self, uid: Union[UUID, str]) -> "ResultQualifier":
-        """Get a result qualifier by ID."""
-
-        return super()._get(uid=str(uid))
 
     def create(
         self,
-        workspace: Union["Workspace", UUID, str],
         code: str,
-        description: str,
+        description: Optional[str] = None,
+        workspace: Optional[Union["Workspace", UUID, str]] = None,
     ) -> "ResultQualifier":
         """Create a new result qualifier."""
 
-        kwargs = {
+        body = {
             "code": code,
             "description": description,
-            "workspaceId": str(getattr(workspace, "uid", workspace)),
+            "workspaceId": normalize_uuid(workspace),
         }
 
-        return super()._create(**kwargs)
+        return super().create(**body)
 
     def update(
         self,
@@ -59,16 +56,9 @@ class ResultQualifierService(EndpointService):
     ) -> "ResultQualifier":
         """Update a result qualifier."""
 
-        kwargs = {
+        body = {
             "code": code,
             "description": description,
         }
 
-        return super()._update(
-            uid=str(uid), **{k: v for k, v in kwargs.items() if v is not ...}
-        )
-
-    def delete(self, uid: Union[UUID, str]) -> None:
-        """Delete a result qualifier."""
-
-        super()._delete(uid=str(uid))
+        return super().update(uid=str(uid), **body)

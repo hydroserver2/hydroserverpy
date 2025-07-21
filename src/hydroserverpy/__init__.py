@@ -1,4 +1,4 @@
-from .api.main import HydroServer
+from .api.client import HydroServer
 from .etl.hydroserver_etl import HydroServerETL
 from .quality import HydroServerQualityControl
 

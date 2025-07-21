@@ -1,59 +1,46 @@
-from typing import Union, Optional, TYPE_CHECKING, List
-from uuid import UUID
-from pydantic import BaseModel, Field
+import uuid
+from typing import Union, ClassVar, Optional, TYPE_CHECKING, List
+from pydantic import Field
 from .orchestration_system import OrchestrationSystem
 from .orchestration_configuration import OrchestrationConfigurationFields
 from ..sta.datastream import Datastream
-from ..base import HydroServerModel
+from ..base import HydroServerBaseModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
     from hydroserverpy.api.models import Workspace
 
 
-class DataArchiveFields(BaseModel):
+class DataArchive(
+    HydroServerBaseModel, OrchestrationConfigurationFields
+):
     name: str = Field(..., max_length=255)
     settings: Optional[dict] = None
+    orchestration_system_id: uuid.UUID
+    workspace_id: uuid.UUID
 
+    _editable_fields: ClassVar[set[str]] = {
+        "name", "settings", "interval", "interval_units", "crontab", "start_time", "end_time", "last_run_successful",
+        "last_run_message", "last_run", "next_run", "paused"
+    }
 
-class DataArchive(
-    HydroServerModel, DataArchiveFields, OrchestrationConfigurationFields
-):
-    def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
-        super().__init__(
-            _connection=_connection, _model_ref="dataarchives", _uid=_uid, **data
-        )
-
-        self._workspace_id = str(data.get("workspace_id") or data["workspaceId"])
-        self._orchestration_system_id = str(
-            data.get("orchestration_system_id") or data["orchestrationSystem"]["id"]
-        )
+    def __init__(self, client: "HydroServer", **data):
+        super().__init__(client=client, service=client.dataarchives, **data)
 
         self._workspace = None
+        self._orchestration_system = None
+        self._datastreams = None
 
-        if data.get("orchestrationSystem"):
-            self._orchestration_system = OrchestrationSystem(
-                _connection=_connection,
-                _uid=self._orchestration_system_id,
-                **data["orchestrationSystem"]
-            )
-        else:
-            self._orchestration_system = None
-
-        if data.get("datastreams"):
-            self._datastreams = [
-                Datastream(_connection=_connection, _uid=datastream["id"], **datastream)
-                for datastream in data["datastreams"]
-            ]
-        else:
-            self._datastreams = []
+    @classmethod
+    def get_route(cls):
+        return "data-archives"
 
     @property
     def workspace(self) -> "Workspace":
         """The workspace this data archive belongs to."""
 
-        if self._workspace is None and self._workspace_id:
-            self._workspace = self._connection.workspaces.get(uid=self._workspace_id)
+        if self._workspace is None:
+            self._workspace = self.client.workspaces.get(uid=self.workspace_id)
 
         return self._workspace
 
@@ -61,10 +48,8 @@ class DataArchive(
     def orchestration_system(self) -> "OrchestrationSystem":
         """The orchestration system that manages this data archive."""
 
-        if self._orchestration_system is None and self._orchestration_system_id:
-            self._orchestration_system = self._connection.orchestration_systems.get(
-                uid=self._orchestration_system_id
-            )
+        if self._orchestration_system is None:
+            self._orchestration_system = self.client.orchestrationsystems.get(uid=self.orchestration_system_id)
 
         return self._orchestration_system
 
@@ -72,34 +57,21 @@ class DataArchive(
     def datastreams(self) -> List["Datastream"]:
         """The datastreams this data archive provides data for."""
 
+        if self._datastreams is None:
+            self._datastreams = self.client.datastreams.list(data_archive=self.uid, fetch_all=True)
+
         return self._datastreams
 
-    def refresh(self):
-        """Refresh this data archive from HydroServer."""
-
-        super()._refresh()
-        self._workspace = None
-
-    def save(self):
-        """Save changes to this data archive to HydroServer."""
-
-        super()._save()
-
-    def delete(self):
-        """Delete this data archive from HydroServer."""
-
-        super()._delete()
-
-    def add_datastream(self, datastream: Union["Datastream", UUID, str]):
+    def add_datastream(self, datastream: Union["Datastream", uuid.UUID, str]):
         """Add a datastream to this data archive."""
 
-        self._connection.dataarchives.add_datastream(
+        self.client.dataarchives.add_datastream(
             uid=self.uid, datastream=datastream
         )
 
-    def remove_datastream(self, datastream: Union["Datastream", UUID, str]):
+    def remove_datastream(self, datastream: Union["Datastream", uuid.UUID, str]):
         """Remove a datastream from this data archive."""
 
-        self._connection.dataarchives.remove_datastream(
+        self.client.dataarchives.remove_datastream(
             uid=self.uid, datastream=datastream
         )

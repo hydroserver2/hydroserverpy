@@ -1,102 +1,118 @@
-from typing import TYPE_CHECKING, Type, Union, Optional
+import json
+import uuid
+from typing import TYPE_CHECKING, Type, List, Union
 from datetime import datetime
-from uuid import UUID
+from hydroserverpy.api.models.base import HydroServerBaseModel, HydroServerCollection
+from hydroserverpy.api.utils import order_by_to_camel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models.base import HydroServerModel
 
 
-class EndpointService:
-    _model: Type["HydroServerModel"]
-    _api_route: str
-    _endpoint_route: str
+class HydroServerBaseService:
+    model: Type[HydroServerBaseModel]
 
-    def __init__(self, connection: "HydroServer") -> None:
-        self._connection = connection
+    def __init__(self, client: "HydroServer") -> None:
+        self.client = client
 
-    def _list(self, params: Optional[dict] = None):
-        path = f"/{self._api_route}/{self._endpoint_route}"
-
-        response = self._connection.request("get", path, params=params).json()
-
-        return [
-            self._model(
-                _connection=self._connection, _uid=UUID(str(obj.pop("id"))), **obj
-            )
-            for obj in response
-        ]
-
-    def _get(self, uid: Union[UUID, str]):
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}"
-        response = self._connection.request("get", path).json()
-
-        return self._model(
-            _connection=self._connection, _uid=UUID(str(response.pop("id"))), **response
-        )
-
-    def _create(self, **kwargs):
-        path = f"/{self._api_route}/{self._endpoint_route}"
-        headers = {"Content-type": "application/json"}
-        response = self._connection.request(
-            "post", path, headers=headers, json=self._to_iso_time(kwargs)
-        ).json()
-
-        return self._model(
-            _connection=self._connection, _uid=UUID(str(response.pop("id"))), **response
-        )
-
-    def _update(self, uid: Union[UUID, str], **kwargs):
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}"
-        headers = {"Content-type": "application/json"}
-        response = self._connection.request(
-            "patch", path, headers=headers, json=self._to_iso_time(kwargs)
-        ).json()
-
-        return self._model(
-            _connection=self._connection, _uid=UUID(str(response.pop("id"))), **response
-        )
-
-    def _delete(self, uid: Union[UUID, str]):
-        path = f"/{self._api_route}/{self._endpoint_route}/{str(uid)}"
-        response = self._connection.request("delete", path)
-
-        return response
-
-    def _to_iso_time(self, obj):
-        if isinstance(obj, dict):
-            return {k: self._to_iso_time(v) for k, v in obj.items()}
-        elif isinstance(obj, list):
-            return [self._to_iso_time(i) for i in obj]
-        elif isinstance(obj, datetime):
-            return obj.isoformat()
-        return obj
-
-
-class SensorThingsService(EndpointService):
-    _sta_route: str
-
-    def __init__(self, connection) -> None:
-        super().__init__(connection)
-
-    def _list(self, path: Optional[str] = None, params: Optional[dict] = None):
-        path = path or f"/{self._sta_route}"
-        response = self._connection.request("get", path, params=params)
-
-        return [
-            self._model(_connection=self._connection, _uid=obj.pop("@iot.id"), **obj)
-            for obj in response.json()["value"]
-        ]
-
-    def _get(
+    def list(
         self,
-        uid: Union[UUID, str],
-        path: Optional[str] = None,
-        params: Optional[dict] = None,
+        page: int = ...,
+        page_size: int = ...,
+        order_by: List[str] = ...,
+        fetch_all: bool = False,
+        **kwargs
     ):
-        path = path or f"/{self._sta_route}('{str(uid)}')"
-        response = self._connection.request("get", path, params=params).json()
+        kwargs = {
+            k: v for k, v in kwargs.items() if v is not ...
+        }
+        params = kwargs.copy()
+        params.update({
+            "page": page,
+            "page_size": page_size,
+            "order_by": [order_by_to_camel(order) for order in order_by] if order_by is not ... else order_by
+        })
+        params = {
+            k: ("null" if v is None else v)
+            for k, v in params.items()
+            if v is not ...
+        }
 
-        return self._model(
-            _connection=self._connection, _uid=response.pop("@iot.id"), **response
+        path = f"/{self.client.base_route}/{self.model.get_route()}"
+        response = self.client.request("get", path, params=params)
+        collection = HydroServerCollection(
+            model=self.model,
+            client=self.client,
+            service=self,
+            response=response,
+            order_by=params.get("order_by"),
+            filters={
+                (k[:-3] if k.endswith("_id") else k): v
+                for k, v in kwargs.items()
+            }
         )
+        if fetch_all is True:
+            collection = collection.fetch_all()
+
+        return collection
+
+    def get(
+        self,
+        uid: Union[uuid.UUID, str]
+    ):
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}"
+        response = self.client.request("get", path).json()
+
+        return self.model(
+            client=self.client, uid=uuid.UUID(str(response.pop("id"))), **response
+        )
+
+    def create(self, **kwargs):
+        path = f"/{self.client.base_route}/{self.model.get_route()}"
+        headers = {"Content-type": "application/json"}
+        response = self.client.request(
+            "post", path, headers=headers, data=json.dumps(kwargs, default=self.default_serializer)
+        ).json()
+
+        return self.model(
+            client=self.client, uid=uuid.UUID(str(response.pop("id"))), **response
+        )
+
+    def update(
+        self,
+        uid: Union[uuid.UUID, str],
+        **kwargs
+    ):
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}"
+        headers = {"Content-type": "application/json"}
+        body = self.prune_unset(kwargs) or {}
+        response = self.client.request(
+            "patch", path, headers=headers, data=json.dumps(body, default=self.default_serializer)
+        ).json()
+
+        return self.model(
+            client=self.client, uid=uuid.UUID(str(response.pop("id"))), **response
+        )
+
+    def delete(
+        self,
+        uid: Union[uuid.UUID, str]
+    ) -> None:
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}"
+        self.client.request("delete", path)
+
+    @staticmethod
+    def default_serializer(obj):
+        if isinstance(obj, datetime):
+            return obj.isoformat()
+        raise TypeError(f"Type {type(obj)} not serializable")
+
+    def prune_unset(self, obj):
+        if isinstance(obj, dict):
+            cleaned = {
+                k: self.prune_unset(v)
+                for k, v in obj.items()
+                if v is not ... and self.prune_unset(v) is not None
+            }
+            return cleaned if cleaned else None
+        return obj

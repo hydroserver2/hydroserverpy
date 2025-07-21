@@ -1,8 +1,9 @@
 import requests
+import json
 from typing import Optional, Tuple
-from hydroserverpy.api.http import raise_for_hs_status
 from hydroserverpy.api.services import (
     WorkspaceService,
+    RoleService,
     ThingService,
     ObservedPropertyService,
     UnitService,
@@ -20,11 +21,14 @@ class HydroServer:
     def __init__(
         self,
         host: str,
+        auth_route: str = "/api/auth",
+        base_route: str = "/api/data",
         email: Optional[str] = None,
         password: Optional[str] = None,
         apikey: Optional[str] = None,
     ):
         self.host = host.strip("/")
+        self.base_route = base_route
         self.auth = (
             (
                 email or "__key__",
@@ -34,7 +38,7 @@ class HydroServer:
             else None
         )
 
-        self._auth_url = f"{self.host}/api/auth/app/session"
+        self._auth_url = f"{self.host}{auth_route}/app/session"
 
         self._session = None
         self._timeout = 60
@@ -51,6 +55,30 @@ class HydroServer:
         """End your HydroServer session."""
 
         self._session.delete(self._auth_url, timeout=self._timeout)
+
+    def request(self, method, path, *args, **kwargs) -> requests.Response:
+        """Sends a request to HydroServer's API."""
+
+        for attempt in range(2):
+            try:
+                response = getattr(self._session, method)(
+                    f"{self.host}/{path.strip('/')}",
+                    timeout=self._timeout,
+                    *args,
+                    **kwargs,
+                )
+                self._raise_for_hs_status(response)
+            except (
+                requests.exceptions.HTTPError,
+                requests.exceptions.ConnectionError,
+            ) as e:
+                if attempt == 0:
+                    self._init_session()
+                    continue
+                else:
+                    raise e
+
+            return response
 
     def _init_session(self, auth: Optional[Tuple[str, str]] = None) -> None:
         if self._session is not None:
@@ -82,35 +110,37 @@ class HydroServer:
 
         return session_token
 
-    def request(self, method, path, *args, **kwargs) -> requests.Response:
-        """Sends a request to HydroServer's API."""
-
-        for attempt in range(2):
+    @staticmethod
+    def _raise_for_hs_status(response):
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as e:
             try:
-                response = getattr(self._session, method)(
-                    f"{self.host}/{path.strip('/')}",
-                    timeout=self._timeout,
-                    *args,
-                    **kwargs,
+                http_error_msg = (
+                    f"{response.status_code} Client Error: "
+                    f"{str(json.loads(response.content).get('detail'))}"
                 )
-                raise_for_hs_status(response)
             except (
-                requests.exceptions.HTTPError,
-                requests.exceptions.ConnectionError,
-            ) as e:
-                if attempt == 0:
-                    self._init_session()
-                    continue
-                else:
-                    raise e
-
-            return response
+                    ValueError,
+                    TypeError,
+            ):
+                http_error_msg = e
+            if 400 <= response.status_code < 500:
+                raise requests.HTTPError(http_error_msg, response=response)
+            else:
+                raise requests.HTTPError(str(e), response=response)
 
     @property
     def workspaces(self):
         """Utilities for managing HydroServer workspaces."""
 
         return WorkspaceService(self)
+
+    @property
+    def roles(self):
+        """Utilities for managing HydroServer workspaces."""
+
+        return RoleService(self)
 
     @property
     def things(self):

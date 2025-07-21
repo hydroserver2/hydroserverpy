@@ -1,8 +1,8 @@
-from typing import List, Union, Optional, TYPE_CHECKING
+from typing import List, Union, Optional, ClassVar, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
-from pydantic import BaseModel, Field, EmailStr
-from ..base import HydroServerModel
+from pydantic import Field, EmailStr
+from ..base import HydroServerBaseModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
@@ -24,21 +24,21 @@ if TYPE_CHECKING:
     )
 
 
-class WorkspaceFields(BaseModel):
+class Workspace(HydroServerBaseModel):
     name: str = Field(..., max_length=255)
     is_private: bool
-    owner: "Account" = Field(..., json_schema_extra={"read_only": True})
+    owner: "Account"
     collaborator_role: Optional["Role"] = None
     pending_transfer_to: Optional["Account"] = None
 
+    _editable_fields: ClassVar[set[str]] = {"name", "is_private"}
 
-class Workspace(HydroServerModel, WorkspaceFields):
-    def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
-        super().__init__(
-            _connection=_connection, _model_ref="workspaces", _uid=_uid, **data
-        )
+    def __init__(self, client: "HydroServer", **data):
+        super().__init__(client=client, service=client.workspaces, **data)
+
         self._roles = None
         self._collaborators = None
+        self._apikeys = None
         self._things = None
         self._observedproperties = None
         self._processinglevels = None
@@ -50,12 +50,16 @@ class Workspace(HydroServerModel, WorkspaceFields):
         self._datasources = None
         self._dataarchives = None
 
+    @classmethod
+    def get_route(cls):
+        return "workspaces"
+
     @property
     def roles(self) -> List["Role"]:
         """The roles that can be assigned for this workspace."""
 
         if self._roles is None:
-            self._roles = self._connection.workspaces.list_roles(uid=self.uid)
+            self._roles = self.client.roles.list(workspace=self.uid, fetch_all=True).items
 
         return self._roles
 
@@ -64,18 +68,25 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The collaborators associated with this workspace."""
 
         if self._collaborators is None:
-            self._collaborators = self._connection.workspaces.list_collaborators(
-                uid=self.uid
-            )
+            self._collaborators = self.client.workspaces.list_collaborators(uid=self.uid)
 
         return self._collaborators
+
+    @property
+    def apikeys(self) -> List["APIKey"]:
+        """The API keys associated with this workspace."""
+
+        if self._apikeys is None:
+            self._apikeys = self.client.workspaces.list_api_keys(uid=self.uid)
+
+        return self._apikeys
 
     @property
     def things(self) -> List["Thing"]:
         """The things associated with this workspace."""
 
         if self._things is None:
-            self._things = self._connection.things.list(workspace=self.uid)
+            self._things = self.client.things.list(workspace=self.uid, fetch_all=True).items
 
         return self._things
 
@@ -84,9 +95,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The observed properties associated with this workspace."""
 
         if self._observedproperties is None:
-            self._observedproperties = self._connection.observedproperties.list(
-                workspace=self.uid
-            )
+            self._observedproperties = self.client.observedproperties.list(workspace=self.uid, fetch_all=True).items
 
         return self._observedproperties
 
@@ -95,9 +104,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The processing levels associated with this workspace."""
 
         if self._processinglevels is None:
-            self._processinglevels = self._connection.processinglevels.list(
-                workspace=self.uid
-            )
+            self._processinglevels = self.client.processinglevels.list(workspace=self.uid, fetch_all=True).items
 
         return self._processinglevels
 
@@ -106,9 +113,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The result qualifiers associated with this workspace."""
 
         if self._resultqualifiers is None:
-            self._resultqualifiers = self._connection.resultqualifiers.list(
-                workspace=self.uid
-            )
+            self._resultqualifiers = self.client.resultqualifiers.list(workspace=self.uid, fetch_all=True).items
 
         return self._resultqualifiers
 
@@ -117,7 +122,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The units associated with this workspace."""
 
         if self._units is None:
-            self._units = self._connection.units.list(workspace=self.uid)
+            self._units = self.client.units.list(workspace=self.uid, fetch_all=True).items
 
         return self._units
 
@@ -126,7 +131,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The sensors associated with this workspace."""
 
         if self._sensors is None:
-            self._sensors = self._connection.sensors.list(workspace=self.uid)
+            self._sensors = self.client.sensors.list(workspace=self.uid, fetch_all=True).items
 
         return self._sensors
 
@@ -135,7 +140,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The datastreams associated with this workspace."""
 
         if self._datastreams is None:
-            self._datastreams = self._connection.datastreams.list(workspace=self.uid)
+            self._datastreams = self.client.datastreams.list(workspace=self.uid, fetch_all=True).items
 
         return self._datastreams
 
@@ -144,9 +149,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The orchestration systems associated with this workspace."""
 
         if self._orchestrationsystems is None:
-            self._orchestrationsystems = self._connection.orchestrationsystems.list(
-                workspace=self.uid
-            )
+            self._orchestrationsystems = self.client.orchestrationsystems.list(workspace=self.uid, fetch_all=True).items
 
         return self._orchestrationsystems
 
@@ -155,7 +158,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The data sources associated with this workspace."""
 
         if self._datasources is None:
-            self._datasources = self._connection.datasources.list(workspace=self.uid)
+            self._datasources = self.client.datasources.list(workspace=self.uid, fetch_all=True).items
 
         return self._datasources
 
@@ -164,45 +167,9 @@ class Workspace(HydroServerModel, WorkspaceFields):
         """The data archives associated with this workspace."""
 
         if self._dataarchives is None:
-            self._dataarchives = self._connection.dataarchives.list(workspace=self.uid)
+            self._dataarchives = self.client.dataarchives.list(workspace=self.uid, fetch_all=True).items
 
         return self._dataarchives
-
-    def refresh(self) -> None:
-        """Refresh the workspace details from HydroServer."""
-
-        self._roles = None
-        self._collaborators = None
-        self._things = None
-        self._observedproperties = None
-        self._processinglevels = None
-        self._units = None
-        self._sensors = None
-        self._datastreams = None
-        super()._refresh()
-
-    def save(self):
-        """Save changes to this workspace to HydroServer."""
-
-        super()._save()
-
-    def delete(self):
-        """Delete this workspace from HydroServer."""
-
-        super()._delete()
-
-    def list_api_keys(self) -> List["APIKey"]:
-        """Get all API keys associated with this workspace."""
-
-        return self._connection.workspaces.list_api_keys(uid=self.uid)
-
-    def get_api_key(self, api_key: Union["APIKey", UUID, str]) -> "APIKey":
-        """Get an API key associated with this workspace."""
-
-        return self._connection.workspaces.get_api_key(
-            uid=self.uid,
-            api_key_id=str(getattr(api_key, "uid", api_key))
-        )
 
     def create_api_key(
         self,
@@ -214,7 +181,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
     ):
         """Create an API key associated with this workspace."""
 
-        api_key, key = self._connection.workspaces.create_api_key(
+        response, key = self.client.workspaces.create_api_key(
             uid=self.uid,
             role=role,
             name=name,
@@ -222,21 +189,22 @@ class Workspace(HydroServerModel, WorkspaceFields):
             is_active=is_active,
             expires_at=expires_at
         )
+        self._apikeys = None
 
-        return api_key, key
+        return response, key
 
     def update_api_key(
-            self,
-            api_key_id: Union[UUID, str],
-            role: Union["Role", UUID, str] = ...,
-            name: str = ...,
-            description: Optional[str] = ...,
-            is_active: bool = ...,
-            expires_at: Optional[datetime] = ...
+        self,
+        api_key_id: Union[UUID, str],
+        role: Union["Role", UUID, str] = ...,
+        name: str = ...,
+        description: Optional[str] = ...,
+        is_active: bool = ...,
+        expires_at: Optional[datetime] = ...
     ):
         """Create an API key associated with this workspace."""
 
-        return self._connection.workspaces.update_api_key(
+        response = self.client.workspaces.update_api_key(
             uid=self.uid,
             api_key_id=api_key_id,
             role=role,
@@ -245,19 +213,23 @@ class Workspace(HydroServerModel, WorkspaceFields):
             is_active=is_active,
             expires_at=expires_at
         )
+        self._apikeys = None
+
+        return response
 
     def delete_api_key(self, api_key_id: Union[UUID, str]):
         """Delete an API key associated with this workspace."""
 
-        return self._connection.workspaces.delete_api_key(
+        self.client.workspaces.delete_api_key(
             uid=self.uid,
             api_key_id=api_key_id
         )
+        self._apikeys = None
 
     def regenerate_api_key(self, api_key_id: Union[UUID, str]):
         """Regenerate an API key associated with this workspace."""
 
-        api_key, key = self._connection.workspaces.regenerate_api_key(
+        api_key, key = self.client.workspaces.regenerate_api_key(
             uid=self.uid,
             api_key_id=api_key_id
         )
@@ -269,7 +241,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
     ) -> "Collaborator":
         """Add a new collaborator to the workspace."""
 
-        response = self._connection.workspaces.add_collaborator(
+        response = self.client.workspaces.add_collaborator(
             uid=self.uid, email=email, role=role
         )
         self._collaborators = None
@@ -281,7 +253,7 @@ class Workspace(HydroServerModel, WorkspaceFields):
     ) -> "Collaborator":
         """Edit a collaborator's role in this workspace."""
 
-        response = self._connection.workspaces.edit_collaborator_role(
+        response = self.client.workspaces.edit_collaborator_role(
             uid=self.uid, email=email, role=role
         )
         self._collaborators = None
@@ -291,23 +263,23 @@ class Workspace(HydroServerModel, WorkspaceFields):
     def remove_collaborator(self, email: EmailStr) -> None:
         """Remove a collaborator from the workspace."""
 
-        self._connection.workspaces.remove_collaborator(uid=self.uid, email=email)
+        self.client.workspaces.remove_collaborator(uid=self.uid, email=email)
         self._collaborators = None
 
     def transfer_ownership(self, email: EmailStr) -> None:
         """Transfer ownership of this workspace to another HydroServer user."""
 
-        self._connection.workspaces.transfer_ownership(uid=self.uid, email=email)
+        self.client.workspaces.transfer_ownership(uid=self.uid, email=email)
         self.refresh()
 
     def accept_ownership_transfer(self) -> None:
         """Accept ownership transfer of this workspace."""
 
-        self._connection.workspaces.accept_ownership_transfer(uid=self.uid)
+        self.client.workspaces.accept_ownership_transfer(uid=self.uid)
         self.refresh()
 
     def cancel_ownership_transfer(self) -> None:
         """Cancel ownership transfer of this workspace."""
 
-        self._connection.workspaces.cancel_ownership_transfer(uid=self.uid)
+        self.client.workspaces.cancel_ownership_transfer(uid=self.uid)
         self.refresh()
