@@ -183,7 +183,7 @@ class Datastream(HydroServerBaseModel):
         """The data archives of this datastream."""
 
         if self._data_archives is None:
-            self._data_archives = self.client.dataarchives.list(datastream=self.uid, fetch_all=True)
+            self._data_archives = self.client.dataarchives.list(datastream=self.uid, fetch_all=True).items
 
         return self._data_archives
 

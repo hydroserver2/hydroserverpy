@@ -66,7 +66,7 @@ class Thing(HydroServerBaseModel):
         """The datastreams collected at this thing."""
 
         if self._datastreams is None:
-            self._datastreams = self.client.datastreams.list(thing=self.uid, fetch_all=True)
+            self._datastreams = self.client.datastreams.list(thing=self.uid, fetch_all=True).items
 
         return self._datastreams
 

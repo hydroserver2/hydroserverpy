@@ -58,7 +58,7 @@ class DataArchive(
         """The datastreams this data archive provides data for."""
 
         if self._datastreams is None:
-            self._datastreams = self.client.datastreams.list(data_archive=self.uid, fetch_all=True)
+            self._datastreams = self.client.datastreams.list(data_archive=self.uid, fetch_all=True).items
 
         return self._datastreams
 

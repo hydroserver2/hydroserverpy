@@ -47,7 +47,7 @@ class OrchestrationSystem(HydroServerBaseModel):
         if self._datasources is None:
             self._datasources = self.client.datasources.list(
                 orchestration_system=self.uid, fetch_all=True
-            )
+            ).items
 
         return self._datasources
 
@@ -58,6 +58,6 @@ class OrchestrationSystem(HydroServerBaseModel):
         if self._dataarchives is None:
             self._dataarchives = self.client.dataarchives.list(
                 orchestration_system=self.uid, fetch_all=True
-            )
+            ).items
 
         return self._dataarchives

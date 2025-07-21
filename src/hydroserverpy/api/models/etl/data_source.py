@@ -61,7 +61,7 @@ class DataSource(
         """The datastreams this data source provides data for."""
 
         if self._datastreams is None:
-            self._datastreams = self.client.datastreams.list(data_source=self.uid, fetch_all=True)
+            self._datastreams = self.client.datastreams.list(data_source=self.uid, fetch_all=True).items
 
         return self._datastreams
 
