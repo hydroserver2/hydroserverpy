@@ -1,91 +1,96 @@
-from typing import Optional, Union, List, TYPE_CHECKING
+from typing import Optional, Union, ClassVar, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
-from pydantic import BaseModel
-from ..base import HydroServerResourceModel, HydroServerCollectionModel
+from hydroserverpy.api.models.iam.role import Role
+from hydroserverpy.api.utils import normalize_uuid
+from ..base import HydroServerBaseModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models import Workspace, Role
+    from hydroserverpy.api.models import Workspace
 
 
-class APIKeyFields(BaseModel):
+class APIKey(HydroServerBaseModel):
     name: str
+    role_id: Union[UUID, str]
+    workspace_id: Union[UUID, str]
     description: Optional[str] = None
     is_active: bool
     expires_at: Optional[datetime] = None
-    role: "Role"
 
+    _editable_fields: ClassVar[set[str]] = {"name", "description", "role_id", "is_active", "expires_at"}
 
-class APIKey(HydroServerResourceModel, APIKeyFields):
-    def __init__(self, _connection: "HydroServer", _uid: Union[UUID, str], **data):
-        super().__init__(
-            _connection=_connection, _model_ref="apikeys", _uid=_uid, **data
-        )
+    def __init__(self, client: "HydroServer", **data):
+        super().__init__(client=client, service=None, **data)
 
-        self._workspace_id = str(data.get("workspace_id") or data["workspaceId"])
         self._workspace = None
+        self._role = None
 
     @property
     def workspace(self) -> "Workspace":
-        """The workspace this data source belongs to."""
+        """The workspace this API key belongs to."""
 
-        if self._workspace is None and self._workspace_id:
-            self._workspace = self._connection.workspaces.get(uid=self._workspace_id)
+        if self._workspace is None:
+            self._workspace = self.client.workspaces.get(uid=self.workspace_id)
 
         return self._workspace
 
-    def refresh(self):
-        """Refresh this data source from HydroServer."""
+    @property
+    def role(self) -> "Role":
+        """The role this API key is assigned."""
 
-        self._original_data = (
-            self._connection.workspaces.get_api_key(
-                uid=self._workspace_id, api_key_id=self.uid
-            ).model_dump(exclude=["uid"])
-        )
-        self.__dict__.update(self._original_data)
-        self._workspace = None
+        if self._role is None:
+            self._role = self.client.roles.get(uid=self.role_id)
+
+        return self._role
+
+    @role.setter
+    def role(self, role: Union["Role", UUID, str] = ...):
+        if not role:
+            raise ValueError("Role of API key cannot be None.")
+        if normalize_uuid(role) != str(self.role_id):
+            self.role_id = normalize_uuid(role)
+            self._role = None
 
     def save(self):
-        """Save changes to this data source to HydroServer."""
+        """Saves changes to this resource to HydroServer."""
 
-        if self._patch_data:
-            api_key = self._connection.workspaces.update_api_key(
-                uid=self._workspace_id, api_key_id=self.uid, **self._patch_data
+        if not self.uid:
+            raise AttributeError("Data cannot be saved: UID is not set.")
+
+        if self.unsaved_changes:
+            saved_resource = self.client.workspaces.update_api_key(
+                uid=self.workspace_id, api_key_id=self.uid, **self.unsaved_changes
             )
-            self._original_data = api_key.dict(by_alias=False, exclude=["uid"])
-            self.__dict__.update(self._original_data)
+            self._server_data = saved_resource.dict(by_alias=False).copy()
+            self.__dict__.update(saved_resource.__dict__)
+
+    def refresh(self):
+        """Refreshes this resource from HydroServer."""
+
+        if self.uid is None:
+            raise ValueError("Cannot refresh data without a valid ID.")
+
+        refreshed_resource = self.client.workspaces.get_api_key(uid=self.workspace_id, api_key_id=self.uid)
+        self._server_data = refreshed_resource.dict(by_alias=False).copy()
+        self.__dict__.update(refreshed_resource.__dict__)
 
     def delete(self):
-        """Delete this data source from HydroServer."""
+        """Deletes this resource from HydroServer."""
 
-        if not self._uid:
-            raise AttributeError("This resource cannot be deleted: UID is not set.")
+        if self.uid is None:
+            raise AttributeError("Cannot delete data without a valid ID.")
 
-        self._connection.workspaces.delete_api_key(
-            uid=self._workspace_id, api_key_id=self.uid
+        self.client.workspaces.delete_api_key(
+            uid=self.workspace_id, api_key_id=self.uid
         )
-        self._uid = None
+        self.uid = None
 
     def regenerate(self):
         """Regenerates this API key. WARNING: Previous key will be invalidated."""
 
-        _, key = self._connection.workspaces.regenerate_api_key(
-            uid=self._workspace_id, api_key_id=self.uid
+        _, key = self.client.workspaces.regenerate_api_key(
+            uid=self.workspace_id, api_key_id=self.uid
         )
 
         return key
-
-
-class APIKeyCollection(HydroServerCollectionModel):
-    data: List[APIKey]
-
-    def __init__(
-        self,
-        _connection: "HydroServer",
-        **data,
-    ):
-        super().__init__(
-            _connection=_connection, _model_ref="apikeys", **data
-        )
-

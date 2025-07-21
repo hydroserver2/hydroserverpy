@@ -1,56 +1,41 @@
-from datetime import datetime
-from typing import Optional, Literal, Union, List, TYPE_CHECKING
+from typing import Optional, Union, List, Literal, TYPE_CHECKING
 from uuid import UUID
-from ..base import EndpointService
-from hydroserverpy.api.models import DataSource, Datastream
-
+from datetime import datetime
+from hydroserverpy.api.models import DataSource
+from hydroserverpy.api.utils import normalize_uuid
+from ..base import HydroServerBaseService
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models import Workspace, OrchestrationSystem
+    from hydroserverpy.api.models import Workspace, OrchestrationSystem, Datastream
 
 
-class DataSourceService(EndpointService):
-    def __init__(self, connection: "HydroServer"):
-        self._model = DataSource
-        self._api_route = "api/data"
-        self._endpoint_route = "data-sources"
-
-        super().__init__(connection)
+class DataSourceService(HydroServerBaseService):
+    def __init__(self, client: "HydroServer"):
+        self.model = DataSource
+        super().__init__(client)
 
     def list(
         self,
-        workspace: Optional[Union["Workspace", UUID, str]] = None,
-        orchestration_system: Optional[Union["OrchestrationSystem", UUID, str]] = None,
+        page: int = ...,
+        page_size: int = ...,
+        order_by: List[str] = ...,
+        workspace: Optional[Union["Workspace", UUID, str]] = ...,
+        datastream: Optional[Union["Datastream", UUID, str]] = ...,
+        orchestration_system: Optional[Union["OrchestrationSystem", UUID, str]] = ...,
+        fetch_all: bool = False,
     ) -> List["DataSource"]:
         """Fetch a collection of data sources."""
 
-        params = {}
-
-        workspace_id = getattr(workspace, "uid", workspace)
-        workspace_id = str(workspace_id) if workspace_id else None
-
-        orchestration_system_id = getattr(
-            orchestration_system, "uid", orchestration_system
+        return super().list(
+            page=page,
+            page_size=page_size,
+            order_by=order_by,
+            workspace_id=normalize_uuid(workspace),
+            datastream_id=normalize_uuid(datastream),
+            orchestration_system_id=normalize_uuid(orchestration_system),
+            fetch_all=fetch_all,
         )
-        orchestration_system_id = (
-            str(orchestration_system_id) if orchestration_system_id else None
-        )
-
-        if workspace_id:
-            params["workspace_id"] = workspace_id
-
-        if orchestration_system_id:
-            params["orchestration_system_id"] = orchestration_system_id
-
-        return super()._list(
-            params=params,
-        )
-
-    def get(self, uid: Union[UUID, str]) -> "DataSource":
-        """Get a data source by ID."""
-
-        return super()._get(uid=str(uid))
 
     def create(
         self,
@@ -72,12 +57,10 @@ class DataSourceService(EndpointService):
     ) -> "DataSource":
         """Create a new data source."""
 
-        kwargs = {
+        body = {
             "name": name,
-            "workspaceId": str(getattr(workspace, "uid", workspace)),
-            "orchestrationSystemId": getattr(
-                orchestration_system, "uid", orchestration_system
-            ),
+            "workspaceId": normalize_uuid(workspace),
+            "orchestrationSystemId": normalize_uuid(orchestration_system),
             "settings": settings,
             "schedule": {
                 "interval": interval,
@@ -95,7 +78,7 @@ class DataSourceService(EndpointService):
             },
             "datastreamIds": (
                 [
-                    str(getattr(datastream, "uid", datastream))
+                    normalize_uuid(datastream)
                     for datastream in datastreams
                 ]
                 if datastreams
@@ -103,7 +86,7 @@ class DataSourceService(EndpointService):
             ),
         }
 
-        return super()._create(**kwargs)
+        return super().create(**body)
 
     def update(
         self,
@@ -124,7 +107,7 @@ class DataSourceService(EndpointService):
     ) -> "DataSource":
         """Update a data source."""
 
-        status_kwargs = {
+        status_body = {
             k: v
             for k, v in {
                 "lastRunSuccessful": last_run_successful,
@@ -135,9 +118,9 @@ class DataSourceService(EndpointService):
             }.items()
             if v is not ...
         }
-        status_kwargs = status_kwargs if status_kwargs else ...
+        status_body = status_body if status_body else ...
 
-        schedule_kwargs = {
+        schedule_body = {
             k: v
             for k, v in {
                 "interval": interval,
@@ -148,9 +131,9 @@ class DataSourceService(EndpointService):
             }.items()
             if v is not ...
         }
-        schedule_kwargs = schedule_kwargs if schedule_kwargs else ...
+        schedule_body = schedule_body if schedule_body else ...
 
-        kwargs = {
+        body = {
             k: v
             for k, v in {
                 "name": name,
@@ -158,39 +141,26 @@ class DataSourceService(EndpointService):
                     orchestration_system, "uid", orchestration_system
                 ),
                 "settings": settings,
-                "schedule": schedule_kwargs,
-                "status": status_kwargs,
+                "schedule": schedule_body,
+                "status": status_body,
             }.items()
             if v is not ...
         }
 
-        return super()._update(uid=str(uid), **kwargs)
-
-    def delete(self, uid: Union[UUID, str]) -> None:
-        """Delete a data source."""
-
-        super()._delete(uid=str(uid))
+        return super().update(uid=str(uid), **body)
 
     def add_datastream(
         self, uid: Union[UUID, str], datastream: Union["Datastream", UUID, str]
     ) -> None:
         """Add a datastream to this data source."""
 
-        datastream_id = str(getattr(datastream, "uid", datastream))
-
-        self._connection.request(
-            "post",
-            f"{self._api_route}/{self._endpoint_route}/{str(uid)}/datastreams/{datastream_id}",
-        )
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/datastreams/{normalize_uuid(datastream)}"
+        self.client.request("put", path)
 
     def remove_datastream(
         self, uid: Union[UUID, str], datastream: Union["Datastream", UUID, str]
     ) -> None:
         """Remove a datastream from this data source."""
 
-        datastream_id = str(getattr(datastream, "uid", datastream))
-
-        self._connection.request(
-            "delete",
-            f"{self._api_route}/{self._endpoint_route}/{str(uid)}/datastreams/{datastream_id}",
-        )
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/datastreams/{normalize_uuid(datastream)}"
+        self.client.request("delete", path)

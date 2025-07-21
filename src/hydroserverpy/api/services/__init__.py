@@ -1,4 +1,5 @@
 from .iam.workspace import WorkspaceService
+from .iam.role import RoleService
 from .sta.thing import ThingService
 from .sta.observed_property import ObservedPropertyService
 from .sta.unit import UnitService

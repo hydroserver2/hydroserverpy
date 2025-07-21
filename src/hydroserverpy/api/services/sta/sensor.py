@@ -1,68 +1,49 @@
 from typing import Optional, Union, List, TYPE_CHECKING
 from uuid import UUID
-from ..base import EndpointService
-from hydroserverpy.api.models import Sensor, SensorCollection
-
+from hydroserverpy.api.models import Sensor
+from hydroserverpy.api.utils import normalize_uuid
+from ..base import HydroServerBaseService
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
     from hydroserverpy.api.models import Workspace, Thing, Datastream
 
 
-class SensorService(EndpointService):
-    def __init__(self, connection: "HydroServer"):
-        self._model = Sensor
-        self._collection_model = SensorCollection
-        self._api_route = "api/data"
-        self._endpoint_route = "sensors"
-
-        super().__init__(connection)
+class SensorService(HydroServerBaseService):
+    def __init__(self, client: "HydroServer"):
+        self.model = Sensor
+        super().__init__(client)
 
     def list(
         self,
-        workspace: Optional[Union["Workspace", UUID, str]] = None,
-        thing: Optional[Union["Thing", UUID, str]] = None,
-        datastream: Optional[Union["Datastream", UUID, str]] = None,
-        encoding_type: Optional[str] = None,
-        manufacturer: Optional[str] = None,
-        method_type: Optional[str] = None,
-        page: int = 1,
-        page_size: int = 100,
-        order_by: Optional[List[str]] = None,
+        page: int = ...,
+        page_size: int = ...,
+        order_by: List[str] = ...,
+        workspace: Optional[Union["Workspace", UUID, str]] = ...,
+        thing: Optional[Union["Thing", UUID, str]] = ...,
+        datastream: Optional[Union["Datastream", UUID, str]] = ...,
+        encoding_type: str = ...,
+        manufacturer: Optional[str] = ...,
+        method_type: str = ...,
+        fetch_all: bool = False,
     ) -> List["Sensor"]:
         """Fetch a collection of sensors."""
 
-        params = {}
-
-        if workspace is not None:
-            params["workspace"] = str(getattr(workspace, "uid", workspace))
-        if thing is not None:
-            params["thing"] = str(getattr(thing, "uid", thing))
-        if datastream is not None:
-            params["datastream"] = str(getattr(datastream, "uid", datastream))
-        if encoding_type is not None:
-            params["encoding_type"] = encoding_type
-        if manufacturer is not None:
-            params["manufacturer"] = manufacturer
-        if method_type is not None:
-            params["method_type"] = method_type
-
-        pagination = {
-            "page": page,
-            "page_size": page_size,
-            "order_by": order_by,
-        }
-
-        return super()._list(params=params, pagination=pagination)
-
-    def get(self, uid: Union[UUID, str]) -> "Sensor":
-        """Get a sensor by ID."""
-
-        return super()._get(uid=str(uid))
+        return super().list(
+            page=page,
+            page_size=page_size,
+            order_by=order_by,
+            workspace_id=normalize_uuid(workspace),
+            thing_id=normalize_uuid(thing),
+            datastream_id=normalize_uuid(datastream),
+            encoding_type=encoding_type,
+            manufacturer=manufacturer,
+            method_type=method_type,
+            fetch_all=fetch_all,
+        )
 
     def create(
         self,
-        workspace: Union["Workspace", UUID, str],
         name: str,
         description: str,
         encoding_type: str,
@@ -72,10 +53,11 @@ class SensorService(EndpointService):
         sensor_model_link: Optional[str] = None,
         method_link: Optional[str] = None,
         method_code: Optional[str] = None,
+        workspace: Optional[Union["Workspace", UUID, str]] = None,
     ) -> "Sensor":
         """Create a new sensor."""
 
-        kwargs = {
+        body = {
             "name": name,
             "description": description,
             "encodingType": encoding_type,
@@ -85,10 +67,10 @@ class SensorService(EndpointService):
             "modelLink": sensor_model_link,
             "methodLink": method_link,
             "methodCode": method_code,
-            "workspaceId": str(getattr(workspace, "uid", workspace)),
+            "workspaceId": normalize_uuid(workspace),
         }
 
-        return super()._create(**kwargs)
+        return super().create(**body)
 
     def update(
         self,
@@ -105,7 +87,7 @@ class SensorService(EndpointService):
     ) -> "Sensor":
         """Update a sensor."""
 
-        kwargs = {
+        body = {
             "name": name,
             "description": description,
             "encodingType": encoding_type,
@@ -117,11 +99,4 @@ class SensorService(EndpointService):
             "methodCode": method_code,
         }
 
-        return super()._update(
-            uid=str(uid), **{k: v for k, v in kwargs.items() if v is not ...}
-        )
-
-    def delete(self, uid: Union[UUID, str]) -> None:
-        """Delete a sensor."""
-
-        super()._delete(uid=str(uid))
+        return super().update(uid=str(uid), **body)
