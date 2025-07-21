@@ -46,6 +46,7 @@ class HydroServerLoader(HydroServer, Loader):
             logging.info(f"dtypes: {df.dtypes}")
 
             df["value"] = pd.to_numeric(df["value"], errors="raise")
+            df = df.rename(columns={"timestamp": "phenomenon_time", "value": "result"})
             self.datastreams.load_observations(uid=col, observations=df)
 
     def _fetch_earliest_begin(self, mappings: list[dict]) -> pd.Timestamp:
