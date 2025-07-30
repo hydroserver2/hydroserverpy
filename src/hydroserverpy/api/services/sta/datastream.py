@@ -267,8 +267,6 @@ class DatastreamService(HydroServerBaseService):
             "data": observations.values.tolist()
         }
 
-        print(body)
-
         self.client.request(
             "post", path, headers=headers, params=params, data=json.dumps(body, default=self.default_serializer)
         )

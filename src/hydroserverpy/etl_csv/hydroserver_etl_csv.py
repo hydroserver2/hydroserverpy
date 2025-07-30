@@ -179,12 +179,12 @@ class HydroServerETLCSV:
         """
 
         try:
+            timestamp_key = (self._data_source.settings["transformer"].get("timestampKey") or
+                             self._data_source.settings["transformer"]["timestamp"]["key"])
             self._timestamp_column_index = (
-                row.index(self._data_source.settings["transformer"]["timestampKey"])
-                if isinstance(
-                    self._data_source.settings["transformer"]["timestampKey"], str
-                )
-                else int(self._data_source.settings["transformer"]["timestampKey"]) - 1
+                row.index(timestamp_key)
+                if isinstance(timestamp_key, str)
+                else int(timestamp_key) - 1
             )
             if self._timestamp_column_index > len(row):
                 raise ValueError
@@ -216,26 +216,24 @@ class HydroServerETLCSV:
         """
 
         try:
-            if (
-                self._data_source.settings["transformer"].get("timestampFormat") in ["utc", "constant", "ISO8601"]
-                or self._data_source.settings["transformer"].get("timestampFormat")
-                is None
-            ):
-                timestamp = isoparse(row[self._timestamp_column_index])
-            else:
+            timestamp_format = (self._data_source.settings["transformer"].get("timestampFormat") or
+                                self._data_source.settings["transformer"].get("timestamp", {}).get("format"))
+            if timestamp_format == "custom":
                 timestamp = datetime.strptime(
-                    row[self._timestamp_column_index],
-                    self._data_source.settings["transformer"].get("timestampFormat"),
+                    row[self._timestamp_column_index], timestamp_format,
                 )
+            else:
+                timestamp = isoparse(row[self._timestamp_column_index])
         except ValueError as e:
             raise TimestampParsingError(str(e)) from e
 
         if timestamp.tzinfo is None:
-            if not self._data_source.settings["transformer"].get(
+            timestamp_offset = self._data_source.settings["transformer"].get(
                 "timestampOffset"
             ) or self._data_source.settings["transformer"].get(
-                "timestampOffset"
-            ).endswith(
+                "timestamp", {}
+            ).get("offset")
+            if not timestamp_offset or timestamp_offset.endswith(
                 "0000"
             ):
                 timestamp = timestamp.replace(tzinfo=timezone.utc)
@@ -243,13 +241,9 @@ class HydroServerETLCSV:
                 try:
                     timestamp = timestamp.replace(
                         tzinfo=datetime.strptime(
-                            self._data_source.settings["transformer"].get(
-                                "timestampOffset"
-                            )[:-2]
+                            timestamp_offset[:-2]
                             + ":"
-                            + self._data_source.settings["transformer"].get(
-                                "timestampOffset"
-                            )[3:],
+                            + timestamp_offset[3:],
                             "%z",
                         ).tzinfo
                     )
