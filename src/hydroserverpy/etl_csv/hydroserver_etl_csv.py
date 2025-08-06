@@ -216,11 +216,11 @@ class HydroServerETLCSV:
         """
 
         try:
-            timestamp_format = (self._data_source.settings["transformer"].get("timestampFormat") or
-                                self._data_source.settings["transformer"].get("timestamp", {}).get("format"))
+            timestamp_format = self._data_source.settings["transformer"]["timestamp"]["format"]
             if timestamp_format == "custom":
                 timestamp = datetime.strptime(
-                    row[self._timestamp_column_index], timestamp_format,
+                    row[self._timestamp_column_index],
+                    self._data_source.settings["transformer"]["timestamp"]["customFormat"],
                 )
             else:
                 timestamp = isoparse(row[self._timestamp_column_index])
@@ -228,11 +228,7 @@ class HydroServerETLCSV:
             raise TimestampParsingError(str(e)) from e
 
         if timestamp.tzinfo is None:
-            timestamp_offset = self._data_source.settings["transformer"].get(
-                "timestampOffset"
-            ) or self._data_source.settings["transformer"].get(
-                "timestamp", {}
-            ).get("offset")
+            timestamp_offset = self._data_source.settings["transformer"]["timestamp"]["timezone"]
             if not timestamp_offset or timestamp_offset.endswith(
                 "0000"
             ):
