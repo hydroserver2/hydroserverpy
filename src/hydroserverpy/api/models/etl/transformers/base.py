@@ -1,15 +1,18 @@
 from abc import ABC, abstractmethod
 import logging
-from typing import Union
-from hydroserverpy.etl.timestamp_parser import TimestampParser
+from typing import List
 import pandas as pd
+
+from ..timestamp_parser import TimestampParser
+from ..etl_configuration import TransformerConfig, SourceTargetMapping
 
 
 class Transformer(ABC):
-    def __init__(self, settings: object):
-        self.timestamp = settings["timestamp"]
-        self.timestamp_key: Union[str, int] = self.timestamp["key"]
+    def __init__(self, transformer_config: TransformerConfig):
+        self.cfg = transformer_config
+        self.timestamp = transformer_config.timestamp
 
+        self.timestamp_key = self.timestamp.key
         if isinstance(self.timestamp_key, int):
             # Users will always interact in 1-based, so if the key is a column index, convert to 0-based
             self.timestamp_key = self.timestamp_key - 1
@@ -24,11 +27,10 @@ class Transformer(ABC):
     def needs_datastreams(self) -> bool:
         return False
 
-    def standardize_dataframe(self, df: pd.DataFrame, payload_mappings):
-        rename_map = {
-            mapping["sourceIdentifier"]: mapping["targetIdentifier"]
-            for mapping in payload_mappings
-        }
+    def standardize_dataframe(
+        self, df: pd.DataFrame, mappings: List[SourceTargetMapping]
+    ):
+        rename_map = {m.source_identifier: m.target_identifier for m in mappings}
 
         df.rename(
             columns={self.timestamp_key: "timestamp", **rename_map},
