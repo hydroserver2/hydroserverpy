@@ -126,13 +126,17 @@ class DataSource(HydroServerBaseModel):
             logging.info("Starting extract")
             data = extractor_cls.extract(payload, loader_cls)
             if self.is_empty(data):
-                self._update_status(True, "No data returned from the extractor")
+                self._update_status(
+                    loader_cls, True, "No data returned from the extractor"
+                )
                 return
 
             logging.info("Starting transform")
             data = transformer_cls.transform(data, payload.mappings)
             if self.is_empty(data):
-                self._update_status(True, "No data returned from the transformer")
+                self._update_status(
+                    loader_cls, True, "No data returned from the transformer"
+                )
                 return
 
             logging.info("Starting load")
