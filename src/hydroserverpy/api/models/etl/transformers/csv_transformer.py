@@ -34,7 +34,14 @@ class CSVTransformer(Transformer):
         """
 
         clean_file = self._strip_comments(data_file)
-        source_identifiers = [m.source_identifier for m in mappings]
+        use_index = self.identifier_type == "index"
+
+        if use_index:
+            # Users will always interact in 1-based, so if the key is a column index, convert to 0-based to work with Pandas
+            timestamp_pos = int(self.timestamp.key) - 1
+            usecols = [timestamp_pos] + [int(m.source_identifier) - 1 for m in mappings]
+        else:
+            usecols = [self.timestamp.key] + [m.source_identifier for m in mappings]
 
         try:
             # Pandas’ heuristics strip offsets and silently coerce failures to strings.
@@ -45,16 +52,17 @@ class CSVTransformer(Transformer):
                 sep=self.delimiter,
                 header=self.header_row,
                 skiprows=self._build_skiprows(),
-                usecols=[self.timestamp_key] + source_identifiers,
-                dtype={self.timestamp_key: "string"},
+                usecols=usecols,
+                dtype={self.timestamp.key: "string"},
             )
             logging.info(f"CSV file read into dataframe: {df.shape}")
         except Exception as e:
             logging.error(f"Error reading CSV data: {e}")
             return None
 
-        if self.header_row is None:
-            df.columns = list(range(1, len(df.columns) + 1))
+        # In index mode, relabel columns back to original 1-based indices so base transformer can use integer labels directly
+        if use_index:
+            df.columns = [(c + 1) if isinstance(c, int) else c for c in usecols]
 
         return self.standardize_dataframe(df, mappings)
 

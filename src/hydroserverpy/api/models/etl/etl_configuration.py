@@ -168,15 +168,30 @@ class HydroServerLoaderConfig(BaseLoaderConfig):
 LoaderConfig = HydroServerLoaderConfig
 
 
-class DataTransformation(BaseModel):
-    transformation_type: Literal["expression", "lookup"] = Field(
-        ..., alias="transformationType"
+class ExpressionDataTransformation(BaseModel):
+    type: Literal["expression"]
+    expression: str
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+class LookupTableDataTransformation(BaseModel):
+    type: Literal["lookup"]
+    lookup_table_id: str = Field(..., alias="lookupTableId")
+
+    class Config:
+        allow_population_by_field_name = True
+
+
+DataTransformation = Union[ExpressionDataTransformation, LookupTableDataTransformation]
+
+
+class MappingPath(BaseModel):
+    target_identifier: Union[str, int] = Field(..., alias="targetIdentifier")
+    data_transformations: List[DataTransformation] = Field(
+        default_factory=list, alias="dataTransformations"
     )
-    expression: Optional[str] = None
-    lookup_table_uuid: Optional[str] = Field(None, alias="lookupTableUuid")
-    operation: str
-    do_save_raw_data_copy: bool = Field(..., alias="doSaveRawDataCopy")
-    raw_target_identifier: Union[str, int] = Field(..., alias="rawTargetIdentifier")
 
     class Config:
         allow_population_by_field_name = True
@@ -184,10 +199,7 @@ class DataTransformation(BaseModel):
 
 class SourceTargetMapping(BaseModel):
     source_identifier: Union[str, int] = Field(..., alias="sourceIdentifier")
-    target_identifier: Union[str, int] = Field(..., alias="targetIdentifier")
-    data_transformation: Optional[DataTransformation] = Field(
-        None, alias="dataTransformation"
-    )
+    paths: List[MappingPath] = Field(default_factory=list)
 
     class Config:
         allow_population_by_field_name = True
@@ -195,7 +207,7 @@ class SourceTargetMapping(BaseModel):
 
 class Payload(BaseModel):
     name: str = ""
-    mappings: List[SourceTargetMapping] = []
+    mappings: List[SourceTargetMapping] = Field(default_factory=list)
     extractor_variables: Dict[str, str] = Field(
         default_factory=dict, alias="extractorVariables"
     )

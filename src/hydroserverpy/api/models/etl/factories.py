@@ -18,6 +18,6 @@ def transformer_factory(settings: TransformerConfig):
     return cls(settings)
 
 
-def loader_factory(settings: LoaderConfig, auth_context):
+def loader_factory(settings: LoaderConfig, auth_context, data_source_id: str):
     cls = LOADERS[settings.type]
-    return cls(auth_context)
+    return cls(auth_context, data_source_id)

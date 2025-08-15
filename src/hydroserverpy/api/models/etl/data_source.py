@@ -120,7 +120,7 @@ class DataSource(HydroServerBaseModel):
 
         extractor_cls = extractor_factory(self.settings.extractor)
         transformer_cls = transformer_factory(self.settings.transformer)
-        loader_cls = loader_factory(self.settings.loader, self.client)
+        loader_cls = loader_factory(self.settings.loader, self.client, self.uid)
 
         try:
             logging.info("Starting extract")

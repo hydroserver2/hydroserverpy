@@ -3,11 +3,11 @@ import requests
 from io import BytesIO
 
 from ..etl_configuration import Payload
-from .base import Extractor
+from .base import Extractor, ExtractorConfig
 
 
 class HTTPExtractor(Extractor):
-    def __init__(self, settings: dict):
+    def __init__(self, settings: ExtractorConfig):
         super().__init__(settings)
 
     def extract(self, payload: Payload, loader=None):

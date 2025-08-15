@@ -1,22 +1,60 @@
 from abc import ABC, abstractmethod
+import ast
+from functools import lru_cache
 import logging
-from typing import List
+import re
+from typing import List, Union
 import pandas as pd
 
 from ..timestamp_parser import TimestampParser
-from ..etl_configuration import TransformerConfig, SourceTargetMapping
+from ..etl_configuration import MappingPath, TransformerConfig, SourceTargetMapping
+
+ALLOWED_AST = (
+    ast.Expression,
+    ast.BinOp,
+    ast.UnaryOp,
+    ast.Add,
+    ast.Sub,
+    ast.Mult,
+    ast.Div,
+    ast.UAdd,
+    ast.USub,
+    ast.Name,
+    ast.Load,
+    ast.Constant,
+)
+
+
+def _canonicalize_expr(expr: str) -> str:
+    # normalize whitespace for cache hits; parentheses remain intact
+    return re.sub(r"\s+", "", expr)
+
+
+@lru_cache(maxsize=256)
+def _compile_arithmetic_expr_canon(expr_no_ws: str):
+    tree = ast.parse(expr_no_ws, mode="eval")
+    for node in ast.walk(tree):
+        if not isinstance(node, ALLOWED_AST):
+            raise ValueError(
+                "Only +, -, *, / with 'x' and numeric literals are allowed."
+            )
+        if isinstance(node, ast.Name) and node.id != "x":
+            raise ValueError("Only the variable 'x' is allowed.")
+        if isinstance(node, ast.Constant):
+            val = node.value
+            if isinstance(val, bool) or not isinstance(val, (int, float)):
+                raise ValueError("Only numeric literals are allowed.")
+    return compile(tree, "<expr>", "eval")
+
+
+def _compile_arithmetic_expr(expr: str):
+    return _compile_arithmetic_expr_canon(_canonicalize_expr(expr))
 
 
 class Transformer(ABC):
     def __init__(self, transformer_config: TransformerConfig):
         self.cfg = transformer_config
         self.timestamp = transformer_config.timestamp
-
-        self.timestamp_key = self.timestamp.key
-        if isinstance(self.timestamp_key, int):
-            # Users will always interact in 1-based, so if the key is a column index, convert to 0-based
-            self.timestamp_key = self.timestamp_key - 1
-
         self.timestamp_parser = TimestampParser(self.timestamp)
 
     @abstractmethod
@@ -30,37 +68,61 @@ class Transformer(ABC):
     def standardize_dataframe(
         self, df: pd.DataFrame, mappings: List[SourceTargetMapping]
     ):
-        rename_map = {m.source_identifier: m.target_identifier for m in mappings}
-
-        df.rename(
-            columns={self.timestamp_key: "timestamp", **rename_map},
-            inplace=True,
-        )
-
-        # Verify timestamp column is present in the DataFrame
+        # 1) Normalize timestamp column
+        df.rename(columns={self.timestamp.key: "timestamp"}, inplace=True)
         if "timestamp" not in df.columns:
-            message = f"Timestamp column '{self.timestamp_key}' not found in data."
-            logging.error(message)
-            raise ValueError(message)
-
-        # verify datastream columns
-        expected = set(rename_map.values())
-        missing = expected - set(df.columns)
-        if missing:
-            raise ValueError(
-                "The following datastream IDs are specified in the config file but their related keys could not be "
-                f"found in the source system's extracted data: {missing}"
-            )
-
-        # keep only timestamp + datastream columns; remove the rest inplace
-        to_keep = ["timestamp", *expected]
-        df.drop(columns=df.columns.difference(to_keep), inplace=True)
-
+            msg = f"Timestamp column '{self.timestamp.key}' not found in data."
+            logging.error(msg)
+            raise ValueError(msg)
         df["timestamp"] = self.timestamp_parser.parse_series(df["timestamp"])
+        df = df.drop_duplicates(subset=["timestamp"], keep="last")
 
-        df.drop_duplicates(subset=["timestamp"], keep="last")
+        def _resolve_source_col(s_id: Union[str, int]) -> str:
+            if isinstance(s_id, int) and s_id not in df.columns:
+                try:
+                    return df.columns[s_id]
+                except IndexError:
+                    raise ValueError(
+                        f"Source index {s_id} is out of range for extracted data."
+                    )
+            if s_id not in df.columns:
+                raise ValueError(f"Source column '{s_id}' not found in extracted data.")
+            return s_id
+
+        def _apply_transformations(series: pd.Series, path: MappingPath) -> pd.Series:
+            out = series  # accumulator for sequential transforms
+            if out.dtype == "object":
+                out = pd.to_numeric(out, errors="coerce")
+
+            for transformation in path.data_transformations:
+                if transformation.type == "expression":
+                    code = _compile_arithmetic_expr(transformation.expression)
+                    try:
+                        out = eval(code, {"__builtins__": {}}, {"x": out})
+                    except Exception as ee:
+                        logging.exception(
+                            "Data transformation failed for expression=%r",
+                            transformation.expression,
+                        )
+                        raise
+                else:
+                    msg = f"Unsupported transformation type: {transformation.type}"
+                    logging.error(msg)
+                    raise ValueError(msg)
+            return out
+
+        # source target mappings may be one to many. Therefore, create a new column for each target and apply transformations
+        transformed_df = pd.DataFrame(index=df.index)
+        for m in mappings:
+            src_col = _resolve_source_col(m.source_identifier)
+            base = df[src_col]
+            for path in m.paths:
+                target_col = str(path.target_identifier)
+                transformed_df[target_col] = _apply_transformations(base, path)
+
+        # 6) Keep only timestamp + target columns
+        df = pd.concat([df[["timestamp"]], pd.DataFrame(transformed_df)], axis=1)
+
         logging.info(f"standardized dataframe created: {df.shape}")
-        logging.info(f"{df.info()}")
-        logging.info(f"{df.head()}")
 
         return df
