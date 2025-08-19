@@ -1,14 +1,16 @@
 import logging
 import requests
 from io import BytesIO
-from .base import Extractor
+
+from ..etl_configuration import Payload
+from .base import Extractor, ExtractorConfig
 
 
 class HTTPExtractor(Extractor):
-    def __init__(self, settings: dict):
+    def __init__(self, settings: ExtractorConfig):
         super().__init__(settings)
 
-    def extract(self, payload, loader=None):
+    def extract(self, payload: Payload, loader=None):
         """
         Downloads the file from the HTTP/HTTPS server and returns a file-like object.
         """

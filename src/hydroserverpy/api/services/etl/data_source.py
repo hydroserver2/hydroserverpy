@@ -77,10 +77,7 @@ class DataSourceService(HydroServerBaseService):
                 "paused": paused,
             },
             "datastreamIds": (
-                [
-                    normalize_uuid(datastream)
-                    for datastream in datastreams
-                ]
+                [normalize_uuid(datastream) for datastream in datastreams]
                 if datastreams
                 else []
             ),

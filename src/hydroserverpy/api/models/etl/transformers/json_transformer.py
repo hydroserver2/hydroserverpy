@@ -1,17 +1,18 @@
 import logging
 import pandas as pd
-from typing import Dict, Optional, Any, List
+from typing import Optional, Any, List
 from .base import Transformer
 import json
 import jmespath
+from ..etl_configuration import TransformerConfig, SourceTargetMapping
 
 
 class JSONTransformer(Transformer):
-    def __init__(self, settings: object):
-        super().__init__(settings)
-        self.JMESPath = settings["JMESPath"]
+    def __init__(self, transformer_config: TransformerConfig):
+        super().__init__(transformer_config)
+        self.jmespath = transformer_config.jmespath
 
-    def transform(self, data_file, mappings):
+    def transform(self, data_file, mappings: List[SourceTargetMapping]):
         """
         Transforms a JSON file-like object into the standard Pandas dataframe format.
         Since JMESPath can natively rename column names, the assumption is the timestamp column
@@ -35,7 +36,7 @@ class JSONTransformer(Transformer):
 
     def extract_data_points(self, json_data: Any) -> Optional[List[dict]]:
         """Extracts data points from the JSON data using the data_path."""
-        data_points = jmespath.search(self.JMESPath, json_data)
+        data_points = jmespath.search(self.jmespath, json_data)
 
         if isinstance(data_points, dict):
             data_points = [data_points]
