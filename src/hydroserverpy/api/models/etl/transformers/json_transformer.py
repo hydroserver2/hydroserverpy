@@ -24,7 +24,21 @@ class JSONTransformer(Transformer):
         Returns:
             pd.DataFrame: pandas DataFrames in the format pd.Timestamp, datastream_id_1, datastream_id_2, ...
         """
+        if data_file is None:
+            raise TypeError(
+                "JSONTransformer received None; expected file-like, bytes, or str"
+            )
+
         json_data = json.load(data_file)
+        logging.info(f"Read in json data: \n{data_file}")
+        logging.info(
+            "JSONTransformer cfg:\n jmespath=%r\n ts.key=%r\n ts.format=%r\n ts.custom=%r",
+            self.cfg.jmespath,
+            self.timestamp.key,
+            self.timestamp.format,
+            self.timestamp.custom_format,
+        )
+
         data_points = self.extract_data_points(json_data)
         if not data_points:
             logging.warning("No data points found in the JSON data.")

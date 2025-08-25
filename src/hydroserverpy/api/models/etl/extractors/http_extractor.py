@@ -17,11 +17,8 @@ class HTTPExtractor(Extractor):
         url = self.resolve_placeholder_variables(payload, loader)
         logging.info(f"Requesting data from → {url}")
 
-        try:
-            response = requests.get(url)
-        except Exception as e:
-            logging.error(f"Failed to fetch {url}: {e}")
-            raise
+        response = requests.get(url)
+        response.raise_for_status()
 
         data = BytesIO()
         for chunk in response.iter_content(chunk_size=8192):

@@ -73,7 +73,10 @@ class TimestampParser:
         return localized.dt.tz_convert(timezone.utc)
 
     def parse_series(self, raw_series: pd.Series) -> pd.Series:
-        s = raw_series.str.strip()
+        if pd.api.types.is_datetime64_any_dtype(raw_series):
+            s = raw_series  # already datetimes
+        else:
+            s = raw_series.astype("string", copy=False).str.strip()
         parsed = self._convert_series_to_UTC(s)
 
         if parsed.isna().any():
