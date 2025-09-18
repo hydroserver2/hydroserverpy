@@ -11,4 +11,4 @@ class Status(BaseModel):
     next_run: Optional[datetime] = Field(None, alias="nextRun")
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True

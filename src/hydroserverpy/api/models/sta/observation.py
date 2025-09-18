@@ -38,7 +38,9 @@ class ObservationCollection:
             data = response.json()
             self.dataframe = pd.DataFrame({to_snake(k): v for k, v in data.items()})
             if "phenomenon_time" in self.dataframe.columns:
-                self.dataframe["phenomenon_time"] = pd.to_datetime(self.dataframe["phenomenon_time"], utc=True)
+                self.dataframe["phenomenon_time"] = pd.to_datetime(
+                    self.dataframe["phenomenon_time"], utc=True, format="ISO8601"
+                )
         else:
             self.dataframe = pd.DataFrame()
 

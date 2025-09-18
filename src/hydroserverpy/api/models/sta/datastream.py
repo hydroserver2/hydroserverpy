@@ -194,6 +194,7 @@ class Datastream(HydroServerBaseModel):
         order_by: List[str] = ...,
         phenomenon_time_max: datetime = ...,
         phenomenon_time_min: datetime = ...,
+        result_qualifier_code: str = ...,
         fetch_all: bool = False,
     ) -> pd.DataFrame:
         """Retrieve the observations for this datastream."""
@@ -205,18 +206,21 @@ class Datastream(HydroServerBaseModel):
             order_by=order_by,
             phenomenon_time_max=phenomenon_time_max,
             phenomenon_time_min=phenomenon_time_min,
+            result_qualifier_code=result_qualifier_code,
             fetch_all=fetch_all
         )
 
     def load_observations(
         self,
         observations: pd.DataFrame,
+        mode: str = "insert"
     ) -> None:
         """Load a DataFrame of observations to the datastream."""
 
         return self.client.datastreams.load_observations(
             uid=self.uid,
             observations=observations,
+            mode=mode
         )
 
     def delete_observations(

@@ -220,6 +220,7 @@ class DatastreamService(HydroServerBaseService):
         order_by: List[str] = ...,
         phenomenon_time_max: datetime = ...,
         phenomenon_time_min: datetime = ...,
+        result_qualifier_code: str = ...,
         fetch_all: bool = False,
     ) -> ObservationCollection:
         """Retrieve observations of a datastream."""
@@ -230,6 +231,7 @@ class DatastreamService(HydroServerBaseService):
             "order_by": ",".join(order_by) if order_by is not ... else order_by,
             "phenomenon_time_max": phenomenon_time_max,
             "phenomenon_time_min": phenomenon_time_min,
+            "result_qualifier_code": result_qualifier_code,
             "format": "column"
         }
         params = {
@@ -256,12 +258,13 @@ class DatastreamService(HydroServerBaseService):
         self,
         uid: Union[UUID, str],
         observations: pd.DataFrame,
+        mode: str = "insert"
     ) -> None:
         """Load observations to a datastream."""
 
         path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/observations/bulk-create"
         headers = {"Content-type": "application/json"}
-        params = {"mode": "insert"}
+        params = {"mode": mode}
         body = {
             "fields": [to_camel(col) for col in observations.columns.tolist()],
             "data": observations.values.tolist()
