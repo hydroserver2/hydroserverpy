@@ -74,7 +74,7 @@ class Timestamp(BaseModel):
     timezone: Optional[Union[FixedOffsetTimezone, str]] = Field(None, alias="timezone")
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
     @field_validator("timezone")
     def check_timezone(cls, timezone_value, info):
@@ -96,7 +96,7 @@ class RunTimePlaceholder(BaseModel):
     timestamp: Timestamp
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 PlaceholderVariable = Annotated[
@@ -114,7 +114,7 @@ class BaseExtractor(BaseModel):
     )
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class HTTPExtractor(BaseExtractor):
@@ -140,7 +140,7 @@ class JSONTransformer(BaseTransformer):
     jmespath: str = Field(..., alias="JMESPath")
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class CSVTransformer(BaseTransformer):
@@ -151,7 +151,7 @@ class CSVTransformer(BaseTransformer):
     identifier_type: IdentifierType = Field(..., alias="identifierType")
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 TransformerConfig = Union[JSONTransformer, CSVTransformer]
@@ -173,7 +173,7 @@ class ExpressionDataTransformation(BaseModel):
     expression: str
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class LookupTableDataTransformation(BaseModel):
@@ -181,7 +181,7 @@ class LookupTableDataTransformation(BaseModel):
     lookup_table_id: str = Field(..., alias="lookupTableId")
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 DataTransformation = Union[ExpressionDataTransformation, LookupTableDataTransformation]
@@ -194,7 +194,7 @@ class MappingPath(BaseModel):
     )
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class SourceTargetMapping(BaseModel):
@@ -202,7 +202,7 @@ class SourceTargetMapping(BaseModel):
     paths: List[MappingPath] = Field(default_factory=list)
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class Payload(BaseModel):
@@ -213,7 +213,7 @@ class Payload(BaseModel):
     )
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
 
 
 class EtlConfiguration(BaseModel):

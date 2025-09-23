@@ -13,4 +13,4 @@ class Schedule(BaseModel):
     end_time: Optional[datetime] = Field(None, alias="endTime")
 
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
