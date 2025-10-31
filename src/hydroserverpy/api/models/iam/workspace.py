@@ -1,7 +1,7 @@
 from typing import List, Union, Optional, ClassVar, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
-from pydantic import Field, EmailStr
+from pydantic import Field, EmailStr, AliasPath
 from ..base import HydroServerBaseModel
 
 if TYPE_CHECKING:
@@ -28,7 +28,9 @@ class Workspace(HydroServerBaseModel):
     name: str = Field(..., max_length=255)
     is_private: bool
     owner: "Account"
-    collaborator_role: Optional["Role"] = None
+    collaborator_role_id: Optional[Union[UUID, str]] = Field(
+        None, validation_alias=AliasPath("collaboratorRole", "id")
+    )
     pending_transfer_to: Optional["Account"] = None
 
     _editable_fields: ClassVar[set[str]] = {"name", "is_private"}
@@ -38,6 +40,7 @@ class Workspace(HydroServerBaseModel):
 
         self._roles = None
         self._collaborators = None
+        self._collaborator_role = None
         self._apikeys = None
         self._things = None
         self._observedproperties = None
@@ -71,6 +74,15 @@ class Workspace(HydroServerBaseModel):
             self._collaborators = self.client.workspaces.list_collaborators(uid=self.uid)
 
         return self._collaborators
+
+    @property
+    def collaborator_role(self) -> Optional["Role"]:
+        """The user's collaborator role on this workspace."""
+
+        if self._collaborator_role is None and self.collaborator_role_id is not None:
+            self._collaborator_role = self.client.roles.get(uid=self.collaborator_role_id)
+
+        return self._collaborator_role
 
     @property
     def apikeys(self) -> List["APIKey"]:
