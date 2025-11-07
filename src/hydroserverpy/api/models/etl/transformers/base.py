@@ -68,7 +68,10 @@ class Transformer(ABC):
     def standardize_dataframe(
         self, df: pd.DataFrame, mappings: List[SourceTargetMapping]
     ):
-        logging.info(f"Successfully read payload into dataframe:\n {df}")
+        if not df.empty:
+            logging.info(f"Read payload into dataframe: {df.iloc[0].to_dict()}")
+        else:
+            logging.info("Read payload into dataframe: [empty dataframe]")
 
         # 1) Normalize timestamp column
         df.rename(columns={self.timestamp.key: "timestamp"}, inplace=True)
@@ -79,10 +82,7 @@ class Transformer(ABC):
         logging.info(f"Renamed timestamp column to 'timestamp'")
 
         df["timestamp"] = self.timestamp_parser.parse_series(df["timestamp"])
-        logging.info(f"Normalized timestamp column \n {df}")
-
         df = df.drop_duplicates(subset=["timestamp"], keep="last")
-        logging.info(f"Removed duplicates\n")
 
         def _resolve_source_col(s_id: Union[str, int]) -> str:
             if isinstance(s_id, int) and s_id not in df.columns:
@@ -126,8 +126,6 @@ class Transformer(ABC):
             for path in m.paths:
                 target_col = str(path.target_identifier)
                 transformed_df[target_col] = _apply_transformations(base, path)
-
-        logging.info(f"Mapped payload sources to targets")
 
         # 6) Keep only timestamp + target columns
         df = pd.concat([df[["timestamp"]], pd.DataFrame(transformed_df)], axis=1)

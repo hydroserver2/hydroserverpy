@@ -80,7 +80,7 @@ class TimestampParser:
         parsed = self._convert_series_to_UTC(s)
 
         if parsed.isna().any():
-            bad_rows = s[parsed.isna()].head(5).tolist()
+            bad_rows = s[parsed.isna()].head(2).tolist()
             logging.warning(
                 f"{parsed.isna().sum()} timestamps failed to parse. "
                 f"Sample bad values: {bad_rows}"

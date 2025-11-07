@@ -36,8 +36,6 @@ class HydroServerLoader(Loader):
             if df.empty:
                 logging.warning(f"No new data for {col}, skipping.")
                 continue
-            logging.info(f"loading dataframe {df}")
-            logging.info(f"dtypes: {df.dtypes}")
 
             df = df.rename(columns={"timestamp": "phenomenon_time", "value": "result"})
 

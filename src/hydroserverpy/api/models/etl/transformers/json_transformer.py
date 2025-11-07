@@ -30,15 +30,6 @@ class JSONTransformer(Transformer):
             )
 
         json_data = json.load(data_file)
-        logging.info(f"Read in json data: \n{data_file}")
-        logging.info(
-            "JSONTransformer cfg:\n jmespath=%r\n ts.key=%r\n ts.format=%r\n ts.custom=%r",
-            self.cfg.jmespath,
-            self.timestamp.key,
-            self.timestamp.format,
-            self.timestamp.custom_format,
-        )
-
         data_points = self.extract_data_points(json_data)
         if not data_points:
             logging.warning("No data points found in the JSON data.")
