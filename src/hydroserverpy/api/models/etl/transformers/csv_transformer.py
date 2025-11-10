@@ -50,7 +50,7 @@ class CSVTransformer(Transformer):
             df = pd.read_csv(
                 clean_file,
                 sep=self.delimiter,
-                header=self.header_row,
+                header=0,
                 skiprows=self._build_skiprows(),
                 usecols=usecols,
                 dtype={self.timestamp.key: "string"},
