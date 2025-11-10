@@ -7,7 +7,7 @@ class LocalFileExtractor(Extractor):
     def __init__(self, extractor_config: ExtractorConfig):
         super().__init__(extractor_config)
 
-    def extract(self):
+    def extract(self, *args, **kwargs):
         """
         Opens the file and returns a file-like object.
         """
