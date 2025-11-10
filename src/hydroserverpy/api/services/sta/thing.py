@@ -173,19 +173,19 @@ class ThingService(HydroServerBaseService):
             "delete", path, headers=headers, data=json.dumps(body, default=self.default_serializer)
         )
 
-    def add_photo(self, uid: Union[UUID, str], file: IO[bytes]) -> Dict[str, str]:
-        """Add a photo of a HydroServer thing."""
+    def add_file_attachment(self, uid: Union[UUID, str], file: IO[bytes], file_attachment_type: str) -> Dict[str, str]:
+        """Add a file attachment of a HydroServer thing."""
 
-        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/photos"
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/file-attachments"
 
         return self.client.request(
-            "post", path, files={"file": file}
+            "post", path, data={"file_attachment_type": file_attachment_type}, files={"file": file}
         ).json()
 
-    def delete_photo(self, uid: Union[UUID, str], name: str) -> None:
-        """Delete a photo of a HydroServer thing."""
+    def delete_file_attachment(self, uid: Union[UUID, str], name: str) -> None:
+        """Delete a file attachment of a HydroServer thing."""
 
-        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/photos"
+        path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/file-attachments"
         headers = {"Content-type": "application/json"}
         body = {
             "name": name

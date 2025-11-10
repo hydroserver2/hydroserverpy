@@ -4,7 +4,6 @@ from pydantic import (
     Field,
     AliasPath,
     AliasChoices,
-    AnyHttpUrl,
     field_validator
 )
 from ..base import HydroServerBaseModel
@@ -34,7 +33,7 @@ class Thing(HydroServerBaseModel):
     county: Optional[str] = Field(None, max_length=200, validation_alias=AliasPath("location", "county"))
     country: Optional[str] = Field(None, max_length=2, validation_alias=AliasPath("location", "country"))
     tags: Dict[str, str]
-    photos: Dict[str, AnyHttpUrl]
+    file_attachments: Dict[str, Dict[str, str]]
     workspace_id: uuid.UUID
 
     _editable_fields: ClassVar[set[str]] = {
@@ -76,10 +75,15 @@ class Thing(HydroServerBaseModel):
             return {item["key"]: item["value"] for item in v if "key" in item and "value" in item}
         return v
 
-    @field_validator("photos", mode="before")
-    def transform_photos(cls, v):
+    @field_validator("file_attachments", mode="before")
+    def transform_file_attachments(cls, v):
         if isinstance(v, list):
-            return {item["name"]: item["link"] for item in v if "name" in item and "link" in item}
+            return {
+                item["name"]: {
+                    "link": item["link"],
+                    "file_attachment_type": item["fileAttachmentType"],
+                } for item in v if "name" in item and "link" in item
+            }
         return v
 
     def add_tag(self, key: str, value: str):
@@ -100,14 +104,19 @@ class Thing(HydroServerBaseModel):
         self.client.things.delete_tag(uid=self.uid, key=key, value=self.tags[key])
         del self.tags[key]
 
-    def add_photo(self, file: IO[bytes]):
-        """Add a photo of this thing."""
+    def add_file_attachment(self, file: IO[bytes], file_attachment_type: str):
+        """Add a file attachment for this thing."""
 
-        photo = self.client.things.add_photo(uid=self.uid, file=file)
-        self.photos[photo["name"]] = photo["link"]
+        file_attachment = self.client.things.add_file_attachment(
+            uid=self.uid, file=file, file_attachment_type=file_attachment_type
+        )
+        self.file_attachments[file_attachment["name"]] = {
+            "link": file_attachment["link"],
+            "file_attachment_type": file_attachment_type,
+        }
 
-    def delete_photo(self, name: str):
-        """Delete a photo of this thing."""
+    def delete_file_attachment(self, name: str):
+        """Delete a file attachment of this thing."""
 
-        self.client.things.delete_photo(uid=self.uid, name=name)
-        del self.photos[name]
+        self.client.things.delete_file_attachment(uid=self.uid, name=name)
+        del self.file_attachments[name]
