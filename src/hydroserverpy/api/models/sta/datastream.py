@@ -1,7 +1,7 @@
 import uuid
 import pandas as pd
-from typing import List, Union, Optional, Literal, ClassVar, TYPE_CHECKING
-from pydantic import Field
+from typing import List, Dict, Union, Optional, Literal, ClassVar, IO, TYPE_CHECKING
+from pydantic import Field, field_validator
 from uuid import UUID
 from datetime import datetime
 from hydroserverpy.api.utils import normalize_uuid
@@ -50,6 +50,8 @@ class Datastream(HydroServerBaseModel):
     observed_property_id: uuid.UUID
     processing_level_id: uuid.UUID
     unit_id: uuid.UUID
+    tags: Dict[str, str]
+    file_attachments: Dict[str, Dict[str, str]]
 
     _editable_fields: ClassVar[set[str]] = {
         "name", "description", "observation_type", "sampled_medium", "no_data_value", "aggregation_statistic",
@@ -252,3 +254,55 @@ class Datastream(HydroServerBaseModel):
             self.phenomenon_end_time = None
 
         self.save()
+
+    @field_validator("tags", mode="before")
+    def transform_tags(cls, v):
+        if isinstance(v, list):
+            return {item["key"]: item["value"] for item in v if "key" in item and "value" in item}
+        return v
+
+    @field_validator("file_attachments", mode="before")
+    def transform_file_attachments(cls, v):
+        if isinstance(v, list):
+            return {
+                item["name"]: {
+                    "link": item["link"],
+                    "file_attachment_type": item["fileAttachmentType"],
+                } for item in v if "name" in item and "link" in item
+            }
+        return v
+
+    def add_tag(self, key: str, value: str):
+        """Add a tag to this datastream."""
+
+        self.client.datastreams.add_tag(uid=self.uid, key=key, value=value)
+        self.tags[key] = value
+
+    def update_tag(self, key: str, value: str):
+        """Edit a tag of this datastream."""
+
+        self.client.datastreams.update_tag(uid=self.uid, key=key, value=value)
+        self.tags[key] = value
+
+    def delete_tag(self, key: str):
+        """Delete a tag of this datastream."""
+
+        self.client.datastreams.delete_tag(uid=self.uid, key=key, value=self.tags[key])
+        del self.tags[key]
+
+    def add_file_attachment(self, file: IO[bytes], file_attachment_type: str):
+        """Add a file attachment for this datastream."""
+
+        file_attachment = self.client.datastreams.add_file_attachment(
+            uid=self.uid, file=file, file_attachment_type=file_attachment_type
+        )
+        self.file_attachments[file_attachment["name"]] = {
+            "link": file_attachment["link"],
+            "file_attachment_type": file_attachment_type,
+        }
+
+    def delete_file_attachment(self, name: str):
+        """Delete a file attachment of this datastream."""
+
+        self.client.datastreams.delete_file_attachment(uid=self.uid, name=name)
+        del self.file_attachments[name]
