@@ -19,8 +19,8 @@ if TYPE_CHECKING:
         ResultQualifier,
         Datastream,
         OrchestrationSystem,
-        DataSource,
-        DataArchive,
+        Task,
+        Job,
     )
 
 
@@ -50,8 +50,8 @@ class Workspace(HydroServerBaseModel):
         self._sensors = None
         self._datastreams = None
         self._orchestrationsystems = None
-        self._datasources = None
-        self._dataarchives = None
+        self._jobs = None
+        self._tasks = None
 
     @classmethod
     def get_route(cls):
@@ -166,22 +166,22 @@ class Workspace(HydroServerBaseModel):
         return self._orchestrationsystems
 
     @property
-    def datasources(self) -> List["DataSource"]:
-        """The data sources associated with this workspace."""
+    def jobs(self) -> List["Job"]:
+        """The ETL jobs associated with this workspace."""
 
-        if self._datasources is None:
-            self._datasources = self.client.datasources.list(workspace=self.uid, fetch_all=True).items
+        if self._jobs is None:
+            self._jobs = self.client.jobs.list(workspace=self.uid, fetch_all=True).items
 
-        return self._datasources
+        return self._jobs
 
     @property
-    def dataarchives(self) -> List["DataArchive"]:
-        """The data archives associated with this workspace."""
+    def tasks(self) -> List["Task"]:
+        """The ETL tasks associated with this workspace."""
 
-        if self._dataarchives is None:
-            self._dataarchives = self.client.dataarchives.list(workspace=self.uid, fetch_all=True).items
+        if self._tasks is None:
+            self._tasks = self.client.tasks.list(workspace=self.uid, fetch_all=True).items
 
-        return self._dataarchives
+        return self._tasks
 
     def create_api_key(
         self,

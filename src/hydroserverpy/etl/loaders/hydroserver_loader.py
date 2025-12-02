@@ -15,10 +15,10 @@ class HydroServerLoader(Loader):
     A class that extends the HydroServer client with ETL-specific functionalities.
     """
 
-    def __init__(self, client: HydroServer, data_source_id):
+    def __init__(self, client: HydroServer, task_id):
         self.client = client
         self._begin_cache: dict[str, pd.Timestamp] = {}
-        self.data_source_id = data_source_id
+        self.task_id = task_id
 
     def load(self, data: pd.DataFrame, payload: Payload) -> None:
         """

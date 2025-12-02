@@ -1,3 +1,4 @@
+import uuid
 from typing import Annotated, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
@@ -206,10 +207,17 @@ class SourceTargetMapping(BaseModel):
 
 
 class Payload(BaseModel):
+    uid: uuid.UUID = Field(..., alias="id")
     name: str = ""
     mappings: List[SourceTargetMapping] = Field(default_factory=list)
     extractor_variables: Dict[str, str] = Field(
         default_factory=dict, alias="extractorVariables"
+    )
+    transformer_variables: Dict[str, str] = Field(
+        default_factory=dict, alias="transformerVariables"
+    )
+    loader_variables: Dict[str, str] = Field(
+        default_factory=dict, alias="loaderVariables"
     )
 
     class Config:
@@ -217,6 +225,8 @@ class Payload(BaseModel):
 
 
 class EtlConfiguration(BaseModel):
+    uid: uuid.UUID = Field(..., alias="id")
+    name: str
     type: WorkflowType
     extractor: ExtractorConfig
     transformer: TransformerConfig
