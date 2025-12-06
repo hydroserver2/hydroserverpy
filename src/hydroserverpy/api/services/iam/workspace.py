@@ -87,7 +87,7 @@ class WorkspaceService(HydroServerBaseService):
         )
 
     def edit_collaborator_role(
-        self, uid: Union[UUID, str], email: EmailStr, role: Union["Role", UUID, str]
+        self, uid: Union[UUID, str], email: EmailStr, role: Union["Role", UUID, str], role_id: UUID
     ) -> "Collaborator":
         """Edit the role of a collaborator in a workspace."""
 
@@ -95,7 +95,7 @@ class WorkspaceService(HydroServerBaseService):
         headers = {"Content-type": "application/json"}
         body = {
             "email": email,
-            "roleId": normalize_uuid(role)
+            "roleId": normalize_uuid(role if role is not ... else role_id)
         }
 
         response = self.client.request(
@@ -165,6 +165,7 @@ class WorkspaceService(HydroServerBaseService):
         uid: Union[UUID, str],
         api_key_id: Union[UUID, str],
         role: Union["Role", UUID, str] = ...,
+        role_id: UUID = ...,
         name: str = ...,
         description: Optional[str] = ...,
         is_active: bool = ...,
@@ -175,7 +176,7 @@ class WorkspaceService(HydroServerBaseService):
         path = f"/{self.client.base_route}/{self.model.get_route()}/{str(uid)}/api-keys/{api_key_id}"
         headers = {"Content-type": "application/json"}
         body = {
-            "roleId": normalize_uuid(role),
+            "roleId": normalize_uuid(role if role is not ... else role_id),
             "name": name,
             "description": description,
             "isActive": is_active,
