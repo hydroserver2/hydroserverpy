@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 from .base import Loader
 import logging
 import pandas as pd
-from ..etl_configuration import Payload, SourceTargetMapping
+from ..etl_configuration import Task, SourceTargetMapping
 
 if TYPE_CHECKING:
     from hydroserverpy.api.client import HydroServer
@@ -20,12 +20,12 @@ class HydroServerLoader(Loader):
         self._begin_cache: dict[str, pd.Timestamp] = {}
         self.task_id = task_id
 
-    def load(self, data: pd.DataFrame, payload: Payload) -> None:
+    def load(self, data: pd.DataFrame, task: Task) -> None:
         """
         Load observations from a DataFrame to the HydroServer.
         :param data: A Pandas DataFrame where each column corresponds to a datastream.
         """
-        begin_date = self.earliest_begin_date(payload)
+        begin_date = self.earliest_begin_date(task)
         new_data = data[data["timestamp"] > begin_date]
         for col in new_data.columns.difference(["timestamp"]):
             df = (
@@ -73,7 +73,7 @@ class HydroServerLoader(Loader):
     def _fetch_earliest_begin(
         self, mappings: list[SourceTargetMapping]
     ) -> pd.Timestamp:
-        logging.info("Querying HydroServer for earliest begin date for payload...")
+        logging.info("Querying HydroServer for earliest begin date for task...")
         timestamps = []
         datastreams = self.client.datastreams.list(
             data_source=self.data_source_id
@@ -88,11 +88,11 @@ class HydroServerLoader(Loader):
         logging.info(f"Found earliest begin date: {min(timestamps)}")
         return min(timestamps)
 
-    def earliest_begin_date(self, payload: Payload) -> pd.Timestamp:
+    def earliest_begin_date(self, task: Task) -> pd.Timestamp:
         """
-        Return earliest begin date for a payload, or compute+cache it on first call.
+        Return earliest begin date for a task, or compute+cache it on first call.
         """
-        key = payload.name
+        key = task.name
         if key not in self._begin_cache:
-            self._begin_cache[key] = self._fetch_earliest_begin(payload.mappings)
+            self._begin_cache[key] = self._fetch_earliest_begin(task.mappings)
         return self._begin_cache[key]
