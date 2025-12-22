@@ -28,8 +28,12 @@ class HydroServerLoader(Loader):
         begin_date = self.earliest_begin_date(payload)
         new_data = data[data["timestamp"] > begin_date]
         for col in new_data.columns.difference(["timestamp"]):
+            datastream = self.client.datastreams.get(
+                uid=str(col)
+            )
             df = (
                 new_data[["timestamp", col]]
+                .loc[lambda d: d["timestamp"] > datastream.phenomenon_end_time]
                 .rename(columns={col: "value"})
                 .dropna(subset=["value"])
             )
@@ -67,7 +71,6 @@ class HydroServerLoader(Loader):
                             start,
                             end - 1,
                         )
-                        break
                     raise
 
     def _fetch_earliest_begin(
