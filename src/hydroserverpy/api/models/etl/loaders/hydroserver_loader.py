@@ -31,9 +31,10 @@ class HydroServerLoader(Loader):
             datastream = self.client.datastreams.get(
                 uid=str(col)
             )
+            ds_cutoff = datastream.phenomenon_end_time
             df = (
                 new_data[["timestamp", col]]
-                .loc[lambda d: d["timestamp"] > datastream.phenomenon_end_time]
+                .loc[lambda d: d["timestamp"] > ds_cutoff if ds_cutoff else True]
                 .rename(columns={col: "value"})
                 .dropna(subset=["value"])
             )
