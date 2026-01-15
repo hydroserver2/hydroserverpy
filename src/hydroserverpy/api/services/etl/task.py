@@ -2,7 +2,8 @@ import json
 from typing import Literal, Union, Optional, List, Dict, Any, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
-from hydroserverpy.api.models import Job, Task, TaskRun, TaskMapping, OrchestrationSystem
+from pydantic import Field
+from hydroserverpy.api.models import DataConnection, Task, TaskRun, TaskMapping, OrchestrationSystem
 from hydroserverpy.api.utils import normalize_uuid
 from ..base import HydroServerBaseService
 
@@ -21,11 +22,11 @@ class TaskService(HydroServerBaseService):
         page: int = ...,
         page_size: int = ...,
         order_by: List[str] = ...,
-        workspace: Union["Workspace", UUID, str] = ...,
-        orchestration_system: Optional[Union["Workspace", UUID, str]] = ...,
+        workspace: Optional[Union["Workspace", UUID, str]] = ...,
+        orchestration_system: Optional[Union["OrchestrationSystem", UUID, str]] = ...,
         orchestration_system_type: str = ...,
-        job: Union["Workspace", UUID, str] = ...,
-        job_type: str = ...,
+        data_connection: Union["Workspace", UUID, str] = ...,
+        data_connection_type: str = ...,
         extractor_type: str = ...,
         transformer_type: str = ...,
         loader_type: str = ...,
@@ -52,8 +53,8 @@ class TaskService(HydroServerBaseService):
             workspace_id=normalize_uuid(workspace),
             orchestration_system=normalize_uuid(orchestration_system),
             orchestration_system_type=orchestration_system_type,
-            job=normalize_uuid(job),
-            job_type=job_type,
+            data_connection=normalize_uuid(data_connection),
+            data_connection_type=data_connection_type,
             extractor_type=extractor_type,
             transformer_type=transformer_type,
             loader_type=loader_type,
@@ -75,24 +76,26 @@ class TaskService(HydroServerBaseService):
     def create(
         self,
         name: str,
-        job: Union["Job", UUID, str],
-        orchestration_system: Optional[Union["OrchestrationSystem", UUID, str]] = ...,
-        extractor_variables: dict = ...,
-        transformer_variables: dict = ...,
-        loader_variables: dict = ...,
-        paused: bool = ...,
-        start_time: Optional[datetime] = ...,
-        next_run_at: Optional[datetime] = ...,
-        crontab: Optional[str] = ...,
-        interval: Optional[int] = ...,
-        interval_period: Optional[str] = ...,
-        mappings: List["TaskMapping"] = ...
+        workspace: Union["Workspace", UUID, str],
+        data_connection: Union["DataConnection", UUID, str],
+        orchestration_system: Union["OrchestrationSystem", UUID, str],
+        extractor_variables: dict = Field(default_factory=dict),
+        transformer_variables: dict = Field(default_factory=dict),
+        loader_variables: dict = Field(default_factory=dict),
+        paused: bool = False,
+        start_time: Optional[datetime] = None,
+        next_run_at: Optional[datetime] = None,
+        crontab: Optional[str] = None,
+        interval: Optional[int] = None,
+        interval_period: Optional[str] = None,
+        mappings: List[dict] = Field(default_factory=list),
     ) -> "Task":
         """Create a new ETL task."""
 
         body = {
             "name": name,
-            "jobId": normalize_uuid(job),
+            "workspaceId": normalize_uuid(workspace),
+            "dataConnectionId": normalize_uuid(data_connection),
             "orchestrationSystemId": normalize_uuid(orchestration_system),
             "extractorVariables": extractor_variables,
             "transformerVariables": transformer_variables,
@@ -114,8 +117,8 @@ class TaskService(HydroServerBaseService):
         self,
         uid: Union[UUID, str],
         name: str = ...,
-        job: Union["Job", UUID, str] = ...,
-        orchestration_system: Optional[Union["OrchestrationSystem", UUID, str]] = ...,
+        data_connection: Union["DataConnection", UUID, str] = ...,
+        orchestration_system: Union["OrchestrationSystem", UUID, str] = ...,
         extractor_variables: dict = ...,
         transformer_variables: dict = ...,
         loader_variables: dict = ...,
@@ -125,13 +128,13 @@ class TaskService(HydroServerBaseService):
         crontab: Optional[str] = ...,
         interval: Optional[int] = ...,
         interval_period: Optional[str] = ...,
-        mappings: List["TaskMapping"] = ...
-    ) -> "Job":
+        mappings: List[dict] = ...
+    ) -> "DataConnection":
         """Update an ETL task."""
 
         body: Dict[str, Any] = {
             "name": name,
-            "jobId": normalize_uuid(job),
+            "dataConnectionId": normalize_uuid(data_connection),
             "orchestrationSystemId": normalize_uuid(orchestration_system),
             "extractorVariables": extractor_variables,
             "transformerVariables": transformer_variables,

@@ -1,4 +1,4 @@
-from typing import Union, List, TYPE_CHECKING
+from typing import Union, List, Optional, TYPE_CHECKING
 from uuid import UUID
 from hydroserverpy.api.models import OrchestrationSystem
 from hydroserverpy.api.utils import normalize_uuid
@@ -38,7 +38,7 @@ class OrchestrationSystemService(HydroServerBaseService):
         self,
         name: str,
         orchestration_system_type: str,
-        workspace: Union["Workspace", UUID, str],
+        workspace: Optional[Union["Workspace", UUID, str]] = None,
     ) -> "OrchestrationSystem":
         """Create a new orchestration system."""
 

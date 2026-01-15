@@ -20,7 +20,7 @@ if TYPE_CHECKING:
         Datastream,
         OrchestrationSystem,
         Task,
-        Job,
+        DataConnection,
     )
 
 
@@ -50,7 +50,7 @@ class Workspace(HydroServerBaseModel):
         self._sensors = None
         self._datastreams = None
         self._orchestrationsystems = None
-        self._jobs = None
+        self._dataconnections = None
         self._tasks = None
 
     @classmethod
@@ -166,13 +166,13 @@ class Workspace(HydroServerBaseModel):
         return self._orchestrationsystems
 
     @property
-    def jobs(self) -> List["Job"]:
-        """The ETL jobs associated with this workspace."""
+    def dataconnections(self) -> List["DataConnection"]:
+        """The ETL data connections associated with this workspace."""
 
-        if self._jobs is None:
-            self._jobs = self.client.jobs.list(workspace=self.uid, fetch_all=True).items
+        if self._dataconnections is None:
+            self._dataconnections = self.client.dataconnections.list(workspace=self.uid, fetch_all=True).items
 
-        return self._jobs
+        return self._dataconnections
 
     @property
     def tasks(self) -> List["Task"]:

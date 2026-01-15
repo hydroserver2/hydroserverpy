@@ -1,5 +1,5 @@
 import uuid
-from typing import ClassVar, List, TYPE_CHECKING
+from typing import ClassVar, List, Optional, TYPE_CHECKING
 from pydantic import Field
 from ..base import HydroServerBaseModel
 
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 class OrchestrationSystem(HydroServerBaseModel):
     name: str = Field(..., max_length=255)
     orchestration_system_type: str = Field(..., max_length=255, alias="type")
-    workspace_id: uuid.UUID
+    workspace_id: Optional[uuid.UUID] = None
 
     _editable_fields: ClassVar[set[str]] = {"name", "orchestration_system_type"}
 

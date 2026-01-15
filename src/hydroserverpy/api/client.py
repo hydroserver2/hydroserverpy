@@ -12,7 +12,7 @@ from hydroserverpy.api.services import (
     SensorService,
     DatastreamService,
     OrchestrationSystemService,
-    JobService,
+    DataConnectionService,
     TaskService,
 )
 
@@ -191,10 +191,10 @@ class HydroServer:
         return OrchestrationSystemService(self)
 
     @property
-    def jobs(self):
-        """Utilities for managing HydroServer ETL jobs."""
+    def dataconnections(self):
+        """Utilities for managing HydroServer ETL data connections."""
 
-        return JobService(self)
+        return DataConnectionService(self)
 
     @property
     def tasks(self):

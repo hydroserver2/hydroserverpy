@@ -1,6 +1,6 @@
 import uuid
-from typing import ClassVar, List, TYPE_CHECKING
-from pydantic import Field, AliasPath
+from typing import ClassVar, List, Optional, TYPE_CHECKING
+from pydantic import Field, AliasPath, AliasChoices
 from ..base import HydroServerBaseModel
 
 if TYPE_CHECKING:
@@ -8,10 +8,12 @@ if TYPE_CHECKING:
     from hydroserverpy.api.models import Workspace, Task
 
 
-class Job(HydroServerBaseModel):
+class DataConnection(HydroServerBaseModel):
     name: str = Field(..., max_length=255)
-    job_type: str = Field(..., max_length=255, alias="type")
-    workspace_id: uuid.UUID
+    data_connection_type: str = Field(..., max_length=255, alias="type")
+    workspace_id: Optional[uuid.UUID] = Field(
+        None, validation_alias=AliasChoices("workspaceId", AliasPath("workspace", "id"))
+    )
     extractor_type: str = Field(..., max_length=255, validation_alias=AliasPath("extractor", "type"))
     extractor_settings: dict = Field(default_factory=dict, validation_alias=AliasPath("extractor", "settings"))
     transformer_type: str = Field(..., max_length=255, validation_alias=AliasPath("transformer", "type"))
@@ -21,7 +23,7 @@ class Job(HydroServerBaseModel):
 
     _editable_fields: ClassVar[set[str]] = {
         "name",
-        "job_type",
+        "data_connection_type",
         "extractor_type",
         "extractor_settings",
         "transformer_type",
@@ -31,18 +33,18 @@ class Job(HydroServerBaseModel):
     }
 
     def __init__(self, client: "HydroServer", **data):
-        super().__init__(client=client, service=client.jobs, **data)
+        super().__init__(client=client, service=client.dataconnections, **data)
 
         self._workspace = None
         self._tasks = None
 
     @classmethod
     def get_route(cls):
-        return "etl-jobs"
+        return "etl-data-connections"
 
     @property
     def workspace(self) -> "Workspace":
-        """The workspace this ETL job belongs to."""
+        """The workspace this ETL data connection belongs to."""
 
         if self._workspace is None and self.workspace_id:
             self._workspace = self.client.workspaces.get(uid=self.workspace_id)
@@ -51,11 +53,11 @@ class Job(HydroServerBaseModel):
 
     @property
     def tasks(self) -> List["Task"]:
-        """The ETL tasks associated with this ETL job."""
+        """The ETL tasks associated with this ETL data connection."""
 
         if self._tasks is None:
             self._tasks = self.client.tasks.list(
-                job=self.uid, fetch_all=True
+                data_connection=self.uid, fetch_all=True
             ).items
 
         return self._tasks

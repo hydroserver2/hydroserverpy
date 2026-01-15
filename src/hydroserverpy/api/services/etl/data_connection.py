@@ -1,6 +1,6 @@
-from typing import Union, List, TYPE_CHECKING
+from typing import Union, List, Optional, TYPE_CHECKING
 from uuid import UUID
-from hydroserverpy.api.models import Job
+from hydroserverpy.api.models import DataConnection
 from hydroserverpy.api.utils import normalize_uuid
 from ..base import HydroServerBaseService
 
@@ -9,9 +9,9 @@ if TYPE_CHECKING:
     from hydroserverpy.api.models import Workspace
 
 
-class JobService(HydroServerBaseService):
+class DataConnectionService(HydroServerBaseService):
     def __init__(self, client: "HydroServer"):
-        self.model = Job
+        self.model = DataConnection
         super().__init__(client)
 
     def list(
@@ -20,20 +20,20 @@ class JobService(HydroServerBaseService):
         page_size: int = ...,
         order_by: List[str] = ...,
         workspace: Union["Workspace", UUID, str] = ...,
-        job_type: str = ...,
+        data_connection_type: str = ...,
         extractor_type: str = ...,
         transformer_type: str = ...,
         loader_type: str = ...,
         fetch_all: bool = False,
-    ) -> List["Job"]:
-        """Fetch a collection of ETL jobs."""
+    ) -> List["DataConnection"]:
+        """Fetch a collection of ETL data connections."""
 
         return super().list(
             page=page,
             page_size=page_size,
             order_by=order_by,
             workspace_id=normalize_uuid(workspace),
-            type=job_type,
+            type=data_connection_type,
             extractor_type=extractor_type,
             transformer_type=transformer_type,
             loader_type=loader_type,
@@ -43,20 +43,20 @@ class JobService(HydroServerBaseService):
     def create(
         self,
         name: str,
-        job_type: str,
-        workspace: Union["Workspace", UUID, str],
+        data_connection_type: str,
+        workspace: Optional[Union["Workspace", UUID, str]] = None,
         extractor_type: str = ...,
         extractor_settings: dict = ...,
         transformer_type: str = ...,
         transformer_settings: dict = ...,
         loader_type: str = ...,
         loader_settings: dict = ...,
-    ) -> "Job":
-        """Create a new orchestration system."""
+    ) -> "DataConnection":
+        """Create a new data connection."""
 
         body = {
             "name": name,
-            "type": job_type,
+            "type": data_connection_type,
             "workspaceId": normalize_uuid(workspace),
             "extractor": {
                 "type": extractor_type,
@@ -78,19 +78,19 @@ class JobService(HydroServerBaseService):
         self,
         uid: Union[UUID, str],
         name: str = ...,
-        job_type: str = ...,
+        data_connection_type: str = ...,
         extractor_type: str = ...,
         extractor_settings: dict = ...,
         transformer_type: str = ...,
         transformer_settings: dict = ...,
         loader_type: str = ...,
         loader_settings: dict = ...,
-    ) -> "Job":
-        """Update an ETL job."""
+    ) -> "DataConnection":
+        """Update an ETL data connection."""
 
         body = {
             "name": name,
-            "type": job_type,
+            "type": data_connection_type,
         }
 
         if extractor_type is not ... or extractor_settings is not ...:
