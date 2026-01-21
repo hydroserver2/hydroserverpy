@@ -1,9 +1,14 @@
 from __future__ import annotations
 from functools import cached_property
 import uuid
+import logging
+import croniter
+import pandas as pd
 from typing import ClassVar, TYPE_CHECKING, List, Optional, Literal, Union
-from datetime import datetime
-from pydantic import Field, AliasPath, AliasChoices
+from datetime import datetime, timedelta, timezone
+from pydantic import Field, AliasPath, AliasChoices, TypeAdapter
+from hydroserverpy.etl.factories import extractor_factory, transformer_factory, loader_factory
+from hydroserverpy.etl.etl_configuration import ExtractorConfig, TransformerConfig, LoaderConfig, SourceTargetMapping, MappingPath
 from ..base import HydroServerBaseModel
 from .orchestration_system import OrchestrationSystem
 from .data_connection import DataConnection
@@ -153,6 +158,91 @@ class Task(HydroServerBaseModel):
         return self.client.tasks.delete_task_run(uid=self.uid, task_run_id=uid)
 
     def run(self):
-        """Run this task."""
+        """Trigger HydroServer to run this task."""
 
         return self.client.tasks.run(uid=self.uid)
+
+    def run_local(self):
+        """Run this task locally."""
+
+        if self.paused is True:
+            return
+
+        extractor_cls = extractor_factory(TypeAdapter(ExtractorConfig).validate_python({
+            "type": self.data_connection.extractor_type,
+            **self.data_connection.extractor_settings
+        }))
+        transformer_cls = transformer_factory(TypeAdapter(TransformerConfig).validate_python({
+            "type": self.data_connection.transformer_type,
+            **self.data_connection.transformer_settings
+        }))
+        loader_cls = loader_factory(TypeAdapter(LoaderConfig).validate_python({
+            "type": self.data_connection.loader_type,
+            **self.data_connection.loader_settings
+        }), self.client, str(self.uid))
+
+        task_run = self.create_task_run(status="RUNNING", started_at=datetime.now(timezone.utc))
+
+        try:
+            logging.info("Starting extract")
+
+            task_mappings = [
+                SourceTargetMapping(
+                    source_identifier=task_mapping["sourceIdentifier"],
+                    paths=[
+                        MappingPath(
+                            target_identifier=task_mapping_path["targetIdentifier"],
+                            data_transformations=task_mapping_path["dataTransformations"],
+                        ) for task_mapping_path in task_mapping["paths"]
+                    ]
+                ) for task_mapping in self.mappings
+            ]
+
+            data = extractor_cls.extract(self, loader_cls)
+            if self.is_empty(data):
+                self._update_status(
+                    loader_cls, True, "No data returned from the extractor"
+                )
+                return
+
+            logging.info("Starting transform")
+            data = transformer_cls.transform(data, task_mappings)
+            if self.is_empty(data):
+                self._update_status(
+                    loader_cls, True, "No data returned from the transformer"
+                )
+                return
+
+            logging.info("Starting load")
+            loader_cls.load(data, self)
+            self._update_status(task_run, True, "OK")
+        except Exception as e:
+            self._update_status(task_run, False, str(e))
+
+    @staticmethod
+    def is_empty(data):
+        if data is None:
+            return True
+
+        if isinstance(data, pd.DataFrame) and data.empty:
+            return True
+
+        return False
+
+    def _update_status(self, task_run: TaskRun, success: bool, msg: str):
+        self.update_task_run(
+            task_run.id,
+            status="SUCCESS" if success else "FAILURE",
+            result={"message": msg}
+        )
+        self.next_run_at = self._next_run()
+        self.save()
+
+    def _next_run(self) -> Optional[str]:
+        now = datetime.now(timezone.utc)
+        if cron := self.crontab:
+            return croniter.croniter(cron, now).get_next(datetime).isoformat()
+        if iv := self.interval:
+            unit = self.interval_period or "minutes"
+            return (now + timedelta(**{unit: iv})).isoformat()
+        return None

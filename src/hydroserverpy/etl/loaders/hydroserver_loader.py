@@ -75,13 +75,10 @@ class HydroServerLoader(Loader):
     ) -> pd.Timestamp:
         logging.info("Querying HydroServer for earliest begin date for task...")
         timestamps = []
-        datastreams = self.client.datastreams.list(
-            data_source=self.data_source_id
-        ).items
-        ds_by_uid = {str(ds.uid): ds for ds in datastreams}
         for m in mappings:
-            for p in m.paths:
-                datastream = ds_by_uid[str(p.target_identifier)]
+            for p in m["paths"] if isinstance(m, dict) else m.paths:
+                datastream_id = p["targetIdentifier"] if isinstance(p, dict) else p.target_identifier
+                datastream = self.client.datastreams.get(datastream_id)
                 raw = datastream.phenomenon_end_time or "1970-01-01"
                 ts = pd.to_datetime(raw, utc=True)
                 timestamps.append(ts)
