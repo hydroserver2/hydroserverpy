@@ -1,4 +1,4 @@
-from typing import Optional, Union, List, TYPE_CHECKING
+from typing import Union, List, Optional, TYPE_CHECKING
 from uuid import UUID
 from hydroserverpy.api.models import OrchestrationSystem
 from hydroserverpy.api.utils import normalize_uuid
@@ -19,7 +19,7 @@ class OrchestrationSystemService(HydroServerBaseService):
         page: int = ...,
         page_size: int = ...,
         order_by: List[str] = ...,
-        workspace: Optional[Union["Workspace", UUID, str]] = ...,
+        workspace: Union["Workspace", UUID, str] = ...,
         orchestration_system_type: str = ...,
         fetch_all: bool = False,
     ) -> List["OrchestrationSystem"]:

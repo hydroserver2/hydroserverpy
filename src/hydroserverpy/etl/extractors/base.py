@@ -2,7 +2,7 @@ from abc import abstractmethod
 import logging
 import pandas as pd
 from datetime import datetime
-from ..etl_configuration import ExtractorConfig, Payload
+from ..etl_configuration import ExtractorConfig, Task
 from ..timestamp_parser import TimestampParser
 
 
@@ -10,7 +10,7 @@ class Extractor:
     def __init__(self, extractor_config: ExtractorConfig):
         self.cfg = extractor_config
 
-    def resolve_placeholder_variables(self, payload: Payload, loader):
+    def resolve_placeholder_variables(self, task: Task, loader):
         logging.info(f"Creating runtime variables...")
         filled = {}
         for placeholder in self.cfg.placeholder_variables:
@@ -19,14 +19,14 @@ class Extractor:
             if placeholder.type == "runTime":
                 logging.info(f"Resolving runtime var: {name}")
                 if placeholder.run_time_value == "latestObservationTimestamp":
-                    value = loader.earliest_begin_date(payload)
+                    value = loader.earliest_begin_date(task)
                 elif placeholder.run_time_value == "jobExecutionTime":
                     value = pd.Timestamp.now(tz="UTC")
-            elif placeholder.type == "perPayload":
-                logging.info(f"Resolving payload var: {name}")
-                if name not in payload.extractor_variables:
-                    raise KeyError(f"Missing per-payload variable '{name}'")
-                value = payload.extractor_variables[name]
+            elif placeholder.type == "perTask":
+                logging.info(f"Resolving task var: {name}")
+                if name not in task.extractor_variables:
+                    raise KeyError(f"Missing per-task variable '{name}'")
+                value = task.extractor_variables[name]
             else:
                 continue
 

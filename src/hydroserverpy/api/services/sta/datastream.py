@@ -17,8 +17,6 @@ if TYPE_CHECKING:
         Sensor,
         ObservedProperty,
         ProcessingLevel,
-        DataSource,
-        DataArchive
     )
 
 
@@ -38,8 +36,6 @@ class DatastreamService(HydroServerBaseService):
         observed_property: Union["ObservedProperty", UUID, str] = ...,
         processing_level: Union["ProcessingLevel", UUID, str] = ...,
         unit: Union["Unit", UUID, str] = ...,
-        data_source: Optional[Union["DataSource", UUID, str]] = ...,
-        data_archive: Optional[Union["DataArchive", UUID, str]] = ...,
         observation_type: str = ...,
         sampled_medium: str = ...,
         status: Optional[str] = ...,
@@ -69,8 +65,6 @@ class DatastreamService(HydroServerBaseService):
             observed_property_id=normalize_uuid(observed_property),
             processing_level_id=normalize_uuid(processing_level),
             unit_id=normalize_uuid(unit),
-            data_source_id=normalize_uuid(data_source),
-            data_archive_id=normalize_uuid(data_archive),
             observation_type=observation_type,
             sampled_medium=sampled_medium,
             status=status,

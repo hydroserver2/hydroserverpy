@@ -1,3 +1,4 @@
+import uuid
 from typing import Annotated, Dict, List, Literal, Optional, Union
 from pydantic import BaseModel, Field, field_validator
 from enum import Enum
@@ -84,9 +85,9 @@ class Timestamp(BaseModel):
         return timezone_value
 
 
-class PerPayloadPlaceholder(BaseModel):
+class PerTaskPlaceholder(BaseModel):
     name: str
-    type: Literal["perPayload"]
+    type: Literal["perTask"]
 
 
 class RunTimePlaceholder(BaseModel):
@@ -100,7 +101,7 @@ class RunTimePlaceholder(BaseModel):
 
 
 PlaceholderVariable = Annotated[
-    Union[PerPayloadPlaceholder, RunTimePlaceholder],
+    Union[PerTaskPlaceholder, RunTimePlaceholder],
     Field(discriminator="type"),
 ]
 
@@ -205,20 +206,19 @@ class SourceTargetMapping(BaseModel):
         populate_by_name = True
 
 
-class Payload(BaseModel):
+class Task(BaseModel):
+    uid: uuid.UUID = Field(..., alias="id")
     name: str = ""
     mappings: List[SourceTargetMapping] = Field(default_factory=list)
     extractor_variables: Dict[str, str] = Field(
         default_factory=dict, alias="extractorVariables"
     )
+    transformer_variables: Dict[str, str] = Field(
+        default_factory=dict, alias="transformerVariables"
+    )
+    loader_variables: Dict[str, str] = Field(
+        default_factory=dict, alias="loaderVariables"
+    )
 
     class Config:
         populate_by_name = True
-
-
-class EtlConfiguration(BaseModel):
-    type: WorkflowType
-    extractor: ExtractorConfig
-    transformer: TransformerConfig
-    loader: LoaderConfig
-    payloads: List[Payload]

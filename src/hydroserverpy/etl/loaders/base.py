@@ -7,5 +7,5 @@ class Loader(ABC):
         pass
 
     @abstractmethod
-    def earliest_begin_date(self, payload_mappings) -> str:
+    def earliest_begin_date(self, task_mappings) -> str:
         pass

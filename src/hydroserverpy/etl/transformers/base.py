@@ -69,9 +69,9 @@ class Transformer(ABC):
         self, df: pd.DataFrame, mappings: List[SourceTargetMapping]
     ):
         if not df.empty:
-            logging.info(f"Read payload into dataframe: {df.iloc[0].to_dict()}")
+            logging.info(f"Read task into dataframe: {df.iloc[0].to_dict()}")
         else:
-            logging.info("Read payload into dataframe: [empty dataframe]")
+            logging.info("Read task into dataframe: [empty dataframe]")
 
         # 1) Normalize timestamp column
         df.rename(columns={self.timestamp.key: "timestamp"}, inplace=True)

@@ -16,8 +16,6 @@ if TYPE_CHECKING:
         ObservedProperty,
         Unit,
         ProcessingLevel,
-        DataSource,
-        DataArchive
     )
 
 
@@ -43,7 +41,6 @@ class Datastream(HydroServerBaseModel):
     intended_time_spacing_unit: Optional[
         Literal["seconds", "minutes", "hours", "days"]
     ] = None
-    data_source_id: Optional[uuid.UUID] = None
     thing_id: uuid.UUID
     workspace_id: uuid.UUID
     sensor_id: uuid.UUID
@@ -70,8 +67,6 @@ class Datastream(HydroServerBaseModel):
         self._unit = None
         self._processing_level = None
         self._sensor = None
-        self._data_source = None
-        self._data_archives = None
 
     @classmethod
     def get_route(cls):
@@ -170,24 +165,6 @@ class Datastream(HydroServerBaseModel):
         if normalize_uuid(processing_level) != str(self.processing_level_id):
             self.processing_level_id = normalize_uuid(processing_level)
             self._processing_level = None
-
-    @property
-    def data_source(self) -> Optional["DataSource"]:
-        """The data source of this datastream."""
-
-        if self._data_source is None and self.data_source_id is not None:
-            self._data_source = self.client.datasources.get(uid=self.data_source_id)
-
-        return self._data_source
-
-    @property
-    def data_archives(self) -> List["DataArchive"]:
-        """The data archives of this datastream."""
-
-        if self._data_archives is None:
-            self._data_archives = self.client.dataarchives.list(datastream=self.uid, fetch_all=True).items
-
-        return self._data_archives
 
     def get_observations(
         self,

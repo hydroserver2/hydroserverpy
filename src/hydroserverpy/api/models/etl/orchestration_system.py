@@ -1,16 +1,11 @@
 import uuid
-from typing import Optional, ClassVar, List, TYPE_CHECKING
-from pydantic import BaseModel, Field
+from typing import ClassVar, List, Optional, TYPE_CHECKING
+from pydantic import Field
 from ..base import HydroServerBaseModel
 
 if TYPE_CHECKING:
     from hydroserverpy import HydroServer
-    from hydroserverpy.api.models import Workspace, DataSource, DataArchive
-
-
-class OrchestrationSystemFields(BaseModel):
-    name: str = Field(..., max_length=255)
-    orchestration_system_type: str = Field(..., max_length=255, alias="type")
+    from hydroserverpy.api.models import Workspace, Task
 
 
 class OrchestrationSystem(HydroServerBaseModel):
@@ -24,12 +19,11 @@ class OrchestrationSystem(HydroServerBaseModel):
         super().__init__(client=client, service=client.orchestrationsystems, **data)
 
         self._workspace = None
-        self._datasources = None
-        self._dataarchives = None
+        self._tasks = None
 
     @classmethod
     def get_route(cls):
-        return "orchestration-systems"
+        return "etl-orchestration-systems"
 
     @property
     def workspace(self) -> "Workspace":
@@ -41,23 +35,12 @@ class OrchestrationSystem(HydroServerBaseModel):
         return self._workspace
 
     @property
-    def datasources(self) -> List["DataSource"]:
-        """The data sources associated with this workspace."""
+    def tasks(self) -> List["Task"]:
+        """The ETL tasks associated with this orchestration system."""
 
-        if self._datasources is None:
-            self._datasources = self.client.datasources.list(
+        if self._tasks is None:
+            self._tasks = self.client.tasks.list(
                 orchestration_system=self.uid, fetch_all=True
             ).items
 
-        return self._datasources
-
-    @property
-    def dataarchives(self) -> List["DataArchive"]:
-        """The data archives associated with this workspace."""
-
-        if self._dataarchives is None:
-            self._dataarchives = self.client.dataarchives.list(
-                orchestration_system=self.uid, fetch_all=True
-            ).items
-
-        return self._dataarchives
+        return self._tasks
