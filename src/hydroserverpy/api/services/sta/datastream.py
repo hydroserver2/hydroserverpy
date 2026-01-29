@@ -149,10 +149,15 @@ class DatastreamService(HydroServerBaseService):
         name: str = ...,
         description: str = ...,
         thing: Union["Thing", UUID, str] = ...,
+        thing_id: UUID = ...,
         sensor: Union["Sensor", UUID, str] = ...,
+        sensor_id: UUID = ...,
         observed_property: Union["ObservedProperty", UUID, str] = ...,
+        observed_property_id: UUID = ...,
         processing_level: Union["ProcessingLevel", UUID, str] = ...,
+        processing_level_id: UUID = ...,
         unit: Union["Unit", UUID, str] = ...,
+        unit_id: UUID = ...,
         observation_type: str = ...,
         result_type: str = ...,
         sampled_medium: str = ...,
@@ -180,11 +185,15 @@ class DatastreamService(HydroServerBaseService):
         body = {
             "name": name,
             "description": description,
-            "thingId": normalize_uuid(thing),
-            "sensorId": normalize_uuid(sensor),
-            "observedPropertyId": normalize_uuid(observed_property),
-            "processingLevelId": normalize_uuid(processing_level),
-            "unitId": normalize_uuid(unit),
+            "thingId": normalize_uuid(thing if thing is not ... else thing_id),
+            "sensorId": normalize_uuid(sensor if sensor is not ... else sensor_id),
+            "observedPropertyId": normalize_uuid(
+                observed_property if observed_property is not ... else observed_property_id
+            ),
+            "processingLevelId": normalize_uuid(
+                processing_level if processing_level is not ... else processing_level_id
+            ),
+            "unitId": normalize_uuid(unit if unit is not ... else unit_id),
             "observationType": observation_type,
             "resultType": result_type,
             "sampledMedium": sampled_medium,
