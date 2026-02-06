@@ -183,6 +183,7 @@ class Task(HydroServerBaseModel):
 
         task_run = self.create_task_run(status="RUNNING", started_at=datetime.now(timezone.utc))
 
+        runtime_source_uri: Optional[str] = None
         try:
             logging.info("Starting extract")
 
@@ -199,9 +200,13 @@ class Task(HydroServerBaseModel):
             ]
 
             data = extractor_cls.extract(self, loader_cls)
+            runtime_source_uri = getattr(extractor_cls, "runtime_source_uri", None)
             if self.is_empty(data):
                 self._update_status(
-                    loader_cls, True, "No data returned from the extractor"
+                    task_run,
+                    True,
+                    "No data returned from the extractor",
+                    runtime_source_uri=runtime_source_uri,
                 )
                 return
 
@@ -209,15 +214,22 @@ class Task(HydroServerBaseModel):
             data = transformer_cls.transform(data, task_mappings)
             if self.is_empty(data):
                 self._update_status(
-                    loader_cls, True, "No data returned from the transformer"
+                    task_run,
+                    True,
+                    "No data returned from the transformer",
+                    runtime_source_uri=runtime_source_uri,
                 )
                 return
 
             logging.info("Starting load")
             loader_cls.load(data, self)
-            self._update_status(task_run, True, "OK")
+            self._update_status(
+                task_run, True, "OK", runtime_source_uri=runtime_source_uri
+            )
         except Exception as e:
-            self._update_status(task_run, False, str(e))
+            self._update_status(
+                task_run, False, str(e), runtime_source_uri=runtime_source_uri
+            )
 
     @staticmethod
     def is_empty(data):
@@ -229,11 +241,28 @@ class Task(HydroServerBaseModel):
 
         return False
 
-    def _update_status(self, task_run: TaskRun, success: bool, msg: str):
+    def _update_status(
+        self,
+        task_run: TaskRun,
+        success: bool,
+        msg: str,
+        runtime_source_uri: Optional[str] = None,
+    ):
+        result = {"message": msg}
+        if runtime_source_uri:
+            result.update(
+                {
+                    "runtimeSourceUri": runtime_source_uri,
+                    "runtime_source_uri": runtime_source_uri,
+                    "runtimeUrl": runtime_source_uri,
+                    "runtime_url": runtime_source_uri,
+                }
+            )
+
         self.update_task_run(
             task_run.id,
             status="SUCCESS" if success else "FAILURE",
-            result={"message": msg}
+            result=result
         )
         self.next_run_at = self._next_run()
         self.save()

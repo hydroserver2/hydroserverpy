@@ -35,6 +35,7 @@ class JSONTransformer(Transformer):
             logging.warning("No data points found in the JSON data.")
             return None
 
+        logging.info("Extracted %s JSON data points.", len(data_points))
         df = pd.DataFrame(data_points)
 
         return self.standardize_dataframe(df, mappings)

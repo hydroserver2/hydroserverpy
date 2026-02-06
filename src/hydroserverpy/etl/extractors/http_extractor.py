@@ -15,10 +15,14 @@ class HTTPExtractor(Extractor):
         Downloads the file from the HTTP/HTTPS server and returns a file-like object.
         """
         url = self.resolve_placeholder_variables(task, loader)
-        logging.info(f"Requesting data from → {url}")
+        logging.info("Requesting data from → %s", url)
 
-        response = requests.get(url)
-        response.raise_for_status()
+        try:
+            response = requests.get(url)
+            response.raise_for_status()
+        except Exception as e:
+            logging.error("HTTP request failed for %s: %s", url, e)
+            raise
 
         data = BytesIO()
         for chunk in response.iter_content(chunk_size=8192):

@@ -9,21 +9,22 @@ from ..timestamp_parser import TimestampParser
 class Extractor:
     def __init__(self, extractor_config: ExtractorConfig):
         self.cfg = extractor_config
+        self.runtime_source_uri = None
 
     def resolve_placeholder_variables(self, task: Task, loader):
-        logging.info(f"Creating runtime variables...")
+        logging.info("Resolving extractor runtime variables...")
         filled = {}
         for placeholder in self.cfg.placeholder_variables:
             name = placeholder.name
 
             if placeholder.type == "runTime":
-                logging.info(f"Resolving runtime var: {name}")
+                logging.info("Resolving runtime var: %s", name)
                 if placeholder.run_time_value == "latestObservationTimestamp":
                     value = loader.earliest_begin_date(task)
                 elif placeholder.run_time_value == "jobExecutionTime":
                     value = pd.Timestamp.now(tz="UTC")
             elif placeholder.type == "perTask":
-                logging.info(f"Resolving task var: {name}")
+                logging.info("Resolving task var: %s", name)
                 if name not in task.extractor_variables:
                     raise KeyError(f"Missing per-task variable '{name}'")
                 value = task.extractor_variables[name]
@@ -36,8 +37,13 @@ class Extractor:
 
             filled[name] = value
         if not filled:
-            return self.cfg.source_uri
-        return self.format_uri(filled)
+            uri = self.cfg.source_uri
+        else:
+            uri = self.format_uri(filled)
+
+        self.runtime_source_uri = uri
+        logging.info("Resolved runtime source URI: %s", uri)
+        return uri
 
     def format_uri(self, placeholder_variables):
         try:
