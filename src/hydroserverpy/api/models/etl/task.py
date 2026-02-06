@@ -222,9 +222,12 @@ class Task(HydroServerBaseModel):
                 return
 
             logging.info("Starting load")
-            loader_cls.load(data, self)
+            load_stats = loader_cls.load(data, self)
             self._update_status(
-                task_run, True, "OK", runtime_source_uri=runtime_source_uri
+                task_run,
+                True,
+                self._success_message(load_stats),
+                runtime_source_uri=runtime_source_uri,
             )
         except Exception as e:
             self._update_status(
@@ -266,6 +269,39 @@ class Task(HydroServerBaseModel):
         )
         self.next_run_at = self._next_run()
         self.save()
+
+    @staticmethod
+    def _success_message(load_stats: Optional[dict]) -> str:
+        if not isinstance(load_stats, dict):
+            return "OK"
+
+        loaded = load_stats.get("observations_loaded")
+        datastreams_loaded = load_stats.get("datastreams_loaded")
+        available = load_stats.get("observations_available")
+        timestamps_total = load_stats.get("timestamps_total")
+        timestamps_after_cutoff = load_stats.get("timestamps_after_cutoff")
+
+        if loaded is None:
+            return "OK"
+
+        if loaded == 0:
+            if timestamps_total and timestamps_after_cutoff == 0:
+                cutoff = load_stats.get("cutoff")
+                if cutoff:
+                    return (
+                        "No new observations to load "
+                        f"(all timestamps were at or before {cutoff})."
+                    )
+                return "No new observations to load (all timestamps were at or before the cutoff)."
+            if available == 0:
+                return "No new observations to load."
+            return "No new observations were loaded."
+
+        if datastreams_loaded is not None:
+            return (
+                f"Load completed successfully ({loaded} rows across {datastreams_loaded} datastreams)."
+            )
+        return f"Load completed successfully ({loaded} rows loaded)."
 
     def _next_run(self) -> Optional[str]:
         now = datetime.now(timezone.utc)

@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict
 
 from .base import Loader
 import logging
@@ -20,30 +20,70 @@ class HydroServerLoader(Loader):
         self._begin_cache: dict[str, pd.Timestamp] = {}
         self.task_id = task_id
 
-    def load(self, data: pd.DataFrame, task: Task) -> None:
+    def load(self, data: pd.DataFrame, task: Task) -> Dict[str, Any]:
         """
         Load observations from a DataFrame to the HydroServer.
         :param data: A Pandas DataFrame where each column corresponds to a datastream.
         """
         begin_date = self.earliest_begin_date(task)
         new_data = data[data["timestamp"] > begin_date]
+
+        cutoff_value = (
+            begin_date.isoformat()
+            if hasattr(begin_date, "isoformat")
+            else str(begin_date)
+        )
+        stats: Dict[str, Any] = {
+            "cutoff": cutoff_value,
+            "timestamps_total": len(data),
+            "timestamps_after_cutoff": len(new_data),
+            "timestamps_filtered_by_cutoff": max(len(data) - len(new_data), 0),
+            "observations_available": 0,
+            "observations_loaded": 0,
+            "observations_skipped": 0,
+            "observations_filtered_by_end_time": 0,
+            "datastreams_total": 0,
+            "datastreams_available": 0,
+            "datastreams_loaded": 0,
+            "per_datastream": {},
+        }
+
         for col in new_data.columns.difference(["timestamp"]):
-            datastream = self.client.datastreams.get(
-                uid=str(col)
-            )
+            stats["datastreams_total"] += 1
+            datastream = self.client.datastreams.get(uid=str(col))
             ds_cutoff = datastream.phenomenon_end_time
-            df = (
+
+            base_df = (
                 new_data[["timestamp", col]]
-                .loc[lambda d: d["timestamp"] > ds_cutoff if ds_cutoff else True]
                 .rename(columns={col: "value"})
                 .dropna(subset=["value"])
             )
+            pre_count = len(base_df)
+            if ds_cutoff:
+                base_df = base_df.loc[base_df["timestamp"] > ds_cutoff]
+
+            filtered_by_end = pre_count - len(base_df)
+            if filtered_by_end:
+                stats["observations_filtered_by_end_time"] += filtered_by_end
+
+            df = base_df
+            available = len(df)
+            stats["observations_available"] += available
             if df.empty:
-                logging.warning(f"No new data for {col}, skipping.")
+                logging.warning(
+                    "No new data for %s after filtering; skipping.", col
+                )
+                stats["per_datastream"][str(col)] = {
+                    "available": 0,
+                    "loaded": 0,
+                    "skipped": 0,
+                }
                 continue
 
+            stats["datastreams_available"] += 1
             df = df.rename(columns={"timestamp": "phenomenon_time", "value": "result"})
 
+            loaded = 0
             # Chunked upload
             CHUNK_SIZE = 5000
             total = len(df)
@@ -61,6 +101,7 @@ class HydroServerLoader(Loader):
                     self.client.datastreams.load_observations(
                         uid=str(col), observations=chunk
                     )
+                    loaded += len(chunk)
                 except Exception as e:
                     status = getattr(e, "status_code", None) or getattr(
                         getattr(e, "response", None), "status_code", None
@@ -73,6 +114,18 @@ class HydroServerLoader(Loader):
                             end - 1,
                         )
                     raise
+
+            stats["observations_loaded"] += loaded
+            stats["observations_skipped"] += max(available - loaded, 0)
+            if loaded > 0:
+                stats["datastreams_loaded"] += 1
+            stats["per_datastream"][str(col)] = {
+                "available": available,
+                "loaded": loaded,
+                "skipped": max(available - loaded, 0),
+            }
+
+        return stats
 
     def _fetch_earliest_begin(
         self, mappings: list[SourceTargetMapping]
