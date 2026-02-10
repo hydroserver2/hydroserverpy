@@ -59,7 +59,7 @@ class HTTPExtractor(Extractor):
 
         if total_bytes == 0:
             raise ValueError(
-                "The connection to the source worked but no data were returned."
+                "The connection to the source worked but no observations were returned."
             )
 
         # Keep payload-level details at DEBUG; hydroserver-api-services already logs
