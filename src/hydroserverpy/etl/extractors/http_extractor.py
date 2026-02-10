@@ -4,6 +4,10 @@ from io import BytesIO
 
 from ..etl_configuration import Task
 from .base import Extractor, ExtractorConfig
+from ..logging_utils import redact_url
+
+
+logger = logging.getLogger(__name__)
 
 
 class HTTPExtractor(Extractor):
@@ -15,18 +19,50 @@ class HTTPExtractor(Extractor):
         Downloads the file from the HTTP/HTTPS server and returns a file-like object.
         """
         url = self.resolve_placeholder_variables(task, loader)
-        logging.info("Requesting data from → %s", url)
+        logger.info("Requesting data from → %s", redact_url(url))
 
         try:
             response = requests.get(url)
-            response.raise_for_status()
-        except Exception as e:
-            logging.error("HTTP request failed for %s: %s", url, e)
-            raise
+        except requests.exceptions.Timeout as e:
+            raise ValueError("The source system did not respond before the timeout.") from e
+        except requests.exceptions.ConnectionError as e:
+            raise ValueError("Could not connect to the source system.") from e
+        except requests.exceptions.RequestException as e:
+            # Generic network/client error.
+            raise ValueError("Could not connect to the source system.") from e
+
+        status = getattr(response, "status_code", None)
+        if status in (401, 403):
+            raise ValueError(
+                "Authentication with the source system failed; credentials may be invalid or expired."
+            )
+        if status == 404:
+            raise ValueError("The requested payload was not found on the source system.")
+        if status is not None and status >= 400:
+            logger.error(
+                "HTTP request failed (status=%s) for %s",
+                status,
+                redact_url(url),
+            )
+            raise ValueError("The source system returned an error.")
 
         data = BytesIO()
+        total_bytes = 0
         for chunk in response.iter_content(chunk_size=8192):
             if chunk:
+                total_bytes += len(chunk)
                 data.write(chunk)
         data.seek(0)
+
+        if total_bytes == 0:
+            raise ValueError("The source system returned no data.")
+
+        # Keep payload-level details at DEBUG; hydroserver-api-services already logs
+        # a concise "Extractor returned payload" line for the end user.
+        logger.debug(
+            "Extractor returned payload (status=%s, content_type=%r, bytes=%s).",
+            getattr(response, "status_code", None),
+            response.headers.get("Content-Type") if hasattr(response, "headers") else None,
+            total_bytes,
+        )
         return data

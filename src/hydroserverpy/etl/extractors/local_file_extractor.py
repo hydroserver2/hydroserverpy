@@ -3,6 +3,9 @@ from .base import Extractor
 from ..etl_configuration import ExtractorConfig
 
 
+logger = logging.getLogger(__name__)
+
+
 class LocalFileExtractor(Extractor):
     def __init__(self, extractor_config: ExtractorConfig):
         super().__init__(extractor_config)
@@ -18,8 +21,10 @@ class LocalFileExtractor(Extractor):
         )
         try:
             file_handle = open(path, "r")
-            logging.info("Successfully opened file '%s'.", path)
+            logger.debug("Successfully opened local file %r.", path)
             return file_handle
+        except FileNotFoundError as e:
+            raise ValueError("This job references a resource that no longer exists.") from e
         except Exception as e:
-            logging.error("Error opening file '%s': %s", path, e)
-            return None
+            logger.error("Error opening local file %r: %s", path, e, exc_info=True)
+            raise ValueError("Could not open the source file.") from e

@@ -8,6 +8,7 @@ import pandas as pd
 
 from ..timestamp_parser import TimestampParser
 from ..etl_configuration import MappingPath, TransformerConfig, SourceTargetMapping
+from ..logging_utils import summarize_list
 
 ALLOWED_AST = (
     ast.Expression,
@@ -51,6 +52,9 @@ def _compile_arithmetic_expr(expr: str):
     return _compile_arithmetic_expr_canon(_canonicalize_expr(expr))
 
 
+logger = logging.getLogger(__name__)
+
+
 class Transformer(ABC):
     def __init__(self, transformer_config: TransformerConfig):
         self.cfg = transformer_config
@@ -68,18 +72,39 @@ class Transformer(ABC):
     def standardize_dataframe(
         self, df: pd.DataFrame, mappings: List[SourceTargetMapping]
     ):
+        logger.debug(
+            "Standardizing extracted dataframe (rows=%s, columns=%s).",
+            len(df),
+            len(df.columns),
+        )
+        logger.debug(
+            "Extracted dataframe columns (sample): %s",
+            summarize_list(list(df.columns), max_items=30),
+        )
         if not df.empty:
-            logging.info(f"Read task into dataframe: {df.iloc[0].to_dict()}")
-        else:
-            logging.info("Read task into dataframe: [empty dataframe]")
+            # Avoid dumping full rows; just log a compact preview.
+            preview = df.iloc[0].to_dict()
+            for k, v in list(preview.items()):
+                if isinstance(v, str) and len(v) > 128:
+                    preview[k] = v[:128] + "...(truncated)"
+            logger.debug("Extracted dataframe first-row preview: %s", preview)
 
         # 1) Normalize timestamp column
         df.rename(columns={self.timestamp.key: "timestamp"}, inplace=True)
         if "timestamp" not in df.columns:
             msg = f"Timestamp column '{self.timestamp.key}' not found in data."
-            logging.error(msg)
+            logger.error(
+                "%s Available columns=%s",
+                msg,
+                summarize_list(list(df.columns), max_items=30),
+            )
             raise ValueError(msg)
-        logging.info(f"Renamed timestamp column to 'timestamp'")
+        logger.debug(
+            "Normalized timestamp column '%s' -> 'timestamp' (timezoneMode=%r, format=%r).",
+            self.timestamp.key,
+            getattr(self.timestamp, "timezone_mode", None),
+            getattr(self.timestamp, "format", None),
+        )
 
         df["timestamp"] = self.timestamp_parser.parse_series(df["timestamp"])
         df = df.drop_duplicates(subset=["timestamp"], keep="last")
@@ -89,10 +114,21 @@ class Transformer(ABC):
                 try:
                     return df.columns[s_id]
                 except IndexError:
+                    logger.error(
+                        "Source index %s is out of range. Extracted columns count=%s, columns(sample)=%s",
+                        s_id,
+                        len(df.columns),
+                        summarize_list(list(df.columns), max_items=30),
+                    )
                     raise ValueError(
                         f"Source index {s_id} is out of range for extracted data."
                     )
             if s_id not in df.columns:
+                logger.error(
+                    "Source column %r not found. Available columns=%s",
+                    s_id,
+                    summarize_list(list(df.columns), max_items=30),
+                )
                 raise ValueError(f"Source column '{s_id}' not found in extracted data.")
             return s_id
 
@@ -107,19 +143,25 @@ class Transformer(ABC):
                     try:
                         out = eval(code, {"__builtins__": {}}, {"x": out})
                     except Exception as ee:
-                        logging.exception(
-                            "Data transformation failed for expression=%r",
+                        logger.exception(
+                            "Data transformation failed for target=%r expression=%r",
+                            path.target_identifier,
                             transformation.expression,
                         )
                         raise
                 else:
                     msg = f"Unsupported transformation type: {transformation.type}"
-                    logging.error(msg)
+                    logger.error(msg)
                     raise ValueError(msg)
             return out
 
         # source target mappings may be one to many. Therefore, create a new column for each target and apply transformations
         transformed_df = pd.DataFrame(index=df.index)
+        logger.debug(
+            "Applying %s source mapping(s): %s",
+            len(mappings),
+            summarize_list([m.source_identifier for m in mappings], max_items=30),
+        )
         for m in mappings:
             src_col = _resolve_source_col(m.source_identifier)
             base = df[src_col]
@@ -130,6 +172,6 @@ class Transformer(ABC):
         # 6) Keep only timestamp + target columns
         df = pd.concat([df[["timestamp"]], pd.DataFrame(transformed_df)], axis=1)
 
-        logging.info(f"standardized dataframe created: {df.shape}")
+        logger.debug("Standardized dataframe created: %s", df.shape)
 
         return df

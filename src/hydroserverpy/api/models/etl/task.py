@@ -8,6 +8,7 @@ from typing import ClassVar, TYPE_CHECKING, List, Optional, Literal, Union
 from datetime import datetime, timedelta, timezone
 from pydantic import Field, AliasPath, AliasChoices, TypeAdapter
 from hydroserverpy.etl.factories import extractor_factory, transformer_factory, loader_factory
+from hydroserverpy.etl.loaders.hydroserver_loader import LoadSummary
 from hydroserverpy.etl.etl_configuration import ExtractorConfig, TransformerConfig, LoaderConfig, SourceTargetMapping, MappingPath
 from ..base import HydroServerBaseModel
 from .orchestration_system import OrchestrationSystem
@@ -222,11 +223,11 @@ class Task(HydroServerBaseModel):
                 return
 
             logging.info("Starting load")
-            load_stats = loader_cls.load(data, self)
+            load_summary = loader_cls.load(data, self)
             self._update_status(
                 task_run,
                 True,
-                self._success_message(load_stats),
+                self._success_message(load_summary),
                 runtime_source_uri=runtime_source_uri,
             )
         except Exception as e:
@@ -271,35 +272,26 @@ class Task(HydroServerBaseModel):
         self.save()
 
     @staticmethod
-    def _success_message(load_stats: Optional[dict]) -> str:
-        if not isinstance(load_stats, dict):
+    def _success_message(load: Optional[LoadSummary]) -> str:
+        if not load:
             return "OK"
 
-        loaded = load_stats.get("observations_loaded")
-        datastreams_loaded = load_stats.get("datastreams_loaded")
-        available = load_stats.get("observations_available")
-        timestamps_total = load_stats.get("timestamps_total")
-        timestamps_after_cutoff = load_stats.get("timestamps_after_cutoff")
-
-        if loaded is None:
-            return "OK"
-
+        loaded = load.observations_loaded
         if loaded == 0:
-            if timestamps_total and timestamps_after_cutoff == 0:
-                cutoff = load_stats.get("cutoff")
-                if cutoff:
+            if load.timestamps_total and load.timestamps_after_cutoff == 0:
+                if load.cutoff:
                     return (
                         "No new observations to load "
-                        f"(all timestamps were at or before {cutoff})."
+                        f"(all timestamps were at or before {load.cutoff})."
                     )
                 return "No new observations to load (all timestamps were at or before the cutoff)."
-            if available == 0:
+            if load.observations_available == 0:
                 return "No new observations to load."
             return "No new observations were loaded."
 
-        if datastreams_loaded is not None:
+        if load.datastreams_loaded:
             return (
-                f"Load completed successfully ({loaded} rows across {datastreams_loaded} datastreams)."
+                f"Load completed successfully ({loaded} rows across {load.datastreams_loaded} datastreams)."
             )
         return f"Load completed successfully ({loaded} rows loaded)."
 
