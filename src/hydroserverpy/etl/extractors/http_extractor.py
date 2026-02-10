@@ -4,7 +4,6 @@ from io import BytesIO
 
 from ..etl_configuration import Task
 from .base import Extractor, ExtractorConfig
-from ..logging_utils import redact_url
 
 
 logger = logging.getLogger(__name__)
@@ -19,12 +18,14 @@ class HTTPExtractor(Extractor):
         Downloads the file from the HTTP/HTTPS server and returns a file-like object.
         """
         url = self.resolve_placeholder_variables(task, loader)
-        logger.info("Requesting data from → %s", redact_url(url))
+        logger.info("Requesting data from source URI")
 
         try:
             response = requests.get(url)
         except requests.exceptions.Timeout as e:
-            raise ValueError("The source system did not respond before the timeout.") from e
+            raise ValueError(
+                "The source system did not respond before the timeout."
+            ) from e
         except requests.exceptions.ConnectionError as e:
             raise ValueError("Could not connect to the source system.") from e
         except requests.exceptions.RequestException as e:
@@ -37,12 +38,14 @@ class HTTPExtractor(Extractor):
                 "Authentication with the source system failed; credentials may be invalid or expired."
             )
         if status == 404:
-            raise ValueError("The requested payload was not found on the source system.")
+            raise ValueError(
+                "The requested payload was not found on the source system."
+            )
         if status is not None and status >= 400:
             logger.error(
                 "HTTP request failed (status=%s) for %s",
                 status,
-                redact_url(url),
+                url,
             )
             raise ValueError("The source system returned an error.")
 
@@ -62,7 +65,11 @@ class HTTPExtractor(Extractor):
         logger.debug(
             "Extractor returned payload (status=%s, content_type=%r, bytes=%s).",
             getattr(response, "status_code", None),
-            response.headers.get("Content-Type") if hasattr(response, "headers") else None,
+            (
+                response.headers.get("Content-Type")
+                if hasattr(response, "headers")
+                else None
+            ),
             total_bytes,
         )
         return data

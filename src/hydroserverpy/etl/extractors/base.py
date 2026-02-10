@@ -4,7 +4,7 @@ import pandas as pd
 from datetime import datetime
 from ..etl_configuration import ExtractorConfig, Task
 from ..timestamp_parser import TimestampParser
-from ..logging_utils import redact_url, summarize_list
+from ..logging_utils import summarize_list
 
 
 logger = logging.getLogger(__name__)
@@ -67,8 +67,8 @@ class Extractor:
             uri = self.format_uri(filled)
 
         self.runtime_source_uri = uri
-        # Keep a stable log prefix for downstream parsing, but redact secrets.
-        logger.info("Resolved runtime source URI: %s", redact_url(uri))
+        # Keep a stable log prefix for downstream parsing.
+        logger.info("Resolved runtime source URI: %s", uri)
         return uri
 
     def format_uri(self, placeholder_variables):

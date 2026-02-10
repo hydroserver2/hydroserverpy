@@ -58,8 +58,8 @@ These are the most important end-user messages the ETL system can return for a s
 - Load completed successfully.
 - Load completed successfully (<n> rows loaded).
 - Load completed successfully (<n> rows across <m> datastreams).
-- No new observations to load.
+- Already up to date - no new observations loaded.
 - No new observations were loaded.
-- No new observations to load (all timestamps were at or before <cutoff>).
+- Already up to date - no new observations loaded (all timestamps were at or before <cutoff>).
 - No data returned from the extractor. Nothing to load.
 - Transform produced no rows. Nothing to load.

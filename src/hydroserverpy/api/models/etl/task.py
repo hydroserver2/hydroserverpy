@@ -281,12 +281,12 @@ class Task(HydroServerBaseModel):
             if load.timestamps_total and load.timestamps_after_cutoff == 0:
                 if load.cutoff:
                     return (
-                        "No new observations to load "
+                        "Already up to date - no new observations loaded "
                         f"(all timestamps were at or before {load.cutoff})."
                     )
-                return "No new observations to load (all timestamps were at or before the cutoff)."
+                return "Already up to date - no new observations loaded (all timestamps were at or before the cutoff)."
             if load.observations_available == 0:
-                return "No new observations to load."
+                return "Already up to date - no new observations loaded."
             return "No new observations were loaded."
 
         if load.datastreams_loaded:
