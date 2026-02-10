@@ -35,11 +35,11 @@ class HTTPExtractor(Extractor):
         status = getattr(response, "status_code", None)
         if status in (401, 403):
             raise ValueError(
-                "Authentication with the source system failed; credentials may be invalid or expired."
+                "Authentication with the source system failed. The username, password, or token may be incorrect or expired."
             )
         if status == 404:
             raise ValueError(
-                "The requested payload was not found on the source system."
+                "The requested data could not be found on the source system."
             )
         if status is not None and status >= 400:
             logger.error(
@@ -58,7 +58,9 @@ class HTTPExtractor(Extractor):
         data.seek(0)
 
         if total_bytes == 0:
-            raise ValueError("The source system returned no data.")
+            raise ValueError(
+                "The connection to the source worked but no data were returned."
+            )
 
         # Keep payload-level details at DEBUG; hydroserver-api-services already logs
         # a concise "Extractor returned payload" line for the end user.
