@@ -107,7 +107,7 @@ class CSVTransformer(Transformer):
             if "No columns to parse from file" in msg:
                 user_message = "The source system returned no data."
             elif "Usecols do not match columns" in msg or "not in list" in msg:
-                user_message = "The header row contained unexpected values and could not be processed."
+                user_message = "One or more configured CSV columns were not found in the header row."
 
             logger.error("Error reading CSV data: %s", user_message)
             raise ValueError(user_message) from e
