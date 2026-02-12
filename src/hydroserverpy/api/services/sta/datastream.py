@@ -113,10 +113,12 @@ class DatastreamService(HydroServerBaseService):
         result_end_time: Optional[datetime] = None,
         is_private: bool = False,
         is_visible: bool = True,
+        uid: Optional[UUID] = None,
     ) -> "Datastream":
         """Create a new datastream."""
 
         body = {
+            "id": normalize_uuid(uid),
             "name": name,
             "description": description,
             "thingId": normalize_uuid(thing),
