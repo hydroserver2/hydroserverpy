@@ -1,10 +1,16 @@
 from abc import ABC, abstractmethod
 import ast
+from io import BytesIO
 from functools import lru_cache
 import logging
+import os
 import re
-from typing import List, Union
+from typing import Any, List, Union
+from urllib.parse import unquote, urlparse
+
+import numpy as np
 import pandas as pd
+import requests
 
 from ..timestamp_parser import TimestampParser
 from ..etl_configuration import MappingPath, TransformerConfig, SourceTargetMapping
@@ -55,6 +61,129 @@ def _compile_arithmetic_expr(expr: str):
 logger = logging.getLogger(__name__)
 
 
+def _rating_curve_reference(transformation: Any) -> str:
+    lookup_url = getattr(transformation, "rating_curve_url", None)
+    lookup_ref = (lookup_url or "").strip()
+    if not lookup_ref:
+        raise ValueError("Rating curve transformation is missing ratingCurveUrl.")
+
+    return lookup_ref
+
+
+def _read_rating_curve_bytes(lookup_ref: str) -> bytes:
+    parsed = urlparse(lookup_ref)
+    scheme = parsed.scheme.lower()
+
+    if scheme in {"http", "https"}:
+        try:
+            response = requests.get(lookup_ref, timeout=30)
+        except requests.exceptions.Timeout as exc:
+            raise ValueError(
+                f"Timed out while retrieving rating curve from '{lookup_ref}'."
+            ) from exc
+        except requests.exceptions.ConnectionError as exc:
+            raise ValueError(
+                f"Could not connect to rating curve URL '{lookup_ref}'."
+            ) from exc
+        except requests.exceptions.RequestException as exc:
+            raise ValueError(
+                f"Failed to retrieve rating curve from '{lookup_ref}'."
+            ) from exc
+
+        if response.status_code == 404:
+            raise ValueError(f"Rating curve file not found at '{lookup_ref}'.")
+        if response.status_code in (401, 403):
+            raise ValueError(
+                f"Authentication failed while retrieving rating curve from '{lookup_ref}'."
+            )
+        if response.status_code >= 400:
+            raise ValueError(
+                f"Rating curve request to '{lookup_ref}' returned HTTP {response.status_code}."
+            )
+
+        payload = response.content or b""
+        if not payload:
+            raise ValueError(f"Rating curve at '{lookup_ref}' is empty.")
+        return payload
+
+    path = lookup_ref
+    if scheme == "file":
+        netloc = parsed.netloc or ""
+        path = unquote(parsed.path or "")
+        if netloc:
+            path = f"//{netloc}{path}"
+
+    if not os.path.exists(path):
+        raise ValueError(f"Rating curve file not found at '{lookup_ref}'.")
+
+    try:
+        with open(path, "rb") as file_obj:
+            payload = file_obj.read()
+    except OSError as exc:
+        raise ValueError(
+            f"Unable to read rating curve file from '{lookup_ref}'."
+        ) from exc
+
+    if not payload:
+        raise ValueError(f"Rating curve at '{lookup_ref}' is empty.")
+
+    return payload
+
+
+@lru_cache(maxsize=128)
+def _load_rating_curve(lookup_ref: str) -> tuple[np.ndarray, np.ndarray]:
+    payload = _read_rating_curve_bytes(lookup_ref)
+
+    try:
+        lookup_df = pd.read_csv(BytesIO(payload))
+    except Exception as exc:
+        raise ValueError(
+            f"Rating curve at '{lookup_ref}' is not a valid CSV file."
+        ) from exc
+
+    if lookup_df.shape[1] < 2:
+        raise ValueError(
+            f"Rating curve at '{lookup_ref}' must contain at least two columns (input and output)."
+        )
+
+    standardized = lookup_df.iloc[:, :2].copy()
+    standardized.columns = ["input_value", "output_value"]
+    standardized["input_value"] = pd.to_numeric(
+        standardized["input_value"], errors="coerce"
+    )
+    standardized["output_value"] = pd.to_numeric(
+        standardized["output_value"], errors="coerce"
+    )
+    standardized = (
+        standardized.dropna(subset=["input_value", "output_value"])
+        .sort_values("input_value")
+        .drop_duplicates(subset=["input_value"], keep="last")
+    )
+
+    if standardized.empty or len(standardized.index) < 2:
+        raise ValueError(
+            f"Rating curve at '{lookup_ref}' must include at least two numeric rows."
+        )
+
+    return (
+        standardized["input_value"].to_numpy(dtype=np.float64),
+        standardized["output_value"].to_numpy(dtype=np.float64),
+    )
+
+
+def _apply_rating_curve_transformation(
+    series: pd.Series, path: MappingPath, transformation: Any
+) -> pd.Series:
+    lookup_ref = _rating_curve_reference(transformation)
+    transformed = Transformer.apply_rating_curve(series, lookup_ref)
+    logger.debug(
+        "Applied rating curve transformation for target=%r using reference=%r.",
+        path.target_identifier,
+        lookup_ref,
+    )
+    return transformed
+
+
 class Transformer(ABC):
     def __init__(self, transformer_config: TransformerConfig):
         self.cfg = transformer_config
@@ -68,6 +197,35 @@ class Transformer(ABC):
     @property
     def needs_datastreams(self) -> bool:
         return False
+
+    @staticmethod
+    def apply_rating_curve(
+        values: Union[pd.Series, np.ndarray, List[float]], rating_curve_url: str
+    ) -> pd.Series:
+        """Apply a rating curve to numeric values using linear interpolation."""
+
+        source = (
+            values
+            if isinstance(values, pd.Series)
+            else pd.Series(values, dtype="float64")
+        )
+        lookup_input, lookup_output = _load_rating_curve(rating_curve_url)
+
+        source_numeric = pd.to_numeric(source, errors="coerce")
+        source_values = source_numeric.to_numpy(dtype=np.float64)
+        finite_mask = np.isfinite(source_values)
+
+        transformed = np.full(source_values.shape, np.nan, dtype=np.float64)
+        if finite_mask.any():
+            transformed[finite_mask] = np.interp(
+                source_values[finite_mask],
+                lookup_input,
+                lookup_output,
+                left=np.nan,
+                right=np.nan,
+            )
+
+        return pd.Series(transformed, index=source.index, dtype="float64")
 
     def standardize_dataframe(
         self, df: pd.DataFrame, mappings: List[SourceTargetMapping]
@@ -149,6 +307,8 @@ class Transformer(ABC):
                             transformation.expression,
                         )
                         raise
+                elif transformation.type == "rating_curve":
+                    out = _apply_rating_curve_transformation(out, path, transformation)
                 else:
                     msg = f"Unsupported transformation type: {transformation.type}"
                     logger.error(msg)

@@ -194,15 +194,15 @@ class ExpressionDataTransformation(BaseModel):
         populate_by_name = True
 
 
-class LookupTableDataTransformation(BaseModel):
-    type: Literal["lookup"]
-    lookup_table_id: str = Field(..., alias="lookupTableId")
+class RatingCurveDataTransformation(BaseModel):
+    type: Literal["rating_curve"]
+    rating_curve_url: str = Field(..., alias="ratingCurveUrl")
 
     class Config:
         populate_by_name = True
 
 
-DataTransformation = Union[ExpressionDataTransformation, LookupTableDataTransformation]
+DataTransformation = Union[ExpressionDataTransformation, RatingCurveDataTransformation]
 
 
 class MappingPath(BaseModel):
