@@ -202,7 +202,7 @@ class Transformer(ABC):
     def apply_rating_curve(
         values: Union[pd.Series, np.ndarray, List[float]], rating_curve_url: str
     ) -> pd.Series:
-        """Apply a rating curve to numeric values using linear interpolation."""
+        """Apply a rating curve using linear interpolation with endpoint clamping."""
 
         source = (
             values
@@ -221,8 +221,8 @@ class Transformer(ABC):
                 source_values[finite_mask],
                 lookup_input,
                 lookup_output,
-                left=np.nan,
-                right=np.nan,
+                left=lookup_output[0],
+                right=lookup_output[-1],
             )
 
         return pd.Series(transformed, index=source.index, dtype="float64")

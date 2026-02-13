@@ -1,4 +1,4 @@
-from typing import List, Union, Optional, ClassVar, TYPE_CHECKING, IO, Dict, Any
+from typing import List, Union, Optional, ClassVar, TYPE_CHECKING
 from uuid import UUID
 from datetime import datetime
 from pydantic import Field, EmailStr, AliasPath
@@ -52,7 +52,6 @@ class Workspace(HydroServerBaseModel):
         self._orchestrationsystems = None
         self._dataconnections = None
         self._tasks = None
-        self._file_attachments = None
 
     @classmethod
     def get_route(cls):
@@ -184,17 +183,6 @@ class Workspace(HydroServerBaseModel):
 
         return self._tasks
 
-    @property
-    def file_attachments(self) -> List[Dict[str, Any]]:
-        """Workspace-level file attachments."""
-
-        if self._file_attachments is None:
-            self._file_attachments = self.client.workspaces.list_file_attachments(
-                uid=self.uid
-            )
-
-        return self._file_attachments
-
     def create_api_key(
         self,
         role: Union["Role", UUID, str],
@@ -289,62 +277,6 @@ class Workspace(HydroServerBaseModel):
 
         self.client.workspaces.remove_collaborator(uid=self.uid, email=email)
         self._collaborators = None
-
-    def get_file_attachments(
-        self, attachment_type: Optional[str] = None
-    ) -> List[Dict[str, Any]]:
-        """List file attachments associated with this workspace."""
-
-        self._file_attachments = self.client.workspaces.list_file_attachments(
-            uid=self.uid, attachment_type=attachment_type
-        )
-        return self._file_attachments
-
-    def add_file_attachment(
-        self,
-        file: IO[bytes],
-        attachment_type: str,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-    ) -> Dict[str, Any]:
-        """Add a workspace file attachment."""
-
-        response = self.client.workspaces.add_file_attachment(
-            uid=self.uid,
-            file=file,
-            attachment_type=attachment_type,
-            name=name,
-            description=description,
-        )
-        self._file_attachments = None
-        return response
-
-    def update_file_attachment(
-        self,
-        file_attachment_id: Union[UUID, str],
-        attachment_type: str = ...,
-        name: str = ...,
-        description: Optional[str] = ...,
-    ) -> Dict[str, Any]:
-        """Update metadata for a workspace file attachment."""
-
-        response = self.client.workspaces.update_file_attachment(
-            uid=self.uid,
-            file_attachment_id=file_attachment_id,
-            attachment_type=attachment_type,
-            name=name,
-            description=description,
-        )
-        self._file_attachments = None
-        return response
-
-    def delete_file_attachment(self, file_attachment_id: Union[UUID, str]) -> None:
-        """Delete a workspace file attachment."""
-
-        self.client.workspaces.delete_file_attachment(
-            uid=self.uid, file_attachment_id=file_attachment_id
-        )
-        self._file_attachments = None
 
     def transfer_ownership(self, email: EmailStr) -> None:
         """Transfer ownership of this workspace to another HydroServer user."""
