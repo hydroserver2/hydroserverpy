@@ -451,6 +451,7 @@ class Task(HydroServerBaseModel):
         self.update_task_run(
             task_run.id,
             status="SUCCESS" if success else "FAILURE",
+            finished_at=datetime.now(timezone.utc),
             result=result
         )
         self.next_run_at = self._next_run()
