@@ -332,9 +332,9 @@ class Task(HydroServerBaseModel):
 
     def _run_local_aggregation(self) -> dict[str, int]:
         mappings = self.mappings or []
-        if len(mappings) != 1:
+        if len(mappings) < 1:
             raise ValueError(
-                "Aggregation tasks currently support exactly one mapping."
+                "Aggregation tasks must include at least one mapping."
             )
 
         rows_loaded = 0
