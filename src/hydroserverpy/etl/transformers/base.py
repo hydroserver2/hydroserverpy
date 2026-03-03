@@ -156,7 +156,7 @@ class Transformer(ETLComponent, Timestamp, ABC):
 
         transformed_series = series
 
-        if series.dtype == "object":
+        if pd.api.types.is_string_dtype(series):
             transformed_series = pd.to_numeric(transformed_series, errors="coerce")
 
         for transformation in path.data_operations:
