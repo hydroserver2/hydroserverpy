@@ -115,8 +115,8 @@ transformer = CSVTransformer(
 
 | `timezone_type` | Behaviour | Requires |
 |---|---|---|
-| `"utc"` (default) | Treats all timestamps as UTC. | — |
-| `"embedded"` | Reads timezone offset from the timestamp string itself. Falls back to UTC if the timestamps are naive. | — |
+| `None` (default) | Reads timezone offset from the timestamp string itself. Falls back to UTC if the timestamps are naive. | — |
+| `"utc"` | Treats all timestamps as UTC. | — |
 | `"offset"` | Treats timestamps as naive and applies a fixed UTC offset. Strips any embedded offset if present. | `timezone` in `±HHMM` or `±HH:MM` format |
 | `"iana"` | Treats timestamps as naive and applies a named IANA timezone. Strips any embedded offset if present. | `timezone` as a valid IANA name |
 
@@ -135,10 +135,10 @@ transformer = CSVTransformer(
     timezone="America/Denver",
 )
 
-# Embedded offset — timestamps include their own offset, e.g. "2024-01-15T08:30:00-07:00"
+# Embedded offsets — timestamps include their own offset, e.g. "2024-01-15T08:30:00-07:00"
+# Omit timezone_type (or set it to None) to read offsets from the timestamps directly.
 transformer = CSVTransformer(
     timestamp_key="datetime",
-    timezone_type="embedded",
 )
 ```
 
@@ -208,6 +208,77 @@ ETLTargetPath(
 ```
 
 Operations are applied in order. The output of each operation becomes the input of the next.
+
+### Temporal Aggregation
+
+Temporal aggregation is an optional step that reduces the per-observation DataFrame produced by the transformer into period-level summaries before loading. When configured, the same aggregation is applied uniformly to every target series in the pipeline.
+
+```python
+from hydroserverpy.etl.models import TemporalAggregation
+
+aggregation = TemporalAggregation(
+    aggregation_statistic="simple_mean",
+    aggregation_interval=1,
+    aggregation_interval_unit="day",
+)
+```
+
+Pass it to the transformer at construction time:
+
+```python
+transformer = CSVTransformer(
+    timestamp_key="datetime",
+    temporal_aggregation=aggregation,
+)
+```
+
+#### Aggregation statistic
+
+| `aggregation_statistic` | Behaviour |
+|---|---|
+| `"simple_mean"` | Arithmetic mean of all observations within the window. |
+| `"time_weighted_mean"` | Mean weighted by the time between observations, computed via trapezoidal integration. Values at window boundaries are estimated by linear interpolation from the nearest surrounding observations. |
+| `"last_value_of_period"` | The last observation within the window. |
+
+#### Aggregation interval
+
+`aggregation_interval` (integer, default `1`) and `aggregation_interval_unit` (currently `"day"`) together define the window width. An `aggregation_interval` of `3` with unit `"day"` produces 3-day windows.
+
+#### Timezone
+
+Window boundaries are aligned to local midnight in the configured timezone. The timezone fields follow the same conventions as the transformer timestamp configuration, with `None` (the default) falling back to UTC-day boundaries.
+
+| `timezone_type` | Window boundary alignment | Requires |
+|---|---|---|
+| `None` (default) | UTC midnight | — |
+| `"utc"` | UTC midnight | — |
+| `"offset"` | Local midnight at a fixed UTC offset | `timezone` in `±HHMM` or `±HH:MM` format |
+| `"iana"` | Local midnight in a named timezone, handling DST automatically | `timezone` as a valid IANA name |
+
+```python
+# Daily windows aligned to US Mountain Time (UTC-7, DST-aware)
+aggregation = TemporalAggregation(
+    aggregation_statistic="simple_mean",
+    aggregation_interval=1,
+    aggregation_interval_unit="day",
+    timezone_type="iana",
+    timezone="America/Denver",
+)
+
+# Daily windows at a fixed offset (no DST adjustment)
+aggregation = TemporalAggregation(
+    aggregation_statistic="time_weighted_mean",
+    aggregation_interval=1,
+    aggregation_interval_unit="day",
+    timezone_type="offset",
+    timezone="-0700",
+)
+```
+
+**Window boundary semantics:** Windows run from the local midnight that contains the first observation to the local midnight that contains the last observation. The last observation defines the exclusive upper boundary — observations on that final local day are not aggregated. Ensure your source data extends at least one day past the last period you want included, or that the last observation falls on the day following the final window.
+
+Days with no observations are omitted from the output rather than filled with null values.
+
 
 ### Loader
 
