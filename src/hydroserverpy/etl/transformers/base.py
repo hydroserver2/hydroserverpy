@@ -2,10 +2,11 @@ import logging
 import pandas as pd
 from abc import ABC, abstractmethod
 from io import BytesIO
-from typing import Union, TextIO
+from typing import Union, TextIO, Optional
 from pydantic import BaseModel, Field
 from ..models.base import ETLComponent
 from ..models.timestamp import Timestamp
+from ..models.temporal_aggregation import TemporalAggregation
 from ..utils import summarize_list
 from ..operations import DataOperation
 from ..exceptions import ETLError
@@ -26,6 +27,7 @@ class ETLDataMapping(BaseModel):
 
 class Transformer(ETLComponent, Timestamp, ABC):
     timestamp_key: str
+    temporal_aggregation: Optional[TemporalAggregation] = None
 
     @abstractmethod
     def transform(
@@ -101,6 +103,9 @@ class Transformer(ETLComponent, Timestamp, ABC):
 
         # Keep only timestamp + target columns
         df = pd.concat([df[["timestamp"]], pd.DataFrame(transformed_df)], axis=1)
+
+        if self.temporal_aggregation:
+            df = self.temporal_aggregation.apply(df)
 
         logger.debug("Standardized dataframe created: %s", df.shape)
 
