@@ -16,10 +16,11 @@ if TYPE_CHECKING:
 
 class Task(HydroServerBaseModel):
     name: str = Field(..., max_length=255)
+    task_type: Literal["ETL", "Aggregation"] = Field("ETL", alias="type")
     extractor_settings: dict = Field(default_factory=dict, alias="extractorSettings")
     transformer_settings: dict = Field(default_factory=dict, alias="transformerSettings")
     loader_settings: dict = Field(default_factory=dict, alias="loaderSettings")
-    data_connection_id: uuid.UUID = Field(
+    data_connection_id: Optional[uuid.UUID] = Field(
         None, validation_alias=AliasChoices("dataConnectionId", AliasPath("dataConnection", "id"))
     )
     orchestration_system_id: uuid.UUID = Field(
@@ -41,6 +42,7 @@ class Task(HydroServerBaseModel):
 
     _editable_fields: ClassVar[set[str]] = {
         "name",
+        "task_type",
         "extractor_settings",
         "transformer_settings",
         "loader_settings",
@@ -72,6 +74,8 @@ class Task(HydroServerBaseModel):
 
     @cached_property
     def data_connection(self) -> Optional[DataConnection]:
+        if not self.data_connection_id:
+            return None
         return self.client.dataconnections.get(uid=self.data_connection_id)
 
     def get_task_runs(
