@@ -107,14 +107,18 @@ class TestTimezoneValidation:
         ts = Timestamp(timestamp_type="iso", timezone_type="iana", timezone=iana_tz)
         assert ts.timezone == iana_tz
 
-    def test_embedded_timezone_rejects_explicit_timezone(self):
+    def test_none_timezone_type_rejects_explicit_timezone(self):
         with pytest.raises(ValueError, match="Default timezone value must not be provided"):
-            Timestamp(timestamp_type="iso", timezone_type="embedded", timezone="UTC")
+            Timestamp(timestamp_type="iso", timezone_type=None, timezone="UTC")
 
-    def test_embedded_timezone_without_value_is_valid(self):
-        ts = Timestamp(timestamp_type="iso", timezone_type="embedded")
-        assert ts.timezone_type == "embedded"
+    def test_none_timezone_type_without_value_is_valid(self):
+        ts = Timestamp(timestamp_type="iso", timezone_type=None)
+        assert ts.timezone_type is None
         assert ts.timezone is None
+
+    def test_timezone_type_defaults_to_none(self):
+        ts = Timestamp(timestamp_type="iso")
+        assert ts.timezone_type is None
 
 
 # ---------------------------------------------------------------------------
@@ -155,8 +159,8 @@ class TestTzProperty:
     def test_iana_type_returns_zone_info(self, iana_timestamp):
         assert iana_timestamp.tz == ZoneInfo("America/New_York")
 
-    def test_embedded_type_returns_none(self):
-        ts = Timestamp(timestamp_type="iso", timezone_type="embedded")
+    def test_none_timezone_type_returns_none(self):
+        ts = Timestamp(timestamp_type="iso", timezone_type=None)
         assert ts.tz is None
 
     @pytest.mark.parametrize("offset,expected_minutes", [
@@ -216,13 +220,13 @@ class TestParseSeriesUtc:
 
 
 # ---------------------------------------------------------------------------
-# parse_series_to_utc – embedded timezone type
+# parse_series_to_utc – None timezone type (embedded offsets in source data)
 # ---------------------------------------------------------------------------
 
-class TestParseSeriesEmbedded:
+class TestParseSeriesNoneTimezone:
 
     def test_embedded_offsets_are_converted_to_utc(self):
-        ts = Timestamp(timestamp_type="iso", timezone_type="embedded")
+        ts = Timestamp(timestamp_type="iso", timezone_type=None)
         series = pd.Series(["2024-01-01T00:00:00+05:30", "2024-01-01T00:00:00-07:00"])
         result = ts.parse_series_to_utc(series)
         assert result.dt.tz == timezone.utc
@@ -230,14 +234,14 @@ class TestParseSeriesEmbedded:
         assert result.iloc[1] == pd.Timestamp("2024-01-01 07:00:00", tz="UTC")
 
     def test_naive_strings_fall_back_to_utc(self):
-        ts = Timestamp(timestamp_type="iso", timezone_type="embedded")
+        ts = Timestamp(timestamp_type="iso", timezone_type=None)
         series = pd.Series(["2024-01-01T00:00:00"])
         result = ts.parse_series_to_utc(series)
         assert result.dt.tz == timezone.utc
         assert result.iloc[0] == pd.Timestamp("2024-01-01 00:00:00", tz="UTC")
 
     def test_mixed_offset_series_is_flattened_to_utc(self):
-        ts = Timestamp(timestamp_type="iso", timezone_type="embedded")
+        ts = Timestamp(timestamp_type="iso", timezone_type=None)
         series = pd.Series(["2024-01-01T00:00:00+02:00", "2024-01-01T00:00:00-05:00"])
         result = ts.parse_series_to_utc(series)
         assert result.dt.tz == timezone.utc
@@ -382,13 +386,13 @@ class TestParseSeriesCustomFormat:
 class TestParseSeriesResultDtype:
 
     @pytest.mark.parametrize("tz_type,kwargs", [
-        ("utc",      {}),
-        ("embedded", {}),
-        ("iana",     {"timezone": "America/New_York"}),
-        ("offset",   {"timezone": "-0500"}),
-        ("offset",   {"timezone": "-05:00"}),
+        ("utc",  {}),
+        (None,     {}),
+        ("iana",  {"timezone": "America/New_York"}),
+        ("offset", {"timezone": "-0500"}),
+        ("offset", {"timezone": "-05:00"}),
     ])
-    def test_result_is_always_utc_aware(self, tz_type: Literal["utc", "embedded", "iana", "offset"], kwargs):
+    def test_result_is_always_utc_aware(self, tz_type, kwargs):
         ts = Timestamp(timestamp_type="iso", timezone_type=tz_type, **kwargs)
         series = pd.Series(["2024-01-01T00:00:00"])
         result = ts.parse_series_to_utc(series)
