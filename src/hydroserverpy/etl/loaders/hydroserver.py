@@ -1,3 +1,4 @@
+import logging
 import traceback
 import pandas as pd
 from typing import Union, Optional
@@ -8,6 +9,9 @@ from .base import Loader, ETLLoaderResult, ETLTargetResult
 from ..exceptions import ETLError
 
 
+logger = logging.getLogger(__name__)
+
+
 class HydroServerLoader(Loader):
     client: HydroServer
     chunk_size: int = 5000
@@ -16,7 +20,8 @@ class HydroServerLoader(Loader):
 
     def load(
         self,
-        payload: pd.DataFrame
+        payload: pd.DataFrame,
+        **kwargs
     ) -> ETLLoaderResult:
         """
         Load observations from a DataFrame to corresponding HydroServer datastreams.
@@ -33,29 +38,30 @@ class HydroServerLoader(Loader):
                     missing_datastreams.append(column)
                 else:
                     raise ETLError(
-                        f"HydroServer loader failed to retrieve datastream with ID '{column}'. "
-                        f"Ensure that the HydroServer connection is configured correctly "
+                        f"The HydroServer data loader could not find a destination datastream "
+                        f"with ID '{column}'. "
+                        f"Ensure the HydroServer connection is configured correctly "
                         f"and is authorized to access the datastream."
                     ) from e
 
         if missing_datastreams:
             raise ETLError(
-                "One or more datastreams referenced in the configuration do not exist. "
-                "Ensure that the HydroServer connection is configured correctly, "
-                "all target datastreams exist on the configured HydroServer instance, "
-                "and the provided connection is authorized to access the datastreams. "
+                f"The HydroServer data loader could not find one or more destination datastreams. "                
+                f"Ensure the HydroServer connection is configured correctly, "
+                f"all destination datastreams exist on the configured HydroServer instance, "
+                f"and the provided connection is authorized to access the datastreams. "
                 f"Missing datastream IDs: {', '.join(sorted(missing_datastreams))}."
             )
 
-        earliest_phenomenon_begin_time = min(
+        earliest_phenomenon_end_time = min(
             (
-                datastream.phenomenon_begin_time for datastream in datastreams.values()
-                if datastream.phenomenon_begin_time is not None
+                datastream.phenomenon_end_time for datastream in datastreams.values()
+                if datastream.phenomenon_end_time is not None
             ), default=None,
         )
 
-        if earliest_phenomenon_begin_time is not None:
-            observations_df = payload[payload["timestamp"] > earliest_phenomenon_begin_time]
+        if earliest_phenomenon_end_time is not None:
+            observations_df = payload[payload["timestamp"] > earliest_phenomenon_end_time]
         else:
             observations_df = payload
 
@@ -80,6 +86,14 @@ class HydroServerLoader(Loader):
                 continue
 
             datastream_observations_to_load = len(datastream_df)
+
+            logger.info(
+                "Uploading %s observation(s) to datastream %s (%s chunk(s), chunk_size=%s)",
+                datastream_observations_to_load,
+                column,
+                (datastream_observations_to_load + self.chunk_size - 1) // self.chunk_size,
+                self.chunk_size,
+            )
 
             for start_idx in range(0, datastream_observations_to_load, self.chunk_size):
                 end_idx = min(start_idx + self.chunk_size, datastream_observations_to_load)
@@ -119,15 +133,16 @@ class HydroServerLoader(Loader):
         except Exception as e:
             if str(e).startswith("404"):
                 raise ETLError(
-                    f"HydroServer loader could not find datastream with ID '{target_identifier}'. "
-                    "Ensure that the HydroServer connection is configured correctly, "
-                    "the datastream exists on the configured HydroServer instance, "
-                    "and the provided connection is authorized to access the datastream. "
+                    f"The HydroServer data loader could not find a destination datastream "
+                    f"with ID '{target_identifier}'. "
+                    f"Ensure the HydroServer connection is configured correctly "
+                    f"and is authorized to access the datastream."
                 ) from e
             else:
                 raise ETLError(
-                    f"HydroServer loader failed to retrieve datastream with ID '{target_identifier}'. "
-                    f"Ensure that the HydroServer connection is configured correctly "
+                    f"The HydroServer data loader failed to retrieve a destination datastream "
+                    f"with ID '{target_identifier}'. "
+                    f"Ensure the HydroServer connection is configured correctly "
                     f"and is authorized to access the datastream."
                 ) from e
 

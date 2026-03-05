@@ -163,7 +163,7 @@ class TestJSONTransformerJMESPath:
 
     def test_jmespath_none_result_raises_etl_error(self):
         t = _make_transformer(jmespath="nonexistent_key")
-        with pytest.raises(ETLError, match="could not be found"):
+        with pytest.raises(ETLError, match="did not match anything"):
             t.transform(
                 _make_payload([_make_row()]),
                 [_make_mapping("value", "target_1")],

@@ -144,7 +144,7 @@ def load_rating_curve(rating_curve_uri: str) -> tuple[np.ndarray, np.ndarray]:
 
 
 class RatingCurveDataOperation(BaseModel):
-    type: Literal["rating_curve"]
+    type: Literal["rating_curve"] = "rating_curve"
     rating_curve_url: str
     target_identifier: str
 

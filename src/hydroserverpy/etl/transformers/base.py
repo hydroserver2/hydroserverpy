@@ -128,13 +128,13 @@ class Transformer(ETLComponent, Timestamp, ABC):
                 return df.columns[source_id]
             except IndexError as e:
                 raise ETLError(
-                    f"Source index {source_id} is out of range ({len(df.columns)}) for extracted data. "
+                    f"Source index '{source_id}' is out of range ({len(df.columns)}) for extracted data. "
                     f"Extracted columns: {summarize_list(list(df.columns), max_items=30)}"
                 ) from e
 
         if source_id not in df.columns:
             raise ETLError(
-                f"Source column {source_id} not found in extracted data. "
+                f"Source column '{source_id}' not found in extracted data. "
                 f"Extracted columns: {summarize_list(list(df.columns), max_items=30)}"
             )
 

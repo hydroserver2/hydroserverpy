@@ -67,7 +67,8 @@ class Loader(ETLComponent, ABC):
     @abstractmethod
     def load(
         self,
-        payload: pd.DataFrame
+        payload: pd.DataFrame,
+        **kwargs
     ) -> ETLLoaderResult:
         ...
 
@@ -77,3 +78,23 @@ class Loader(ETLComponent, ABC):
         target_identifier: Union[str, int]
     ) -> Optional[datetime]:
         ...
+
+    def earliest_loaded_through(
+        self,
+        target_identifiers: list[Union[str, int]],
+    ) -> Optional[datetime]:
+        """
+        Return the earliest 'loaded through' timestamp across all given target
+        identifiers, or None if no targets have been loaded yet.
+
+        Calls target_loaded_through for each target identifier and returns the
+        minimum non-None result. This represents the furthest back in time the
+        pipeline must re-fetch source data to ensure all targets are up-to-date.
+        """
+
+        timestamps = [
+            timestamp for target_identifier in target_identifiers
+            if (timestamp := self.target_loaded_through(target_identifier=target_identifier)) is not None
+        ]
+
+        return min(timestamps) if timestamps else None

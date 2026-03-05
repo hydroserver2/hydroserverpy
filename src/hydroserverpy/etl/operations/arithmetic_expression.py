@@ -27,7 +27,7 @@ ALLOWED_AST = (
 
 
 class ArithmeticExpressionOperation(BaseModel):
-    type: Literal["arithmetic_expression"]
+    type: Literal["arithmetic_expression"] = "arithmetic_expression"
     expression: str
     target_identifier: str
     _compiled: Any = None

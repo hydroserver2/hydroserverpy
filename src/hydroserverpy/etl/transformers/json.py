@@ -49,7 +49,7 @@ class JSONTransformer(Transformer):
             raise ETLError(
                 f"The JSON transformer received a payload object of type {type(payload).__name__}; "
                 "expected one of: str, bytes, TextIO, BytesIO. "
-                "Ensure the extractor URI resolves to a file-like object."
+                "Ensure the source system is returning a file-like object."
             )
 
         try:
@@ -70,6 +70,7 @@ class JSONTransformer(Transformer):
 
         if not isinstance(json_data, (dict, list)):
             raise ETLError(
+                "The JSON transformer received a JSON payload that it cannot evaluate. "
                 "The JSON payload must be a dictionary or a list at the top level."
             )
 
@@ -79,14 +80,16 @@ class JSONTransformer(Transformer):
             data_points = jmespath.search(self.jmespath, json_data)
         except JMESPathError as e:
             raise ETLError(
-                f"The JMESPath expression '{self.jmespath}' provided to the JSON transformer"
-                f" could not be evaluated against the JSON payload. "
+                f"The JMESPath expression '{self.jmespath}' provided to the JSON transformer "
+                f"could not be evaluated against the JSON payload. "
                 f"Verify the expression and the payload structure are correct."
             ) from e
 
         if data_points is None:
             raise ETLError(
-                "The timestamp or value key could not be found with the specified query."
+                f"The JMESPath expression '{self.jmespath}' provided to the JSON transformer "
+                f"did not match anything in the JSON payload. "
+                f"Verify the expression matches the structure of the source data."
             )
 
         if isinstance(data_points, dict):

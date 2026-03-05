@@ -123,24 +123,24 @@ class CSVTransformer(Transformer):
             )
         except EmptyDataError as e:
             raise ETLError(
-                f"CSV transformer received an empty CSV file. "
+                f"The CSV transformer received an empty CSV file. "
                 f"Ensure the provided source file contains valid CSV data."
             ) from e
         except Exception as e:
             exc_message = str(e)
             if "No columns to parse from file" in exc_message:
                 raise ETLError(
-                    f"CSV transformer received an empty CSV file. "
+                    f"The CSV transformer received an empty CSV file. "
                     f"Ensure the provided source file contains valid CSV data."
                 ) from e
             elif "Usecols do not match columns" in exc_message or "not in list" in exc_message:
                 raise ETLError(
-                    "CSV transformer received an invalid CSV payload. "
+                    "The CSV transformer received an invalid CSV payload. "
                     "One or more configured CSV columns were not found in the header row."
                 ) from e
             else:
                 raise ETLError(
-                    f"CSV transformer encountered an unexpected error while parsing the CSV payload. "
+                    f"The CSV transformer encountered an unexpected error while parsing the CSV payload. "
                     f"Ensure the source system is returning a valid CSV payload that matches "
                     f"the settings configured for this transformer."
                 ) from e

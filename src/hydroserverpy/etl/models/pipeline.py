@@ -107,7 +107,8 @@ class ETLPipeline(BaseModel):
 
         try:
             context.results = self.loader.load(
-                payload=transformed_payload
+                payload=transformed_payload,
+                **kwargs
             )
         except Exception as e:
             if raise_on_error:

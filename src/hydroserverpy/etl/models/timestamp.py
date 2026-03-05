@@ -162,7 +162,9 @@ class Timestamp(Timezone):
             if parsed_series.dt.tz is not None or parsed_series.dtype == "object":
                 parsed_series = parsed_series.dt.tz_localize(None)
             tz_label = self._to_pandas_offset(self.timezone) if self.timezone_type == "offset" else self.timezone
-            utc_series = parsed_series.dt.tz_localize(tz_label, ambiguous="infer").dt.tz_convert(timezone.utc)
+            utc_series = parsed_series.dt.tz_localize(
+                tz_label, ambiguous=False, nonexistent="shift_forward"
+            ).dt.tz_convert(timezone.utc)
 
         # Normalize to UTC if the series timezones are embedded or naive and configured as UTC
         else:
@@ -170,30 +172,22 @@ class Timestamp(Timezone):
 
         return utc_series
 
-#     def utc_to_string(self, dt: Union[datetime, pd.Timestamp]) -> str:
-#         """
-#         Convert a UTC datetime or pd.Timestamp to a custom string format.
-#
-#         Some external APIs are picky about their timestamp formats, so we need the ability to pull a
-#         UTC timestamp from HydroServer and format it into a custom string.
-#         """
-#         if isinstance(dt, pd.Timestamp):
-#             dt = dt.to_pydatetime()
-#
-#         tz_format = self.timestamp.format.lower()
-#         if tz_format == "iso8601":
-#             return dt.astimezone(timezone.utc).isoformat()
-#
-#         if tz_format == "naive":
-#             return dt.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%S")
-#
-#         if tz_format == "custom":
-#             logger.debug(
-#                 "Formatting runtime timestamp using custom format (customFormat=%r, timezoneMode=%r, timezone=%r).",
-#                 self.timestamp.custom_format,
-#                 self.timestamp.timezone_mode,
-#                 self.timestamp.timezone,
-#             )
-#             return dt.astimezone(self.tz).strftime(self.timestamp.custom_format)
-#
-#         raise ValueError(f"Unknown timestamp.format: {self.timestamp.format!r}")
+    def to_string(self, dt: datetime) -> str:
+        """
+        Convert a timezone-aware UTC datetime to a string using the configured
+        timestamp type and timezone.
+
+        For 'iso' timestamps, returns a standard ISO 8601 string in the
+        configured timezone (or UTC if no timezone is set).
+
+        For 'custom' timestamps, formats the datetime using timestamp_format
+        in the configured timezone (or UTC if no timezone is set).
+        """
+
+        tz = self.tz or timezone.utc
+        local_dt = dt.astimezone(tz)
+
+        if self.timestamp_type == "custom":
+            return local_dt.strftime(self.timestamp_format)
+
+        return local_dt.isoformat()
