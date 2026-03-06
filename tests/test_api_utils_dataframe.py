@@ -27,10 +27,12 @@ def mock_list_fetch_all(fetch_all=True, **kwargs):
 
 
 def test_hydro_list_to_flat_df_basic():
+
     df = hydro_list_to_flat_df(mock_list_fetch_all)
 
     assert isinstance(df, pd.DataFrame)
     assert len(df) == 2
+
     assert "uid" in df.columns
     assert "name" in df.columns
     assert "Divert ID" in df.columns
@@ -38,34 +40,60 @@ def test_hydro_list_to_flat_df_basic():
 
 
 def test_hydro_list_to_flat_df_numeric_cast():
-    df = hydro_list_to_flat_df(mock_list_fetch_all, auto_cast_numeric=True)
+
+    df = hydro_list_to_flat_df(
+        mock_list_fetch_all,
+        auto_cast_numeric=True
+    )
 
     assert pd.api.types.is_numeric_dtype(df["value"])
 
 
 def test_hydro_list_to_flat_df_no_flatten():
-    df = hydro_list_to_flat_df(mock_list_fetch_all, flatten_dicts=False)
+
+    df = hydro_list_to_flat_df(
+        mock_list_fetch_all,
+        flatten_dicts=False
+    )
 
     assert "tags" in df.columns
     assert "Divert ID" not in df.columns
 
 
+def test_flattened_values_correct():
+
+    df = hydro_list_to_flat_df(mock_list_fetch_all)
+
+    assert df.loc[0, "Divert ID"] == 123
+    assert df.loc[1, "Divert ID"] == 456
+
+
 def mock_list_paginated(page=1, **kwargs):
+
     if page == 1:
         return MockCollection(
             [MockItem("1", "Station A"), MockItem("2", "Station B")],
             total_pages=2,
-            page_size=2,
+            page_size=2
         )
+
     return MockCollection(
         [MockItem("3", "Station C")],
         total_pages=2,
-        page_size=2,
+        page_size=2
     )
 
 
 def test_hydro_list_to_flat_df_manual_pagination():
-    df = hydro_list_to_flat_df(mock_list_paginated, fetch_all=True)
+
+    df = hydro_list_to_flat_df(
+        mock_list_paginated,
+        fetch_all=True
+    )
 
     assert len(df) == 3
-    assert list(df["name"]) == ["Station A", "Station B", "Station C"]
+    assert list(df["name"]) == [
+        "Station A",
+        "Station B",
+        "Station C"
+    ]
