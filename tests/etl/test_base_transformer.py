@@ -166,7 +166,7 @@ class TestStandardizeDataframeOutput:
 
         result = transformer.standardize_dataframe(df, [mapping])
 
-        assert result["target_id"].dtype == object
+        assert pd.api.types.is_string_dtype(result["target_id"])
         assert result["target_id"].iloc[0] == "target_1"
 
     def test_result_has_correct_row_count(self):
