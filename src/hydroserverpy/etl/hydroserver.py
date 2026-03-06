@@ -4,8 +4,9 @@ from typing import Optional
 from hydroserverpy.api.models import Task, DataConnection
 from hydroserverpy.etl import extractors, transformers, loaders, ETLPipeline
 from hydroserverpy.etl.transformers import ETLDataMapping, ETLTargetPath
-from hydroserverpy.etl.operations import DataOperation, RatingCurveDataOperation, ArithmeticExpressionOperation
-from hydroserverpy.etl.models import Timestamp, TemporalAggregation
+from hydroserverpy.etl.operations import (DataOperation, RatingCurveDataOperation, ArithmeticExpressionOperation,
+                                          TemporalAggregationOperation)
+from hydroserverpy.etl.models import Timestamp
 
 
 def normalize_timestamp_kwargs(**kwargs) -> dict:
@@ -82,60 +83,21 @@ def resolve_data_operations(raw_etl_target_path: dict) -> list[DataOperation]:
                 target_identifier=raw_etl_target_path["targetIdentifier"],
                 rating_curve_url=data_operation["ratingCurveUrl"],
             ))
+        elif data_operation["type"] == "aggregation":
+            timezone_kwargs = normalize_timestamp_kwargs(format="iso", **data_operation)
+            aggregation_mapping = {
+                "simple_mean": "simple_mean",
+                "time_weighted_daily_mean": "time_weighted_mean",
+                "last_value_of_day": "last_value_of_period",
+            }
+            resolved_data_operations.append(TemporalAggregationOperation(
+                target_identifier=raw_etl_target_path["targetIdentifier"],
+                aggregation_statistic=aggregation_mapping[data_operation["aggregationStatistic"]],
+                timezone_type=timezone_kwargs.get("timezone_type"),
+                timezone=timezone_kwargs.get("timezone"),
+            ))
 
     return resolved_data_operations
-
-
-def resolve_temporal_aggregation(
-    data_mappings:  list[dict]
-) -> Optional[TemporalAggregation]:
-    """
-    Extract and return a TemporalAggregation configuration from the data mappings,
-    or None if no aggregation transformation is configured.
-
-    Aggregation is applied uniformly across all series at the transformer level,
-    so only one aggregation configuration is permitted across all mappings. Raises
-    ValueError if conflicting aggregation configurations are found.
-    """
-
-    # TODO: Aggregation settings are currently stored in HydroServer under data transformations.
-    #  In the ETL module, aggregation is configured at the transformer level and applied uniformly
-    #  to all datastreams after per-column data operations. This ensures the DataFrame passed to
-    #  the loader remains aligned in time — a shared timestamp column is only valid if all series are
-    #  aggregated identically. We may want to update how aggregation settings are stored in HydroServer
-    #  to match this. In the meantime, if multiple conflicting aggregation settings somehow get passed
-    #  to the same task, this method will throw an exception rather than try to guess which
-    #  aggregation configuration to use. Alternatively, if we want to allow varying aggregation on a per
-    #  column basis, we'll need to retool how the pipeline passes data to the loader. Each datastream
-    #  will either need a dedicated timestamp column, or multiple dataframes will need to be passed to
-    #  the loader.
-
-    temporal_aggregation = None
-
-    for mapping in data_mappings:
-        for path in mapping["paths"]:
-            for transformation in path.get("dataTransformations", []):
-                if transformation["type"] == "aggregation":
-                    if temporal_aggregation is not None:
-                        raise ValueError(
-                            "Received multiple aggregation configurations from HydroServer for the transformer. "
-                            "Only one aggregation configuration per transformer is currently supported."
-                        )
-
-                    timezone_kwargs = normalize_timestamp_kwargs(**transformation)
-                    aggregation_mapping = {
-                        "simple_mean": "simple_mean",
-                        "time_weighted_daily_mean": "time_weighted_mean",
-                        "last_value_of_day": "last_value_of_period",
-                    }
-
-                    temporal_aggregation = TemporalAggregation(
-                        aggregation_statistic=aggregation_mapping[transformation["aggregationStatistic"]],
-                        timezone_type=timezone_kwargs.get("timezone_type"),
-                        timezone=timezone_kwargs.get("timezone"),
-                    )
-
-    return temporal_aggregation
 
 
 def build_hydroserver_pipeline(
@@ -178,9 +140,9 @@ def build_hydroserver_pipeline(
     if loader_cls is None:
         loader_cls = getattr(loaders, f"{data_connection.loader_type}Loader")
 
-    extractor_settings = dict(data_connection.extractor_settings)
-    transformer_settings = dict(data_connection.transformer_settings)
-    loader_settings = dict(data_connection.loader_settings)
+    extractor_settings = dict(data_connection.extractor_settings) if data_connection else {}
+    transformer_settings = dict(data_connection.transformer_settings) if data_connection else {}
+    loader_settings = dict(data_connection.loader_settings) if data_connection else {}
 
     extractor_placeholders = extractor_settings.pop("placeholderVariables", [])
     extractor_variables = getattr(task, "extractor_settings", None) or getattr(task, "extractor_variables", {})
@@ -195,19 +157,22 @@ def build_hydroserver_pipeline(
         **{to_snake(k): v for k, v in extractor_settings.items()}
     )
 
-    timestamp_settings = transformer_settings.pop("timestamp", {})
+    if task.task_type == "Aggregation":
+        timestamp_settings = {
+            "key": "phenomenon_time",
+            "format": "iso",
+            "timezoneMode": "utc"
+        }
+    else:
+        timestamp_settings = transformer_settings.pop("timestamp", {})
+
     transformer_settings = {
         ("jmespath" if k == "JMESPath" else to_snake(k)): v
         for k, v in transformer_settings.items()
     }
 
-    temporal_aggregation = resolve_temporal_aggregation(
-        data_mappings=data_mappings
-    )
-
     transformer: transformers.Transformer = transformer_cls(
         timestamp_key=timestamp_settings["key"],
-        temporal_aggregation=temporal_aggregation,
         **transformer_settings,
         **normalize_timestamp_kwargs(**timestamp_settings)
     )

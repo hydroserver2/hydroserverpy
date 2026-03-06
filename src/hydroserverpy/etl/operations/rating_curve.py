@@ -4,9 +4,8 @@ import pandas as pd
 import requests
 from functools import lru_cache
 from io import BytesIO
-from pydantic import BaseModel
-from typing import Literal
 from urllib.parse import unquote, urlparse
+from .base import DataOperation
 from ..exceptions import ETLError
 
 
@@ -143,32 +142,31 @@ def load_rating_curve(rating_curve_uri: str) -> tuple[np.ndarray, np.ndarray]:
     )
 
 
-class RatingCurveDataOperation(BaseModel):
-    type: Literal["rating_curve"] = "rating_curve"
+class RatingCurveDataOperation(DataOperation):
     rating_curve_url: str
-    target_identifier: str
 
-    def apply(self, series: pd.Series) -> pd.Series:
+    def apply(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Apply a rating curve transformation to a Pandas Series.
+        Apply a rating curve transformation to the value column of a
+        (timestamp, value) DataFrame.
 
         The rating curve is loaded from the provided URL and used to map numeric
-        values in the input series to output values using linear interpolation.
-        Non-numeric values are coerced to NaN and remain NaN in the output.
-        Values outside the range of the rating curve are clamped to the nearest
-        endpoint of the curve.
+        values to output values using linear interpolation. Non-numeric values
+        are coerced to NaN and remain NaN in the output. Values outside the range
+        of the rating curve are clamped to the nearest endpoint of the curve.
+        The timestamp column is passed through unchanged.
         """
 
         lookup_input, lookup_output = load_rating_curve(self.rating_curve_url)
 
-        series_numeric = pd.to_numeric(series, errors="coerce")
+        series_numeric = pd.to_numeric(df["value"], errors="coerce")
         series_values = series_numeric.to_numpy(dtype=np.float64)
         finite_mask = np.isfinite(series_values)
 
-        transformed_series = np.full(series_values.shape, np.nan, dtype=np.float64)
+        transformed_values = np.full(series_values.shape, np.nan, dtype=np.float64)
 
         if finite_mask.any():
-            transformed_series[finite_mask] = np.interp(
+            transformed_values[finite_mask] = np.interp(
                 series_values[finite_mask],
                 lookup_input,
                 lookup_output,
@@ -182,4 +180,6 @@ class RatingCurveDataOperation(BaseModel):
             self.rating_curve_url,
         )
 
-        return pd.Series(transformed_series, index=series.index, dtype="float64")
+        result = df.copy()
+        result["value"] = pd.Series(transformed_values, index=df.index, dtype="float64")
+        return result

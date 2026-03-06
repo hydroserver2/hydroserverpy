@@ -40,9 +40,18 @@ class JSONTransformer(Transformer):
         **kwargs
     ) -> pd.DataFrame:
         """
-        Transforms a JSON file-like object into the standard Pandas dataframe format.
-        Since JMESPath can natively rename column names, the assumption is the timestamp column
-        is always named 'timestamp' for JSON data or converted to 'timestamp' in the JMESPath query.
+        Parse a JSON payload into a long-format DataFrame with columns
+        'timestamp', 'value', and 'target_id'.
+
+        Applies the configured JMESPath expression to extract a list of records,
+        builds a DataFrame from those records, fans out one-to-many mappings,
+        and reshapes into long format before passing to standardize_dataframe
+        for timestamp normalization, numeric coercion, data operations, and
+        deduplication.
+
+        The JMESPath expression is expected to return either a list of dicts
+        or a single dict (which is wrapped in a list). The timestamp field
+        must be present in each record under the configured timestamp_key.
         """
 
         if not isinstance(payload, (str, bytes, TextIOBase, BufferedIOBase)):
@@ -95,15 +104,30 @@ class JSONTransformer(Transformer):
         if isinstance(data_points, dict):
             data_points = [data_points]
 
-        # Treat an empty result list as "no data" (not a configuration error).
-        # Build an empty frame with the expected columns so standardization can proceed cleanly.
-        if len(data_points) == 0:
-            df = pd.DataFrame(columns=(
-                [self.timestamp_key] + [data_mapping.source_identifier for data_mapping in data_mappings]
-            ))
-        else:
-            df = pd.DataFrame(data_points)
-
         logger.debug("Extracted %s JSON data point(s).", len(data_points))
+
+        # Treat an empty result list as no data rather than a configuration error.
+        if len(data_points) == 0:
+            logger.debug("JMESPath returned empty list; returning empty long-format DataFrame.")
+            return pd.DataFrame(columns=["timestamp", "value", "target_id"])
+
+        df = pd.DataFrame(data_points)
+
+        logger.debug("Built DataFrame from JSON records: %s rows, %s columns.", *df.shape)
+
+        # Rename timestamp column and reshape wide → long format.
+        # Each source column fans out to one row per target path that references it.
+        if self.timestamp_key not in df.columns:
+            raise ETLError(
+                f"The configured timestamp key '{self.timestamp_key}' was not found in the "
+                f"JSON records returned by the JMESPath expression. "
+                f"Verify the timestamp key matches the field name in the source data."
+            )
+
+        df = df.rename(columns={self.timestamp_key: "timestamp"})
+        df = self.reshape_dataframe_wide_to_long(
+            df=df,
+            data_mappings=data_mappings,
+        )
 
         return self.standardize_dataframe(df, data_mappings)

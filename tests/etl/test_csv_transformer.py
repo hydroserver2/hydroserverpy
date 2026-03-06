@@ -37,6 +37,11 @@ def _csv_stringio(content):
     return StringIO(_csv(content))
 
 
+def _targets(result, target_id):
+    """Return rows for a specific target_id, sorted by timestamp."""
+    return result[result["target_id"] == str(target_id)].sort_values("timestamp")
+
+
 # ---------------------------------------------------------------------------
 # Model configuration
 # ---------------------------------------------------------------------------
@@ -144,7 +149,7 @@ class TestCSVTransformerPayloadTypeValidation:
     def test_bytes_payload_is_accepted(self):
         t = _make_transformer()
         csv = _csv("timestamp,value\n2024-01-01T00:00:00Z,1.0\n").encode()
-        result = t.transform(csv, [_make_mapping("value", "target_1")])  # noqa
+        result = t.transform(csv, [_make_mapping("value", "target_1")])
         assert not result.empty
 
     def test_bytesio_payload_is_accepted(self):
@@ -165,28 +170,47 @@ class TestCSVTransformerPayloadTypeValidation:
 
 
 # ---------------------------------------------------------------------------
-# transform – name mode
+# transform – output structure
 # ---------------------------------------------------------------------------
 
-class TestCSVTransformerNameMode:
+class TestCSVTransformerOutputStructure:
 
-    def test_returns_dataframe_with_timestamp_column(self):
+    def test_result_contains_timestamp_column(self):
         t = _make_transformer()
         csv = _csv("timestamp,value\n2024-01-01T00:00:00Z,1.0\n")
         result = t.transform(csv, [_make_mapping("value", "target_1")])
         assert "timestamp" in result.columns
 
-    def test_returns_dataframe_with_target_column(self):
+    def test_result_contains_value_column(self):
         t = _make_transformer()
         csv = _csv("timestamp,value\n2024-01-01T00:00:00Z,1.0\n")
         result = t.transform(csv, [_make_mapping("value", "target_1")])
-        assert "target_1" in result.columns
+        assert "value" in result.columns
 
-    def test_source_column_not_in_result(self):
+    def test_result_contains_target_id_column(self):
         t = _make_transformer()
         csv = _csv("timestamp,value\n2024-01-01T00:00:00Z,1.0\n")
         result = t.transform(csv, [_make_mapping("value", "target_1")])
-        assert "value" not in result.columns
+        assert "target_id" in result.columns
+
+    def test_result_has_only_three_columns(self):
+        t = _make_transformer()
+        csv = _csv("timestamp,value\n2024-01-01T00:00:00Z,1.0\n")
+        result = t.transform(csv, [_make_mapping("value", "target_1")])
+        assert set(result.columns) == {"timestamp", "value", "target_id"}
+
+    def test_target_id_values_are_strings(self):
+        t = _make_transformer()
+        csv = _csv("timestamp,value\n2024-01-01T00:00:00Z,1.0\n")
+        result = t.transform(csv, [_make_mapping("value", "target_1")])
+        assert result["target_id"].iloc[0] == "target_1"
+
+
+# ---------------------------------------------------------------------------
+# transform – name mode
+# ---------------------------------------------------------------------------
+
+class TestCSVTransformerNameMode:
 
     def test_correct_row_count(self):
         t = _make_transformer()
@@ -197,19 +221,19 @@ class TestCSVTransformerNameMode:
             2024-01-03T00:00:00Z,3.0
         """)
         result = t.transform(csv, [_make_mapping("value", "target_1")])
-        assert len(result) == 3
+        assert len(_targets(result, "target_1")) == 3
 
     def test_pipe_delimiter(self):
         t = _make_transformer(delimiter="|")
         csv = _csv("timestamp|value\n2024-01-01T00:00:00Z|1.0\n")
         result = t.transform(csv, [_make_mapping("value", "target_1")])
-        assert "target_1" in result.columns
+        assert "target_1" in result["target_id"].values
 
     def test_tab_delimiter(self):
         t = _make_transformer(delimiter="\t")
         csv = _csv("timestamp\tvalue\n2024-01-01T00:00:00Z\t1.0\n")
         result = t.transform(csv, [_make_mapping("value", "target_1")])
-        assert "target_1" in result.columns
+        assert "target_1" in result["target_id"].values
 
     def test_custom_timestamp_key(self):
         t = _make_transformer(timestamp_key="ts")
@@ -225,8 +249,8 @@ class TestCSVTransformerNameMode:
             2024-01-01T00:00:00Z,1.0
         """)
         result = t.transform(csv, [_make_mapping("value", "target_1")])
-        assert "target_1" in result.columns
-        assert len(result) == 1
+        assert "target_1" in result["target_id"].values
+        assert len(_targets(result, "target_1")) == 1
 
     def test_data_start_row_skips_header_rows(self):
         t = _make_transformer(identifier_type="index", timestamp_key="1", data_start_row=3)
@@ -237,7 +261,7 @@ class TestCSVTransformerNameMode:
             2024-01-02T00:00:00Z,2.0
         """)
         result = t.transform(csv, [_make_mapping("2", "target_1")])
-        assert len(result) == 2
+        assert len(_targets(result, "target_1")) == 2
 
     def test_missing_column_raises_etl_error(self):
         t = _make_transformer()
@@ -250,15 +274,43 @@ class TestCSVTransformerNameMode:
         with pytest.raises(ETLError, match="empty"):
             t.transform("", [_make_mapping("value", "target_1")])
 
-    def test_multiple_mappings_produce_multiple_target_columns(self):
+    def test_multiple_mappings_produce_rows_for_each_target(self):
         t = _make_transformer()
         csv = _csv("timestamp,val_a,val_b\n2024-01-01T00:00:00Z,1.0,2.0\n")
         result = t.transform(csv, [
             _make_mapping("val_a", "target_1"),
             _make_mapping("val_b", "target_2"),
         ])
-        assert "target_1" in result.columns
-        assert "target_2" in result.columns
+        assert set(result["target_id"].unique()) == {"target_1", "target_2"}
+
+    def test_one_to_many_mapping_produces_rows_for_each_target(self):
+        t = _make_transformer()
+        csv = _csv("timestamp,value\n2024-01-01T00:00:00Z,1.0\n2024-01-02T00:00:00Z,2.0\n")
+        mapping = ETLDataMapping(
+            source_identifier="value",
+            target_paths=[
+                ETLTargetPath(target_identifier="target_1", data_operations=[]),
+                ETLTargetPath(target_identifier="target_2", data_operations=[]),
+            ],
+        )
+        result = t.transform(csv, [mapping])
+        assert set(result["target_id"].unique()) == {"target_1", "target_2"}
+        assert len(_targets(result, "target_1")) == 2
+        assert len(_targets(result, "target_2")) == 2
+
+    def test_values_are_correct_per_target(self):
+        t = _make_transformer()
+        csv = _csv("""
+            timestamp,val_a,val_b
+            2024-01-01T00:00:00Z,1.0,10.0
+            2024-01-02T00:00:00Z,2.0,20.0
+        """)
+        result = t.transform(csv, [
+            _make_mapping("val_a", "target_1"),
+            _make_mapping("val_b", "target_2"),
+        ])
+        assert _targets(result, "target_1")["value"].tolist() == pytest.approx([1.0, 2.0])
+        assert _targets(result, "target_2")["value"].tolist() == pytest.approx([10.0, 20.0])
 
 
 # ---------------------------------------------------------------------------
@@ -267,17 +319,17 @@ class TestCSVTransformerNameMode:
 
 class TestCSVTransformerIndexMode:
 
-    def test_returns_dataframe_with_timestamp_column(self):
+    def test_result_contains_timestamp_column(self):
         t = _make_transformer(identifier_type="index", timestamp_key="1")
         csv = _csv("2024-01-01T00:00:00Z,1.0\n2024-01-02T00:00:00Z,2.0\n")
         result = t.transform(csv, [_make_mapping("2", "target_1")])
         assert "timestamp" in result.columns
 
-    def test_returns_dataframe_with_target_column(self):
+    def test_result_contains_target_id(self):
         t = _make_transformer(identifier_type="index", timestamp_key="1")
         csv = _csv("2024-01-01T00:00:00Z,1.0\n2024-01-02T00:00:00Z,2.0\n")
         result = t.transform(csv, [_make_mapping("2", "target_1")])
-        assert "target_1" in result.columns
+        assert "target_1" in result["target_id"].values
 
     def test_non_integer_source_identifier_raises_etl_error(self):
         t = _make_transformer(identifier_type="index", timestamp_key="1")
@@ -298,12 +350,12 @@ class TestCSVTransformerIndexMode:
             t.transform(csv, [_make_mapping("99", "target_1")])
 
     def test_columns_are_relabelled_as_1_based_strings(self):
-        """Index mode must relabel columns so standardize_dataframe can match them."""
+        """Index mode must relabel columns so resolve_source_column can match string source identifiers."""
         t = _make_transformer(identifier_type="index", timestamp_key="1")
         csv = _csv("2024-01-01T00:00:00Z,1.0\n2024-01-02T00:00:00Z,2.0\n")
-        # If relabelling is broken, standardize_dataframe will raise an ETLError
+        # If relabelling is broken, resolve_source_column will raise an ETLError
         result = t.transform(csv, [_make_mapping("2", "target_1")])
-        assert "target_1" in result.columns
+        assert "target_1" in result["target_id"].values
 
 
 # ---------------------------------------------------------------------------

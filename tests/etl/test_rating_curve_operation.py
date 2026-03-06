@@ -35,8 +35,13 @@ def _make_http_response(status_code=200, content=SIMPLE_CURVE_CSV):
     return response
 
 
-def _make_series(*values):
-    return pd.Series(list(values), dtype="float64")
+def _make_tv_df(*values):
+    """Build a (timestamp, value) DataFrame with UTC timestamps."""
+    timestamps = pd.date_range("2024-01-01", periods=len(values), freq="D", tz="UTC")
+    return pd.DataFrame({"timestamp": timestamps, "value": list(values)}, dtype=object).assign(
+        timestamp=lambda df: pd.to_datetime(df["timestamp"]),
+        value=lambda df: pd.to_numeric(df["value"], errors="coerce"),
+    )
 
 
 def _patch_fetch(content=SIMPLE_CURVE_CSV):
@@ -244,65 +249,70 @@ class TestLoadRatingCurve:
 
 class TestRatingCurveDataOperationApply:
 
-    def test_returns_series(self):
+    def test_returns_dataframe(self):
         with _patch_fetch():
-            op = _make_op()
-            result = op.apply(_make_series(5.0))
-        assert isinstance(result, pd.Series)
+            result = _make_op().apply(_make_tv_df(5.0))
+        assert isinstance(result, pd.DataFrame)
+
+    def test_result_has_timestamp_and_value_columns(self):
+        with _patch_fetch():
+            result = _make_op().apply(_make_tv_df(5.0))
+        assert "timestamp" in result.columns
+        assert "value" in result.columns
+
+    def test_timestamp_column_is_unchanged(self):
+        with _patch_fetch():
+            df = _make_tv_df(5.0, 15.0)
+            result = _make_op().apply(df)
+        pd.testing.assert_series_equal(result["timestamp"], df["timestamp"])
 
     def test_interpolates_midpoint(self):
         with _patch_fetch():
-            op = _make_op()
-            result = op.apply(_make_series(5.0))
-        assert result.iloc[0] == pytest.approx(50.0)
+            result = _make_op().apply(_make_tv_df(5.0))
+        assert result["value"].iloc[0] == pytest.approx(50.0)
 
     def test_exact_input_value(self):
         with _patch_fetch():
-            op = _make_op()
-            result = op.apply(_make_series(10.0))
-        assert result.iloc[0] == pytest.approx(100.0)
+            result = _make_op().apply(_make_tv_df(10.0))
+        assert result["value"].iloc[0] == pytest.approx(100.0)
 
     def test_value_below_range_is_clamped_to_left(self):
         with _patch_fetch():
-            op = _make_op()
-            result = op.apply(_make_series(-999.0))
-        assert result.iloc[0] == pytest.approx(0.0)
+            result = _make_op().apply(_make_tv_df(-999.0))
+        assert result["value"].iloc[0] == pytest.approx(0.0)
 
     def test_value_above_range_is_clamped_to_right(self):
         with _patch_fetch():
-            op = _make_op()
-            result = op.apply(_make_series(999.0))
-        assert result.iloc[0] == pytest.approx(200.0)
+            result = _make_op().apply(_make_tv_df(999.0))
+        assert result["value"].iloc[0] == pytest.approx(200.0)
 
     def test_nan_input_produces_nan_output(self):
         with _patch_fetch():
-            op = _make_op()
-            result = op.apply(_make_series(float("nan")))
-        assert np.isnan(result.iloc[0])
+            result = _make_op().apply(_make_tv_df(float("nan")))
+        assert np.isnan(result["value"].iloc[0])
 
     def test_non_numeric_input_produces_nan_output(self):
         with _patch_fetch():
-            op = _make_op()
-            result = op.apply(pd.Series(["not a number"]))
-        assert np.isnan(result.iloc[0])
+            timestamps = pd.date_range("2024-01-01", periods=1, freq="D", tz="UTC")
+            df = pd.DataFrame({"timestamp": timestamps, "value": ["not a number"]})
+            result = _make_op().apply(df)
+        assert np.isnan(result["value"].iloc[0])
 
     def test_preserves_index(self):
         with _patch_fetch():
-            op = _make_op()
-            series = pd.Series([5.0, 15.0], index=[10, 20])
-            result = op.apply(series)
+            timestamps = pd.to_datetime(["2024-01-01", "2024-01-02"], utc=True)
+            df = pd.DataFrame({"timestamp": timestamps, "value": [5.0, 15.0]}, index=[10, 20])
+            result = _make_op().apply(df)
         assert list(result.index) == [10, 20]
 
     def test_mixed_valid_and_nan_input(self):
         with _patch_fetch():
-            op = _make_op()
-            result = op.apply(_make_series(5.0, float("nan"), 15.0))
-        assert result.iloc[0] == pytest.approx(50.0)
-        assert np.isnan(result.iloc[1])
-        assert result.iloc[2] == pytest.approx(150.0)
+            result = _make_op().apply(_make_tv_df(5.0, float("nan"), 15.0))
+        assert result["value"].iloc[0] == pytest.approx(50.0)
+        assert np.isnan(result["value"].iloc[1])
+        assert result["value"].iloc[2] == pytest.approx(150.0)
 
     def test_output_dtype_is_float64(self):
         with _patch_fetch():
-            op = _make_op()
-            result = op.apply(_make_series(5.0))
-        assert result.dtype == np.float64
+            result = _make_op().apply(_make_tv_df(5.0))
+        assert result["value"].dtype == np.float64

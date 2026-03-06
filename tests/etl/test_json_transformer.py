@@ -36,6 +36,11 @@ def _make_row(timestamp="2024-01-01T00:00:00Z", value=1.0):
     return {"timestamp": timestamp, "value": value}
 
 
+def _targets(result, target_id):
+    """Return rows for a specific target_id, sorted by timestamp."""
+    return result[result["target_id"] == str(target_id)].sort_values("timestamp")
+
+
 # ---------------------------------------------------------------------------
 # Model configuration
 # ---------------------------------------------------------------------------
@@ -94,7 +99,7 @@ class TestJSONTransformerPayloadTypeValidation:
     def test_bytes_payload_is_accepted(self):
         t = _make_transformer()
         result = t.transform(
-            _make_payload([_make_row()]).encode(),  # noqa
+            _make_payload([_make_row()]).encode(),
             [_make_mapping("value", "target_1")],
         )
         assert not result.empty
@@ -193,7 +198,7 @@ class TestJSONTransformerJMESPath:
         t = _make_transformer(jmespath="data[0]")
         payload = json.dumps({"data": [_make_row()]})
         result = t.transform(payload, [_make_mapping("value", "target_1")])
-        assert len(result) == 1
+        assert len(_targets(result, "target_1")) == 1
 
     def test_nested_jmespath_expression(self):
         t = _make_transformer(jmespath="response.records")
@@ -202,7 +207,7 @@ class TestJSONTransformerJMESPath:
             _make_row("2024-01-02T00:00:00Z"),
         ]}})
         result = t.transform(payload, [_make_mapping("value", "target_1")])
-        assert len(result) == 2
+        assert len(_targets(result, "target_1")) == 2
 
 
 # ---------------------------------------------------------------------------
@@ -227,21 +232,37 @@ class TestJSONTransformerOutput:
         )
         assert "timestamp" in result.columns
 
-    def test_result_contains_target_column(self):
+    def test_result_contains_value_column(self):
         t = _make_transformer()
         result = t.transform(
             _make_payload([_make_row()]),
             [_make_mapping("value", "target_1")],
         )
-        assert "target_1" in result.columns
+        assert "value" in result.columns
 
-    def test_result_does_not_contain_source_column(self):
+    def test_result_contains_target_id_column(self):
         t = _make_transformer()
         result = t.transform(
             _make_payload([_make_row()]),
             [_make_mapping("value", "target_1")],
         )
-        assert "value" not in result.columns
+        assert "target_id" in result.columns
+
+    def test_result_has_only_three_columns(self):
+        t = _make_transformer()
+        result = t.transform(
+            _make_payload([_make_row()]),
+            [_make_mapping("value", "target_1")],
+        )
+        assert set(result.columns) == {"timestamp", "value", "target_id"}
+
+    def test_target_id_values_are_strings(self):
+        t = _make_transformer()
+        result = t.transform(
+            _make_payload([_make_row()]),
+            [_make_mapping("value", "target_1")],
+        )
+        assert result["target_id"].iloc[0] == "target_1"
 
     def test_correct_row_count(self):
         t = _make_transformer()
@@ -250,7 +271,7 @@ class TestJSONTransformerOutput:
             _make_payload(rows),
             [_make_mapping("value", "target_1")],
         )
-        assert len(result) == 3
+        assert len(_targets(result, "target_1")) == 3
 
     def test_empty_jmespath_result_returns_empty_dataframe(self):
         t = _make_transformer()
@@ -260,15 +281,15 @@ class TestJSONTransformerOutput:
         )
         assert result.empty
 
-    def test_empty_result_dataframe_has_correct_columns(self):
+    def test_empty_result_has_correct_columns(self):
         t = _make_transformer()
         result = t.transform(
             _make_payload([]),
             [_make_mapping("value", "target_1")],
         )
-        assert "timestamp" in result.columns
+        assert set(result.columns) == {"timestamp", "value", "target_id"}
 
-    def test_multiple_mappings_produce_multiple_target_columns(self):
+    def test_multiple_mappings_produce_rows_for_each_target(self):
         t = _make_transformer()
         rows = [{"timestamp": "2024-01-01T00:00:00Z", "val_a": 1.0, "val_b": 2.0}]
         result = t.transform(
@@ -278,5 +299,41 @@ class TestJSONTransformerOutput:
                 _make_mapping("val_b", "target_2"),
             ],
         )
-        assert "target_1" in result.columns
-        assert "target_2" in result.columns
+        assert set(result["target_id"].unique()) == {"target_1", "target_2"}
+
+    def test_one_to_many_mapping_produces_rows_for_each_target(self):
+        t = _make_transformer()
+        rows = [_make_row("2024-01-01T00:00:00Z"), _make_row("2024-01-02T00:00:00Z")]
+        mapping = ETLDataMapping(
+            source_identifier="value",
+            target_paths=[
+                ETLTargetPath(target_identifier="target_1", data_operations=[]),
+                ETLTargetPath(target_identifier="target_2", data_operations=[]),
+            ],
+        )
+        result = t.transform(_make_payload(rows), [mapping])
+        assert set(result["target_id"].unique()) == {"target_1", "target_2"}
+        assert len(_targets(result, "target_1")) == 2
+        assert len(_targets(result, "target_2")) == 2
+
+    def test_values_are_correct_per_target(self):
+        t = _make_transformer()
+        rows = [
+            {"timestamp": "2024-01-01T00:00:00Z", "val_a": 1.0, "val_b": 10.0},
+            {"timestamp": "2024-01-02T00:00:00Z", "val_a": 2.0, "val_b": 20.0},
+        ]
+        result = t.transform(
+            _make_payload(rows),
+            [
+                _make_mapping("val_a", "target_1"),
+                _make_mapping("val_b", "target_2"),
+            ],
+        )
+        assert _targets(result, "target_1")["value"].tolist() == pytest.approx([1.0, 2.0])
+        assert _targets(result, "target_2")["value"].tolist() == pytest.approx([10.0, 20.0])
+
+    def test_missing_timestamp_key_in_records_raises_etl_error(self):
+        t = _make_transformer(timestamp_key="recorded_at")
+        rows = [{"timestamp": "2024-01-01T00:00:00Z", "value": 1.0}]
+        with pytest.raises(ETLError, match="recorded_at"):
+            t.transform(_make_payload(rows), [_make_mapping("value", "target_1")])

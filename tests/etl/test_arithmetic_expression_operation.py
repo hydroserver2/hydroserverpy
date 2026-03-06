@@ -12,14 +12,23 @@ from hydroserverpy.etl.exceptions import ETLError
 
 def _make_op(expression, target_identifier="target_1"):
     return ArithmeticExpressionOperation(
-        type="arithmetic_expression",
         expression=expression,
         target_identifier=target_identifier,
     )
 
 
-def _make_series(*values):
-    return pd.Series(list(values), dtype="float64")
+def _make_tv_df(*values):
+    """Build a (timestamp, value) DataFrame with UTC timestamps.
+
+    Values are stored as-is without numeric coercion so that string inputs
+    used to trigger eval errors remain strings rather than being silently
+    coerced to NaN.
+    """
+    timestamps = pd.date_range("2024-01-01", periods=len(values), freq="D", tz="UTC")
+    return pd.DataFrame({
+        "timestamp": pd.to_datetime(timestamps),
+        "value": list(values),
+    })
 
 
 # ---------------------------------------------------------------------------
@@ -109,82 +118,99 @@ class TestArithmeticExpressionOperationApply:
 
     def test_addition(self):
         op = _make_op("x + 1")
-        result = op.apply(_make_series(1.0, 2.0, 3.0))
-        pd.testing.assert_series_equal(result, _make_series(2.0, 3.0, 4.0))
+        result = op.apply(_make_tv_df(1.0, 2.0, 3.0))
+        assert result["value"].tolist() == pytest.approx([2.0, 3.0, 4.0])
 
     def test_subtraction(self):
         op = _make_op("x - 1")
-        result = op.apply(_make_series(1.0, 2.0, 3.0))
-        pd.testing.assert_series_equal(result, _make_series(0.0, 1.0, 2.0))
+        result = op.apply(_make_tv_df(1.0, 2.0, 3.0))
+        assert result["value"].tolist() == pytest.approx([0.0, 1.0, 2.0])
 
     def test_multiplication(self):
         op = _make_op("x * 2")
-        result = op.apply(_make_series(1.0, 2.0, 3.0))
-        pd.testing.assert_series_equal(result, _make_series(2.0, 4.0, 6.0))
+        result = op.apply(_make_tv_df(1.0, 2.0, 3.0))
+        assert result["value"].tolist() == pytest.approx([2.0, 4.0, 6.0])
 
     def test_division(self):
         op = _make_op("x / 2")
-        result = op.apply(_make_series(2.0, 4.0, 6.0))
-        pd.testing.assert_series_equal(result, _make_series(1.0, 2.0, 3.0))
+        result = op.apply(_make_tv_df(2.0, 4.0, 6.0))
+        assert result["value"].tolist() == pytest.approx([1.0, 2.0, 3.0])
 
     def test_compound_expression(self):
         op = _make_op("x * 2 + 1")
-        result = op.apply(_make_series(1.0, 2.0, 3.0))
-        pd.testing.assert_series_equal(result, _make_series(3.0, 5.0, 7.0))
+        result = op.apply(_make_tv_df(1.0, 2.0, 3.0))
+        assert result["value"].tolist() == pytest.approx([3.0, 5.0, 7.0])
 
     def test_parenthesized_expression(self):
         op = _make_op("(x + 1) * 2")
-        result = op.apply(_make_series(1.0, 2.0, 3.0))
-        pd.testing.assert_series_equal(result, _make_series(4.0, 6.0, 8.0))
+        result = op.apply(_make_tv_df(1.0, 2.0, 3.0))
+        assert result["value"].tolist() == pytest.approx([4.0, 6.0, 8.0])
 
     def test_unary_negation(self):
         op = _make_op("-x")
-        result = op.apply(_make_series(1.0, -2.0, 3.0))
-        pd.testing.assert_series_equal(result, _make_series(-1.0, 2.0, -3.0))
+        result = op.apply(_make_tv_df(1.0, -2.0, 3.0))
+        assert result["value"].tolist() == pytest.approx([-1.0, 2.0, -3.0])
 
     def test_float_literal(self):
         op = _make_op("x * 0.5")
-        result = op.apply(_make_series(2.0, 4.0))
-        pd.testing.assert_series_equal(result, _make_series(1.0, 2.0))
+        result = op.apply(_make_tv_df(2.0, 4.0))
+        assert result["value"].tolist() == pytest.approx([1.0, 2.0])
 
     def test_nan_values_propagate(self):
         op = _make_op("x * 2")
-        result = op.apply(_make_series(1.0, float("nan"), 3.0))
-        assert np.isnan(result.iloc[1])
+        result = op.apply(_make_tv_df(1.0, float("nan"), 3.0))
+        assert np.isnan(result["value"].iloc[1])
 
     def test_division_by_zero_produces_inf(self):
         op = _make_op("x / 0")
-        result = op.apply(_make_series(1.0, 2.0))
-        assert np.isinf(result.iloc[0])
+        result = op.apply(_make_tv_df(1.0, 2.0))
+        assert np.isinf(result["value"].iloc[0])
 
-    def test_returns_series(self):
+    def test_returns_dataframe(self):
         op = _make_op("x + 1")
-        result = op.apply(_make_series(1.0))
-        assert isinstance(result, pd.Series)
+        result = op.apply(_make_tv_df(1.0))
+        assert isinstance(result, pd.DataFrame)
+
+    def test_result_has_timestamp_and_value_columns(self):
+        op = _make_op("x + 1")
+        result = op.apply(_make_tv_df(1.0))
+        assert "timestamp" in result.columns
+        assert "value" in result.columns
+
+    def test_timestamp_column_is_unchanged(self):
+        op = _make_op("x * 2")
+        df = _make_tv_df(1.0, 2.0)
+        result = op.apply(df)
+        pd.testing.assert_series_equal(result["timestamp"], df["timestamp"])
 
     def test_preserves_index(self):
         op = _make_op("x + 1")
-        series = pd.Series([1.0, 2.0], index=[10, 20])
-        result = op.apply(series)
+        timestamps = pd.to_datetime(["2024-01-01", "2024-01-02"], utc=True)
+        df = pd.DataFrame({"timestamp": timestamps, "value": [1.0, 2.0]}, index=[10, 20])
+        result = op.apply(df)
         assert list(result.index) == [10, 20]
 
     def test_eval_error_raises_etl_error(self):
         op = _make_op("x + 1")
+        df = _make_tv_df("a", "b")  # string values cause TypeError in eval
         with pytest.raises(ETLError, match="Failed to evaluate"):
-            op.apply("not a series")  # noqa
+            op.apply(df)
 
     def test_eval_error_includes_target_identifier(self):
         op = _make_op("x + 1", target_identifier="my_target")
+        df = _make_tv_df("a", "b")
         with pytest.raises(ETLError, match="my_target"):
-            op.apply("not a series")  # noqa
+            op.apply(df)
 
     def test_eval_error_includes_expression(self):
         op = _make_op("x + 1")
+        df = _make_tv_df("a", "b")
         with pytest.raises(ETLError, match=r"x \+ 1"):
-            op.apply("not a series")  # noqa
+            op.apply(df)
 
     def test_eval_error_chains_original_exception(self):
         op = _make_op("x + 1")
+        df = _make_tv_df("a", "b")
         with pytest.raises(ETLError) as exc_info:
-            op.apply("not a series")  # noqa
+            op.apply(df)
         assert exc_info.value.__cause__ is not None

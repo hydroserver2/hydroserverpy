@@ -55,7 +55,7 @@ extractor = LocalFileExtractor(
 
 ### Transformers
 
-Transformers parse the extracted payload into a DataFrame where the first column is `timestamp` and the remaining columns are named by their target datastream ID.
+Transformers parse the extracted payload into a DataFrame with columns `timestamp`, `value`, and `target_id`.
 
 **CSV:**
 ```python
@@ -71,6 +71,8 @@ transformer = CSVTransformer(
 
 Use `identifier_type="index"` to reference columns by 1-based position instead of name:
 ```python
+from hydroserverpy.etl.transformers import CSVTransformer
+
 transformer = CSVTransformer(
     timestamp_key="1",
     identifier_type="index",
@@ -102,6 +104,8 @@ Every transformer requires a `timestamp_key` identifying the source column that 
 | `"custom"` | Parses timestamps using a `strftime`-compatible format string provided via `timestamp_format`. Required when the source timestamps are not in a standard ISO 8601 format. |
 
 ```python
+from hydroserverpy.etl.transformers import CSVTransformer
+
 # Custom format example — timestamps like "01/15/2024 08:30:00"
 transformer = CSVTransformer(
     timestamp_key="datetime",
@@ -121,15 +125,17 @@ transformer = CSVTransformer(
 | `"iana"` | Treats timestamps as naive and applies a named IANA timezone. Strips any embedded offset if present. | `timezone` as a valid IANA name |
 
 ```python
+from hydroserverpy.etl.transformers import CSVTransformer
+
 # Fixed UTC offset — timestamps are in US Mountain Standard Time
-transformer = CSVTransformer(
+utc_transformer = CSVTransformer(
     timestamp_key="datetime",
     timezone_type="offset",
     timezone="-0700",
 )
 
 # IANA timezone — handles daylight saving time automatically
-transformer = CSVTransformer(
+iana_transformer = CSVTransformer(
     timestamp_key="datetime",
     timezone_type="iana",
     timezone="America/Denver",
@@ -148,7 +154,7 @@ All timestamps are normalized to UTC before loading regardless of the source tim
 
 ### Data Mappings
 
-Data mappings connect source columns (by name or index) to HydroServer datastream IDs. Each mapping can fan out to multiple target datastreams, and optional data operations can be applied along the way.
+Data mappings connect source columns (by name or index) to HydroServer datastream IDs. Each mapping can fan out to multiple target datastreams, and optional data operations can be applied per target path.
 
 ```python
 from hydroserverpy.etl.transformers import ETLDataMapping, ETLTargetPath
@@ -171,18 +177,18 @@ data_mappings = [
 
 #### Data Operations
 
-Target paths can include a sequence of data operations applied to the source values before loading. Supported operations are arithmetic expressions and rating curves.
+Target paths can include a sequence of data operations applied to the source values before loading. Operations are applied in order — the output of each becomes the input of the next. Supported operations are arithmetic expressions, rating curves, and temporal aggregation.
 
 **Arithmetic expression** — applies a Python arithmetic expression where `x` represents the source value. Only `+`, `-`, `*`, `/`, numeric literals, and the variable `x` are permitted.
 
 ```python
+from hydroserverpy.etl.transformers import ETLTargetPath
 from hydroserverpy.etl.operations import ArithmeticExpressionOperation
 
 ETLTargetPath(
     target_identifier="<datastream-uuid>",
     data_operations=[
         ArithmeticExpressionOperation(
-            type="arithmetic_expression",
             expression="(x - 32) / 1.8",   # Fahrenheit to Celsius
             target_identifier="<datastream-uuid>",
         )
@@ -193,13 +199,13 @@ ETLTargetPath(
 **Rating curve** — maps input values to output values using linear interpolation against a two-column CSV lookup table (input, output), retrieved from a URL.
 
 ```python
+from hydroserverpy.etl.transformers import ETLTargetPath
 from hydroserverpy.etl.operations import RatingCurveDataOperation
 
 ETLTargetPath(
     target_identifier="<datastream-uuid>",
     data_operations=[
         RatingCurveDataOperation(
-            type="rating_curve",
             rating_curve_url="https://example.com/curves/stage-discharge.csv",
             target_identifier="<datastream-uuid>",
         )
@@ -207,30 +213,26 @@ ETLTargetPath(
 )
 ```
 
-Operations are applied in order. The output of each operation becomes the input of the next.
-
-### Temporal Aggregation
-
-Temporal aggregation is an optional step that reduces the per-observation DataFrame produced by the transformer into period-level summaries before loading. When configured, the same aggregation is applied uniformly to every target series in the pipeline.
+**Temporal aggregation** — reduces per-observation values into period-level summaries. When included, it should be the last operation in the sequence, as it changes the shape of the data from one row per observation to one row per aggregation window.
 
 ```python
-from hydroserverpy.etl.models import TemporalAggregation
+from hydroserverpy.etl.transformers import ETLTargetPath
+from hydroserverpy.etl.operations import TemporalAggregationOperation
 
-aggregation = TemporalAggregation(
-    aggregation_statistic="simple_mean",
-    aggregation_interval=1,
-    aggregation_interval_unit="day",
+ETLTargetPath(
+    target_identifier="<datastream-uuid>",
+    data_operations=[
+        TemporalAggregationOperation(
+            aggregation_statistic="simple_mean",
+            aggregation_interval=1,
+            aggregation_interval_unit="day",
+            target_identifier="<datastream-uuid>",
+        )
+    ],
 )
 ```
 
-Pass it to the transformer at construction time:
-
-```python
-transformer = CSVTransformer(
-    timestamp_key="datetime",
-    temporal_aggregation=aggregation,
-)
-```
+Because temporal aggregation is a per-target operation, different targets fed by the same source can use different statistics, intervals, or timezone alignments independently.
 
 #### Aggregation statistic
 
@@ -256,22 +258,26 @@ Window boundaries are aligned to local midnight in the configured timezone. The 
 | `"iana"` | Local midnight in a named timezone, handling DST automatically | `timezone` as a valid IANA name |
 
 ```python
+from hydroserverpy.etl.operations import TemporalAggregationOperation
+
 # Daily windows aligned to US Mountain Time (UTC-7, DST-aware)
-aggregation = TemporalAggregation(
+TemporalAggregationOperation(
     aggregation_statistic="simple_mean",
     aggregation_interval=1,
     aggregation_interval_unit="day",
     timezone_type="iana",
     timezone="America/Denver",
+    target_identifier="<datastream-uuid>",
 )
 
 # Daily windows at a fixed offset (no DST adjustment)
-aggregation = TemporalAggregation(
+TemporalAggregationOperation(
     aggregation_statistic="time_weighted_mean",
     aggregation_interval=1,
     aggregation_interval_unit="day",
     timezone_type="offset",
     timezone="-0700",
+    target_identifier="<datastream-uuid>",
 )
 ```
 
@@ -279,14 +285,13 @@ aggregation = TemporalAggregation(
 
 Days with no observations are omitted from the output rather than filled with null values.
 
-
 ### Loader
 
 ```python
 from hydroserverpy import HydroServer
 from hydroserverpy.etl.loaders import HydroServerLoader
 
-hs = HydroServer(host="https://my-hydroserver.com", username="user", password="pass")
+hs = HydroServer(host="https://playground.hydroserver.org", email="user@example.com", password="pass")
 
 loader = HydroServerLoader(
     client=hs,

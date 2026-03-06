@@ -3,56 +3,48 @@ import pandas as pd
 from typing import Literal, Optional
 from bisect import bisect_left
 from datetime import datetime, time, timedelta, timezone as dt_timezone
-from .timestamp import Timezone
+from .base import DataOperation
+from ..models.timestamp import Timezone
 
 
 AggregationStatistic = Literal["simple_mean", "time_weighted_mean", "last_value_of_period"]
 AggregationIntervalUnit = Literal["day"]
 
 
-class TemporalAggregation(Timezone):
+class TemporalAggregationOperation(DataOperation, Timezone):
     aggregation_statistic: AggregationStatistic
     aggregation_interval: int = 1
     aggregation_interval_unit: AggregationIntervalUnit = "day"
 
     def apply(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Aggregate all non-timestamp columns in df over fixed-duration day windows.
+        Aggregate a (timestamp, value) DataFrame over fixed-duration day windows.
 
-        The df must have a UTC-normalized 'timestamp' column. The returned DataFrame
-        has one row per window with the window-start UTC timestamp as the
-        'timestamp' column. Windows where every target column has no observations
-        are dropped entirely.
+        The df must have a UTC-normalized 'timestamp' column and a numeric 'value'
+        column. The returned DataFrame has one row per window with the window-start
+        UTC timestamp as the 'timestamp' column. Windows with no observations are
+        dropped entirely.
         """
 
-        target_columns = [col for col in df.columns if col != "timestamp"]
-
         if df.empty:
-            return pd.DataFrame(columns=["timestamp"] + target_columns)
+            return pd.DataFrame(columns=["timestamp", "value"])
 
         timestamps: list[datetime] = df["timestamp"].dt.to_pydatetime().tolist()
+        values: list[float] = pd.to_numeric(df["value"], errors="coerce").tolist()
         start_utc = timestamps[0]
         end_utc = timestamps[-1]
 
-        result: dict[str, list] = {"timestamp": [], **{col: [] for col in target_columns}}
+        result_timestamps: list = []
+        result_values: list = []
 
         for ws, we in self._iter_windows(start_utc, end_utc):
-            row = {
-                col: self._aggregate_window(
-                    timestamps,
-                    pd.to_numeric(df[col], errors="coerce").tolist(),
-                    ws,
-                    we,
-                )
-                for col in target_columns
-            }
-            if all(v is None for v in row.values()):
+            value = self._aggregate_window(timestamps, values, ws, we)
+            if value is None:
                 continue
-            result["timestamp"].append(ws)
-            for col, val in row.items():
-                result[col].append(val)
+            result_timestamps.append(ws)
+            result_values.append(value)
 
-        out = pd.DataFrame(result)
+        out = pd.DataFrame({"timestamp": result_timestamps, "value": result_values})
         out["timestamp"] = pd.to_datetime(out["timestamp"], utc=True)
 
         return out

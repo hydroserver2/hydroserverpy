@@ -1,10 +1,9 @@
-import traceback
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 from enum import Enum
 from typing import Optional, Any
 from ..extractors import Extractor
 from ..transformers import Transformer, ETLDataMapping
-from ..loaders import Loader
+from ..loaders import Loader, ETLLoaderResult
 
 
 class ETLStatus(Enum):
@@ -26,9 +25,10 @@ class ETLContext(BaseModel):
     status: ETLStatus = ETLStatus.PENDING
     stage: ETLStage = ETLStage.SETUP
     runtime_variables: dict[str, Any] = Field(default_factory=dict)
-    results: dict[str, Any] = Field(default_factory=dict)
-    error: Optional[str] = None
-    traceback: Optional[str] = None
+    results: Optional[ETLLoaderResult] = None
+    exception: Optional[Exception] = None
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
     def mark_failed(self, exc: Exception) -> None:
         """
@@ -36,8 +36,7 @@ class ETLContext(BaseModel):
         """
 
         self.status = ETLStatus.FAILED
-        self.error = str(exc)
-        self.traceback = traceback.format_exc()
+        self.exception = exc
 
 
 class ETLPipeline(BaseModel):

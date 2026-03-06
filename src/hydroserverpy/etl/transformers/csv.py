@@ -48,6 +48,10 @@ class CSVTransformer(Transformer):
 
     @model_validator(mode="after")
     def validate_data_start_row(self) -> "CSVTransformer":
+        """
+        Ensure data_start_row is greater than header_row when both are configured.
+        """
+
         if self.header_row is not None and self.data_start_row <= self.header_row:
             raise ValueError(
                 f"Received an invalid data start row for the CSV transformer: "
@@ -63,8 +67,13 @@ class CSVTransformer(Transformer):
         **kwargs
     ) -> DataFrame:
         """
-        Transforms a CSV file-like object into a Pandas DataFrame where the column
-        names are replaced with their target destination IDs.
+        Parse a CSV payload into a long-format DataFrame with columns
+        'timestamp', 'value', and 'target_id'.
+
+        Reads only the columns referenced by data_mappings, resolves source
+        identifiers, fans out one-to-many mappings, and reshapes into long
+        format before passing to standardize_dataframe for timestamp
+        normalization, numeric coercion, data operations, and deduplication.
         """
 
         if not isinstance(payload, (str, bytes, TextIOBase, BufferedIOBase)):
@@ -103,35 +112,39 @@ class CSVTransformer(Transformer):
             dtype = "string"
 
         else:
-            columns = [self.timestamp_key] + [mapping.source_identifier for mapping in data_mappings]
+            columns = [self.timestamp_key] + [
+                mapping.source_identifier for mapping in data_mappings
+            ]
             dtype = {self.timestamp_key: "string"}
 
-        logger.info("Reading CSV data...")
+        logger.info("Reading CSV data.")
         logger.debug(
-            "Parsing CSV file (identifierType=%r, delimiter=%r, headerRow=%r, dataStartRow=%r, usecols=%r).",
-            self.identifier_type, self.delimiter, self.header_row, self.data_start_row, columns
+            "Parsing CSV (identifierType=%r, delimiter=%r, headerRow=%r, dataStartRow=%r, usecols=%r).",
+            self.identifier_type, self.delimiter, self.header_row, self.data_start_row, columns,
         )
 
         try:
+            header_idx = (self.header_row - 1) if self.header_row is not None else -1
+            data_start_idx = self.data_start_row - 1
             df = read_csv(
                 clean_payload,
                 sep=self.delimiter,
                 header=0 if not use_index else None,
-                skiprows=(self.header_row if self.header_row is not None else self.data_start_row) - 1,
+                skiprows=[i for i in range(data_start_idx) if i != header_idx],
                 usecols=columns,
                 dtype=dtype,
             )
         except EmptyDataError as e:
             raise ETLError(
-                f"The CSV transformer received an empty CSV file. "
-                f"Ensure the provided source file contains valid CSV data."
+                "The CSV transformer received an empty CSV file. "
+                "Ensure the provided source file contains valid CSV data."
             ) from e
         except Exception as e:
             exc_message = str(e)
             if "No columns to parse from file" in exc_message:
                 raise ETLError(
-                    f"The CSV transformer received an empty CSV file. "
-                    f"Ensure the provided source file contains valid CSV data."
+                    "The CSV transformer received an empty CSV file. "
+                    "Ensure the provided source file contains valid CSV data."
                 ) from e
             elif "Usecols do not match columns" in exc_message or "not in list" in exc_message:
                 raise ETLError(
@@ -140,21 +153,28 @@ class CSVTransformer(Transformer):
                 ) from e
             else:
                 raise ETLError(
-                    f"The CSV transformer encountered an unexpected error while parsing the CSV payload. "
-                    f"Ensure the source system is returning a valid CSV payload that matches "
-                    f"the settings configured for this transformer."
+                    "The CSV transformer encountered an unexpected error while parsing the CSV payload. "
+                    "Ensure the source system is returning a valid CSV payload that matches "
+                    "the settings configured for this transformer."
                 ) from e
 
-        logger.debug("CSV file read into dataframe: %s", df.shape)
+        logger.debug("CSV parsed: %s rows, %s columns.", *df.shape)
 
-        # In index mode, relabel columns back to original 1-based indices
-        # so base transformer can use integer labels directly
+        # In index mode, relabel columns to 1-based string labels so that
+        # source identifiers from task config (stored as strings) match correctly.
         if use_index:
-            # Task config stores keys as strings; keep columns as strings so timestamp.key/sourceIdentifier match.
             df.columns = [
-                str(column + 1) if isinstance(column, int) else str(column)
-                for column in columns
+                str(col + 1) if isinstance(col, int) else str(col)
+                for col in columns
             ]
+
+        # Rename timestamp column and reshape wide → long format.
+        # Each source column fans out to one row per target path that references it.
+        df = df.rename(columns={self.timestamp_key: "timestamp"})
+        df = self.reshape_dataframe_wide_to_long(
+            df=df,
+            data_mappings=data_mappings,
+        )
 
         return self.standardize_dataframe(df, data_mappings)
 

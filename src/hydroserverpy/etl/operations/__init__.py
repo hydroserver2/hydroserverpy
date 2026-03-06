@@ -1,6 +1,4 @@
-from typing import Union
+from .base import DataOperation
 from .rating_curve import RatingCurveDataOperation
 from .arithmetic_expression import ArithmeticExpressionOperation
-
-
-DataOperation = Union[ArithmeticExpressionOperation, RatingCurveDataOperation]
+from .temporal_aggregation import TemporalAggregationOperation

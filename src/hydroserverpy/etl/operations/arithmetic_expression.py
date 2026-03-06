@@ -2,8 +2,9 @@ import re
 import ast
 import logging
 import pandas as pd
-from pydantic import BaseModel, model_validator
-from typing import Any, Literal
+from pydantic import model_validator
+from typing import Any
+from .base import DataOperation
 from ..exceptions import ETLError
 
 
@@ -26,10 +27,8 @@ ALLOWED_AST = (
 )
 
 
-class ArithmeticExpressionOperation(BaseModel):
-    type: Literal["arithmetic_expression"] = "arithmetic_expression"
+class ArithmeticExpressionOperation(DataOperation):
     expression: str
-    target_identifier: str
     _compiled: Any = None
 
     @model_validator(mode="after")
@@ -83,15 +82,19 @@ class ArithmeticExpressionOperation(BaseModel):
         self._compiled = compile(tree, "<expr>", "eval")
         return self
 
-    def apply(self, series: pd.Series) -> pd.Series:
+    def apply(self, df: pd.DataFrame) -> pd.DataFrame:
         """
-        Apply the compiled arithmetic expression to a Pandas Series.
+        Apply the compiled arithmetic expression to the value column of a
+        (timestamp, value) DataFrame.
 
-        The variable 'x' in the expression represents the input series.
+        The variable 'x' in the expression represents the value column.
+        The timestamp column is passed through unchanged.
         """
 
         try:
-            return eval(self._compiled, {"__builtins__": {}}, {"x": series})
+            result = df.copy()
+            result["value"] = eval(self._compiled, {"__builtins__": {}}, {"x": df["value"]})
+            return result
         except Exception as e:
             raise ETLError(
                 f"Failed to evaluate arithmetic expression for data target: {self.target_identifier}. "
