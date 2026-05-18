@@ -1,42 +1,6 @@
 # HydroServer Python Client
 
-The hydroserverpy Python package provides an interface for managing HydroServer data and metadata, loading observations, and performing data quality control. This guide will go over how to install the package and connect to a HydroServer instance. Full hydroserverpy documentation and examples can be found [here](https://hydroserver2.github.io/hydroserver/how-to/hydroserverpy/hydroserverpy-examples.html).
-
-## Installation
-
-You can install the package via pip:
-
-```bash
-pip install hydroserverpy
-```
-
-## Connecting to HydroServer
-
-To connect to HydroServer, you need to initialize the client with the instance of HydroServer you're using and your user credentials if you want to access and modify your own data. If you don't provide authentication credentials you can read public data, but you will not be able to create or modify any data.
-
-### Example: Anonymous User
-
-```python
-from hydroserverpy import HydroServer
-
-# Initialize HydroServer connection.
-hs_api = HydroServer(
-    host='https://playground.hydroserver.org'
-)
-```
-
-### Example: Basic Authentication
-
-```python
-from hydroserverpy import HydroServer
-
-# Initialize HydroServer connection with credentials.
-hs_api = HydroServer(
-    host='https://playground.hydroserver.org',
-    email='user@example.com',
-    password='******'
-)
-```
+This repository has been archived and is no longer actively maintained. The project has moved inside the main [hydroserver](https://github.com/hydroserver2/hydroserver/tree/main/packages/hydroserverpy) repository.
 
 ## Funding and Acknowledgements
 
